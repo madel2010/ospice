@@ -1,0 +1,4 @@
+base referer
+rect $classAnalysis.html 5,31 83,57
+rect $classDC.html 152,5 192,32
+rect $classtransient.html 132,56 212,83
