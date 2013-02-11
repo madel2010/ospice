@@ -132,6 +132,7 @@ ADD_CUSTOM_TARGET(suitesparse ALL DEPENDS ${PARENT_SOURCE_DIR}/SuiteSparse/KLU/l
 ######START:Make the simulator library#############
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(SymbolicC++3-3.35)
+add_subdirectory(parser)
 set(LIBS  simulator SymbolicC++ ${LIBS}) 
 ######END:Make the simulator library#############
 
@@ -163,3 +164,4 @@ add_dependencies(Ospice suitesparse SymbolicC++ )
   else()
 	message(STATUS "DOXYGEN documentation is Not found")
   endif()
+

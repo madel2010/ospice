@@ -62,17 +62,17 @@ void Circuit::add_mna_variable(std::string node_name){
     }
 }
 
-void Circuit::add_current_element(std::string element_name){
+void Circuit::add_inductor_index(std::string inductor_name, double value){
     
     //check if the node is already added
-    if(current_elements.find(element_name)==current_elements.end()){
+    if(inductors.find(inductor_name)==inductors.end()){
 	  int index;
-	  element_name+= ".I";
-	  index =  get_variable_index(element_name);
-	  current_elements[element_name]= index ;
+	  inductor_name+= ".I";
+	  index =  get_variable_index(inductor_name);
+	  inductors[inductor_name]= std::pair<int,double>(index,value) ;
     }else{
-	  std::string err = std::string("Element with name ")+element_name+ std::string(" already exists");
-	  throw std::runtime_error(element_name);
+	  std::string err = std::string("Element with name ")+inductor_name+ std::string(" already exists");
+	  throw std::runtime_error(inductor_name);
     }
 }
 
@@ -106,7 +106,9 @@ void Circuit::attach_elements(){
      //now create the mna matrices
      G.create(number_of_mna_variables, number_of_mna_variables);
      C.create(number_of_mna_variables, number_of_mna_variables);
+     J.create(number_of_mna_variables, number_of_mna_variables);
      B.create(number_of_mna_variables, 1);
+     fx.create(number_of_mna_variables, 1);
      
      for(iter=components.begin(); iter!=components.end(); iter++){
 	  (*iter)->write_stamp(G,C,this);  
@@ -133,11 +135,21 @@ void Circuit::update_sources(double time){
 
 ///This function calls the NonLinElement.update_fx() to put the new values of the non linear expression in the fx vector at time 
 ///Note: that the function NonLinElement.update_fx() is only defined for nonlinear elements as they are also inherited from "NonLinElement" class
-void Circuit::update_fx(const double* solution, double time){
+void Circuit::update_fx(const double* solution){
     std::vector<NonLinElement*>::iterator iter;
     
     for(iter= Non_Linear_Elements.begin(); iter!= Non_Linear_Elements.end(); iter++){
-	(*iter)->update_fx( fx , solution, time); //this is a function of all nonlinear elements to update the fx vector
+	(*iter)->update_fx( fx , solution); //this is a function of all nonlinear elements to update the fx vector
+    }
+}
+
+///This function calls the NonLinElement.update_J() to put the new values of the non linear Jacobian matrix in the G matrix at time 
+///Note: that the function NonLinElement.update_J() is only defined for nonlinear elements as they are also inherited from "NonLinElement" class
+void Circuit::update_J(const double* solution){
+    std::vector<NonLinElement*>::iterator iter;
+    
+    for(iter= Non_Linear_Elements.begin(); iter!= Non_Linear_Elements.end(); iter++){
+	(*iter)->update_J( J , solution); 
     }
 }
 
@@ -154,7 +166,7 @@ void Circuit::start_analysis(){
 	    have_dc_solution = true;
 	}
 	//start simulating the required analysis
-	(*iter)->simulate(G, C, B, this);
+	(*iter)->simulate(G, C, J, B, fx, this);
     }
 }
 

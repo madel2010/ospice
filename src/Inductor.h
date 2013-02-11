@@ -41,7 +41,7 @@ private:
 public:
 		
 	Inductor(std::string _n1, std::string _n2, double _value):TwoTerminal(_n1,_n2),value(_value){
-	     name = std::string("R")+".+"+n1+".-"+n2;
+	     name = std::string("L")+".+"+n1+".-"+n2;
 	}
 	
 	Inductor(std::string _name, std::string _n1, std::string _n2, double _value):TwoTerminal(_n1,_n2),value(_value){
@@ -54,6 +54,34 @@ public:
 	virtual void write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, Circuit* circ);
 	
 	void add_my_nodes(Circuit* circuit);
+	
+
+	
+};
+
+
+class MututalInductor : public TwoTerminal
+{
+private:
+	double value;
+
+	
+public:
+		
+	MututalInductor(std::string _n1, std::string _n2, double _value):TwoTerminal(_n1,_n2),value(_value){
+	     name = std::string("K")+".+"+n1+".-"+n2;
+	}
+	
+	MututalInductor(std::string _name, std::string _n1, std::string _n2, double _value):TwoTerminal(_n1,_n2),value(_value){
+	  name = _name;
+	};
+	
+	
+	bool is_linear(){return true;}
+	
+	virtual void write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, Circuit* circ);
+	
+	void add_my_nodes(Circuit* circuit){};
 	
 
 	

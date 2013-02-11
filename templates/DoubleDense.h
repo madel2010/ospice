@@ -22,6 +22,7 @@
 
 extern "C" void dgetrf_( const int * M,  const int* N, double* A, const int *lda, int* ipiv, int* result );
 extern "C" void dgetrs_( const char* TRANS,  const int* N, const int* nrhs, double* A, const int *lda, int* ipiv, double* B, const int* ldb,  int* result, int tlen);
+extern "C" double dnrm2_(const int*N , double*A ,const int* incx);
 
 namespace BMatrix{
 
@@ -69,6 +70,15 @@ inline Dense<double>& Dense<double>::operator = (const Dense<double> &A){
 		return *this;
 }  
 	
+template<>
+inline double Dense<double>::norm(int col){ //col is the column to calculate the norm for (by default col=1) check MatrixBase.h
+	      int inc=1;
+	      int N = this->rows;
+	      
+	      double result = dnrm2_(&N, data+(this->rows*col), &inc);
+	      return result;
+}
+
 //this function finds (this)^{-1}*RHS using LU factorization and F/B subst.
 template<> 
 inline Dense<double> Dense<double>::solve (double* _RHS , const int Nrhs){

@@ -27,7 +27,9 @@
 
 
 #include "Inductor.h"
+#include <math.h>
 
+/*----------_Inductor Class -----------------*/
 void Inductor::write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, Circuit* circ){
     int n1_index = circ->get_variable_index(n1);
     int n2_index = circ->get_variable_index(n2);
@@ -59,7 +61,20 @@ void Inductor::add_my_nodes(Circuit* circuit){
     circuit->add_mna_variable(current);
     
     //we have to add the current element in case we need it for the mutual_inductances
-    circuit->add_current_element(name);
+    circuit->add_inductor_index(name,value);
+    
+}
+
+/*----------_Mutual Inductor Class -----------------*/
+void MututalInductor::write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, Circuit* circ){
+    //n1 and n2 are the inductors that have the mutual coupling between them
+    
+    std::pair<int,double> Inductor1 = circ->get_inductor_element_index(n1); //the index of the current of the first inductor
+    std::pair<int,double> Inductor2 = circ->get_inductor_element_index(n2); //the index of the current of the second inductor
+    
+    double M = value/sqrt(Inductor1.second*Inductor2.second);
+    C.put(Inductor1.first , Inductor2.first , -M);
+    C.put(Inductor2.first , Inductor1.first , -M);
     
 }
 

@@ -41,7 +41,7 @@ public:
     Analysis(){};
     virtual ~Analysis(){};
     
-    virtual void simulate(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, BMatrix::Dense<double> &B, Circuit* circ)=0;
+    virtual void simulate(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, BMatrix::Sparse<double> &J, BMatrix::Dense<double> &B, BMatrix::Dense<double> &fx, Circuit* circ)=0;
 };
 
 
@@ -56,7 +56,7 @@ public:
     DC();
 
     ~DC(){};
-    void simulate(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, BMatrix::Dense<double> &B, Circuit* circ);
+    void simulate(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, BMatrix::Sparse<double> &J, BMatrix::Dense<double> &B, BMatrix::Dense<double> &fx, Circuit* circ);
      
      const BMatrix::Dense<double>& get_solution() { return dc_solution ; }
 };
@@ -75,7 +75,7 @@ private:
 public:
     transient(double _start_time, double _end_time , double _h):start_time(_start_time), end_time(_end_time), h(_h){};
 
-    void simulate(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, BMatrix::Dense<double> &B, Circuit* circ);
+    void simulate(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, BMatrix::Sparse<double> &J, BMatrix::Dense<double> &B, BMatrix::Dense<double> &fx, Circuit* circ);
     
 };
 
