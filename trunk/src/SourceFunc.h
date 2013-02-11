@@ -70,3 +70,5 @@ public:
     double get_value(double time);
 };
 #endif // SOURCEFUNC_H
+
+

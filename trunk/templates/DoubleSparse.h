@@ -639,7 +639,8 @@ public:
 			throw std::runtime_error("Can not multible Sparse*Dense with inconsistence sizes");
 		}
 
-         
+		create_ccs();
+		
 		Dense<double> result (this->rows, B.get_number_of_cols());
 
 		

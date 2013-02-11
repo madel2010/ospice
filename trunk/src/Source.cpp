@@ -79,8 +79,6 @@ void VoltageSource::add_my_nodes(Circuit* circuit){
     std::string current = name + ".I";
     circuit->add_mna_variable(current);
     
-    //we have to add the current element in case we need it for the mutual_inductances
-    circuit->add_current_element(name);
     
 }
 

@@ -260,6 +260,10 @@ public:
 	double det(){
 	      
 	}
+	
+	double norm(int col=0){ //col is the column to calculate the norm for
+	      throw std::runtime_error("Please code me Dense<>.norm()");
+	}
 
 	bool is_zero(){
 		//we only check the diagonals
@@ -359,7 +363,7 @@ public:
   
   		for(int i=0; i<this->cols; i++){
 			for(int j=0; j<this->rows; j++){	
-				this->data[i+this->rows*j] += A.data[i+this->rows*j];
+				this->data[j+this->rows*i] += A.data[j+this->rows*i];
 			}
 		}
 
@@ -375,7 +379,7 @@ public:
   			}
     			for(int i=0; i<this->cols; i++){
 				for(int j=0; j<this->rows; j++){	
-					this->data[i+this->rows*j] += BB->data[i+this->rows*j];
+					this->data[j+this->rows*i] += BB->data[j+this->rows*i];
 				}
 			}
   		}else{
@@ -395,7 +399,7 @@ public:
   
   		for(int i=0; i<this->cols; i++){
 			for(int j=0; j<this->rows; j++){	
-				this->data[i+this->rows*j] -= A.data[i+this->rows*j];
+				this->data[j+this->rows*i] -= A.data[j+this->rows*i];
 			}
 		}
 
@@ -413,7 +417,7 @@ public:
 
     			for(int i=0; i<this->cols; i++){
 				for(int j=0; j<this->rows; j++){	
-					this->data[i+this->rows*j] -= BB->data[i+this->rows*j];
+					this->data[j+this->rows*i] -= BB->data[j+this->rows*i];
 				}
 			}
   		}else{

@@ -33,7 +33,8 @@ namespace SymbolicConstant
  static const Symbolic i = Symbolic(Power(Symbolic(-1),
                                           Power(Symbolic(2), Symbolic(-1))));
  static const Symbolic i_symbol("i");
- static const Symbolic e       ("e");
+ //static const Symbolic e       ("e");
+ static const Symbolic e       (2.71828182845905);
  static const Symbolic pi      ("pi");
 }
 

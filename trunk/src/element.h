@@ -54,7 +54,8 @@ class NonLinElement
 
 public:
     NonLinElement(){};
-    virtual void update_fx(BMatrix::Sparse<double>& fx, const double* solution, double time);
+    virtual void update_fx(BMatrix::Dense<double>& fx, const double* solution)=0;
+    virtual void update_J(BMatrix::Sparse<double>& J, const double* solution)=0;
     
 };
 

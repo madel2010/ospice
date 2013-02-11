@@ -50,7 +50,8 @@ class Circuit
 private:
      BMatrix::Sparse<double> G;
      BMatrix::Sparse<double> C;
-     BMatrix::Sparse<double> fx; //the non linear vector
+     BMatrix::Sparse<double> J;
+     BMatrix::Dense<double> fx; //the non linear vector
      BMatrix::Dense<double> B; 
      
      
@@ -75,8 +76,8 @@ private:
      //associative array that saves the elements that addes extra nodes for currents like inductors. 
      //This is usefeull when we need to add mutual inductance. 
      //In this case we do not need to search in all elements
-     // map<name , index_of_current>
-     std::map< std::string , int> current_elements;
+     // map<name , <index_of_current,value of inductor> >
+     std::map< std::string , std::pair<int,double> > inductors;
      
      void attach_elements();
      
@@ -97,7 +98,12 @@ public:
 	  Probes.push_back(_Probe);
     }
     
-    void add_current_element(std::string element_name);
+    void add_inductor_index(std::string inductor_name, double value);
+    
+    //this function gets the index of the current of the current_element
+    std::pair<int,double> get_inductor_element_index(std::string element_name){
+	return inductors[element_name];
+    }
     
     inline void add_source(Source* _src){
       sources.push_back(_src);
@@ -123,7 +129,9 @@ public:
     
     void update_sources(double time);
     
-    void update_fx(const double* solution, double time);
+    void update_fx( const double* solution);
+    
+    void update_J(const double* solution);
  
     void start_analysis();
     

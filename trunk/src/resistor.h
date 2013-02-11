@@ -75,10 +75,11 @@ private:
       std::string Curr_Expression;
 	
       Symbolic F; //The non linear function 
+      std::vector<Symbolic> dFdx; //The derivative of df/dx with respect to each node that F depends on
+      
       std::vector< std::pair<Symbolic , int> > expression_depends_on; //The node names and references that the expression depends on. 
       
-      //This function adds the falue to the nonlinear vector fx of the circuit
-      void update_fx(BMatrix::Sparse<double>& fx, const double* solution, double time);
+      
       
       //The Shunting Yard algorithm is used to parse Mathematical Expressions
       //This function is a modefied version of the code found in "http://en.wikipedia.org/wiki/Shunting_yard_algorithm"
@@ -118,6 +119,11 @@ public:
 	virtual void write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, Circuit* circ);
 	
 	void add_my_nodes(Circuit* circuit);
+	
+	//This function adds the falue to the nonlinear vector fx of the circuit
+       void update_fx(BMatrix::Dense<double>& fx, const double* solution);
+      
+       void update_J(BMatrix::Sparse<double>& J, const double* solution);
 };
 
 #endif // RESISTOR_H
