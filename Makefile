@@ -115,6 +115,19 @@ Ospice/fast:
 .PHONY : Ospice/fast
 
 #=============================================================================
+# Target rules for targets named OspiceParser
+
+# Build rule for target.
+OspiceParser: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 OspiceParser
+.PHONY : OspiceParser
+
+# fast build rule for target.
+OspiceParser/fast:
+	$(MAKE) -f CMakeFiles/OspiceParser.dir/build.make CMakeFiles/OspiceParser.dir/build
+.PHONY : OspiceParser/fast
+
+#=============================================================================
 # Target rules for targets named doc
 
 # Build rule for target.
@@ -166,6 +179,30 @@ SymbolicC++/fast:
 	$(MAKE) -f SymbolicC++3-3.35/CMakeFiles/SymbolicC++.dir/build.make SymbolicC++3-3.35/CMakeFiles/SymbolicC++.dir/build
 .PHONY : SymbolicC++/fast
 
+lex.yy.o: lex.yy.c.o
+.PHONY : lex.yy.o
+
+# target to build an object file
+lex.yy.c.o:
+	$(MAKE) -f CMakeFiles/OspiceParser.dir/build.make CMakeFiles/OspiceParser.dir/lex.yy.c.o
+.PHONY : lex.yy.c.o
+
+lex.yy.i: lex.yy.c.i
+.PHONY : lex.yy.i
+
+# target to preprocess a source file
+lex.yy.c.i:
+	$(MAKE) -f CMakeFiles/OspiceParser.dir/build.make CMakeFiles/OspiceParser.dir/lex.yy.c.i
+.PHONY : lex.yy.c.i
+
+lex.yy.s: lex.yy.c.s
+.PHONY : lex.yy.s
+
+# target to generate assembly for a file
+lex.yy.c.s:
+	$(MAKE) -f CMakeFiles/OspiceParser.dir/build.make CMakeFiles/OspiceParser.dir/lex.yy.c.s
+.PHONY : lex.yy.c.s
+
 main.o: main.cpp.o
 .PHONY : main.o
 
@@ -190,6 +227,30 @@ main.cpp.s:
 	$(MAKE) -f CMakeFiles/Ospice.dir/build.make CMakeFiles/Ospice.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+parser.o: parser.cpp.o
+.PHONY : parser.o
+
+# target to build an object file
+parser.cpp.o:
+	$(MAKE) -f CMakeFiles/OspiceParser.dir/build.make CMakeFiles/OspiceParser.dir/parser.cpp.o
+.PHONY : parser.cpp.o
+
+parser.i: parser.cpp.i
+.PHONY : parser.i
+
+# target to preprocess a source file
+parser.cpp.i:
+	$(MAKE) -f CMakeFiles/OspiceParser.dir/build.make CMakeFiles/OspiceParser.dir/parser.cpp.i
+.PHONY : parser.cpp.i
+
+parser.s: parser.cpp.s
+.PHONY : parser.s
+
+# target to generate assembly for a file
+parser.cpp.s:
+	$(MAKE) -f CMakeFiles/OspiceParser.dir/build.make CMakeFiles/OspiceParser.dir/parser.cpp.s
+.PHONY : parser.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -197,15 +258,22 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... Ospice"
+	@echo "... OspiceParser"
 	@echo "... doc"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... suitesparse"
 	@echo "... simulator"
 	@echo "... SymbolicC++"
+	@echo "... lex.yy.o"
+	@echo "... lex.yy.i"
+	@echo "... lex.yy.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... parser.o"
+	@echo "... parser.i"
+	@echo "... parser.s"
 .PHONY : help
 
 

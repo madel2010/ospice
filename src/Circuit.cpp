@@ -38,9 +38,15 @@ Circuit::Circuit()
 
 Circuit::~Circuit()
 {
-      for(int i=0; i<components.size(); i++){
-	  delete components[i];
-      }
+     std::vector<Element*>::iterator it_el;
+     for(it_el=components.begin(); it_el!=components.end();it_el++){
+	delete (*it_el);
+     } 
+     
+     std::vector<Analysis*>::iterator it_an;
+     for(it_an=required_analysis.begin(); it_an!=required_analysis.end();it_an++){
+	delete (*it_an);
+     }     
 }
 
 void Circuit::operator << (Element* E){
@@ -62,6 +68,7 @@ void Circuit::add_mna_variable(std::string node_name){
     }
 }
 
+//this function adds a has map that maps every inductor to its added current, so that it would be easy when we use the mutual inductor
 void Circuit::add_inductor_index(std::string inductor_name, double value){
     
     //check if the node is already added
@@ -123,6 +130,8 @@ void Circuit::update_probes(double time, const double* solution){
     }
 }
 
+
+
 ///This function calls the source.update_B() to put the new values of the sources in the B vector at time 
 void Circuit::update_sources(double time){
     std::vector<Source*>::iterator iter;
@@ -183,7 +192,11 @@ const BMatrix::Dense<double>& Circuit::get_dc_solution(){
   if(have_dc_solution){
 	return DC_Analysis->get_solution();
   }else{
-      throw std::runtime_error("I need to call dc solution please");
+        DC_Analysis = new DC;
+	DC_Analysis->simulate(G, C, J, B, fx, this);
+	have_dc_solution = true;
+	
+	return DC_Analysis->get_solution();
   }
 }
     

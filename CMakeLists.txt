@@ -111,7 +111,25 @@ endif()
 #add definitions, compiler switches, etc.
 ADD_DEFINITIONS(-Wall -O0 -g)
 
-#ADD_SUBDIRECTORY(src)
+
+###############check Flex/Bison
+######check for yacc and lex
+message(STATUS "Checking YACC/LEX")
+include(FindFLEX)
+include(FindBISON) 
+if(NOT FLEX_FOUND)
+	message(FATAL_ERROR "Cannot find FLEX.")
+endif()
+
+if(NOT BISON_FOUND)
+	message(FATAL_ERROR "Cannot find FLEX/BISON.")
+endif()
+
+
+BISON_TARGET(OspiceBison parser.y ${PROJECT_SOURCE_DIR}/parser.cpp  VERBOSE yacc.out COMPILE_FLAGS --debug)
+FLEX_TARGET(OspiceFlex parser.l ${PROJECT_SOURCE_DIR}/lex.yy.c)
+ADD_FLEX_BISON_DEPENDENCY(OspiceFlex OspiceBison)
+##################
 
 include_directories(${PROJECT_SOURCE_DIR}/SuiteSparse/KLU/templates)
 include_directories(${INCLUDE_DIRS})
@@ -132,7 +150,6 @@ ADD_CUSTOM_TARGET(suitesparse ALL DEPENDS ${PARENT_SOURCE_DIR}/SuiteSparse/KLU/l
 ######START:Make the simulator library#############
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(SymbolicC++3-3.35)
-add_subdirectory(parser)
 set(LIBS  simulator SymbolicC++ ${LIBS}) 
 ######END:Make the simulator library#############
 
@@ -143,7 +160,14 @@ set(LIBS  ${LIBS} ${LIBSPARSE_LIBS})
 target_link_libraries(Ospice ${LIBS})
 
 #dependecies of the projects
-add_dependencies(Ospice suitesparse SymbolicC++ )
+add_dependencies(Ospice suitesparse SymbolicC++)
+
+
+########The parser
+ADD_EXECUTABLE(OspiceParser ${FLEX_OspiceFlex_OUTPUTS} ${BISON_OspiceBison_OUTPUTS})
+ADD_DEPENDENCIES(OspiceParser OspiceBison OspiceFlex suitesparse SymbolicC++)
+set(LIBS  ${LIBS} ${LIBSPARSE_LIBS}) 
+target_link_libraries(OspiceParser ${LIBS})
 
 #################For DOXYGEN documentaton#######################
   
@@ -164,4 +188,5 @@ add_dependencies(Ospice suitesparse SymbolicC++ )
   else()
 	message(STATUS "DOXYGEN documentation is Not found")
   endif()
+
 
