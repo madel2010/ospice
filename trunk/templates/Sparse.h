@@ -419,7 +419,8 @@ public:
     		}
 	
     		const_cast<Sparse<T>&>(B).create_ccs();
-
+		const_cast<Sparse<T>*>(this)->create_ccs();
+		
     		Sparse<T> result(this->rows, this->cols);
 
     		for (int i = 0; i < this->cols; i++) {
@@ -455,7 +456,8 @@ public:
     		}
 	
     		const_cast<Sparse<T>&>(B).create_ccs();
-
+		const_cast<Sparse<T>*>(this)->create_ccs();
+		
     		Sparse<T> result(this->rows, this->cols);
 
     		for (int i = 0; i < this->rows; i++) {
