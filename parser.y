@@ -37,7 +37,6 @@ extern "C"
 	int yylinno;
 }
 
-void yyerror(char *s, ...);
 
 //declare the main crcuit class to add the elements to it
 Circuit MainCircuit;
