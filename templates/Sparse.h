@@ -695,12 +695,30 @@ public:
   		}
 	}
 	     
-	Sparse<T> operator/(T val){
-		create_ccs();
-		
-		for(int i=0; i<nnz; i++){
-		    (*Ax[i]) /= val;
-		}
+	Sparse<T> operator/(T val)const{
+	    
+	    Sparse<T> result = *this;
+	  
+	    result.create_ccs();
+	    
+	    for(int i=0; i<nnz; i++){
+		result.Ax[i]/= val;
+	    }
+	    
+	    return result;
+	}
+
+        Sparse<T> operator*(T val)const{
+	    
+	    Sparse<T> result = *this;
+	  
+	    result.create_ccs();
+	    
+	    for(int i=0; i<nnz; i++){
+		result.Ax[i]*= val;
+	    }
+	    
+	    return result;
 	}
 	     
 	template<class U>
