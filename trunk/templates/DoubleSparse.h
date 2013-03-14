@@ -18,6 +18,7 @@
 #include <time.h>
 #include <sys/time.h>
 #include <sys/times.h>
+#include <ctime>
 
 namespace BMatrix{
   
@@ -41,6 +42,15 @@ private:
       bool calculated_LU;
       bool calculated_Sparse_ordering;
       
+
+      //the following numbers are for storing the time for doing sparse order and LU factorization.
+      double time_to_do_klu_analyze;
+      double time_to_do_klu_factor;
+      double time_to_do_klu_refactor;
+      int number_of_klu_analyze;
+      int number_of_klu_factor;
+      int number_of_klu_refactor;
+
       struct SparseElement{
 	  int row;
 	  double value;
@@ -109,6 +119,14 @@ public:
 	  calculated_Sparse_ordering = false;
 	  
 	  nnz = 0;
+
+	  //the time report data
+	  time_to_do_klu_analyze = 0;
+      	  time_to_do_klu_factor = 0;
+	  time_to_do_klu_refactor = 0;
+          number_of_klu_analyze = 0;
+          number_of_klu_factor = 0;
+	  number_of_klu_refactor = 0;
       }
       
       Sparse(int m, int n){
@@ -129,6 +147,14 @@ public:
 	  calculated_Sparse_ordering = false;
 	  
 	  nnz = 0;
+
+	  //the time report data
+	  time_to_do_klu_analyze = 0;
+      	  time_to_do_klu_factor = 0;
+	  time_to_do_klu_refactor = 0;
+          number_of_klu_analyze = 0;
+          number_of_klu_factor = 0;
+	  number_of_klu_refactor = 0;
       }
       
       //copy constructor
@@ -155,6 +181,14 @@ public:
 	  
 	  klu_defaults(&Common);
 	  Common.scale=0;
+
+	  //the time report data
+	  time_to_do_klu_analyze = 0;
+      	  time_to_do_klu_factor = 0;
+	  time_to_do_klu_refactor = 0;
+          number_of_klu_analyze = 0;
+          number_of_klu_factor = 0;
+	  number_of_klu_refactor = 0;
       }
       
 	Sparse<double>* clone(){
@@ -179,6 +213,14 @@ public:
 		calculated_Sparse_ordering = false;
 	  
 		nnz = 0;
+
+		//the time report data
+	  	time_to_do_klu_analyze = 0;
+      	  	time_to_do_klu_factor = 0;
+	  	time_to_do_klu_refactor = 0;
+          	number_of_klu_analyze = 0;
+          	number_of_klu_factor = 0;
+	  	number_of_klu_refactor = 0;
 	}
 	
       ~Sparse(){
@@ -192,7 +234,7 @@ public:
       
       SBase<double>* scale(double* val)const {}
 	
-      Sparse<double>& operator/=(double val){}
+      
       
       Sparse<double>& operator=(const Sparse<double>&A){
 	  nnz = A.nnz;
@@ -362,11 +404,11 @@ public:
 			  nnz++; //increase the number of non zeros in the matrix
 		  }
 	      }
+
+	      ccs_created = false;
+	      calculated_LU = false;
+	      calculated_Sparse_ordering = false;
 	 }
-	 
-	 ccs_created = false;
-	 calculated_LU = false;
-	 calculated_Sparse_ordering = false;
 	 
       }
 
@@ -374,18 +416,49 @@ public:
       //get the number of non zeros entries
       int get_nnz(){ return nnz; }
       
+      //This re writes the RHS
       void solve(BMatrix::Dense<double>& RHS, const int Nrhs=1){
 	  
 	  create_ccs();
 
-	  if(!calculated_Sparse_ordering){
+	  if(!calculated_Sparse_ordering){	
+		clock_t start,finish;
+		start = clock();
+
 		Symbolic = klu_analyze(this->rows, Ap, Ai, &Common) ;
+		
+		finish = clock();
+		time_to_do_klu_analyze+= (double(finish)-double(start))/CLOCKS_PER_SEC;
+		number_of_klu_analyze++;
+
+		calculated_Sparse_ordering = true;
 	  }
 	  
 
 	  //Do LU factorization if not done before
 	  if(!calculated_LU){
-	      Numeric  = klu_factor ( Ap, Ai, Ax, Symbolic, &Common ) ;
+	      
+	        clock_t start,finish;
+		start = clock();
+
+	      	Numeric  = klu_factor ( Ap, Ai, Ax, Symbolic, &Common ) ;
+
+	      	finish = clock();
+		time_to_do_klu_factor+= (double(finish)-double(start))/CLOCKS_PER_SEC;
+		number_of_klu_factor++;
+		
+		calculated_LU = true;
+	  }else{
+		clock_t start,finish;
+		start = clock();
+
+		klu_refactor ( Ap, Ai, Ax, Symbolic, Numeric, &Common ) ;
+
+	      	finish = clock();
+		time_to_do_klu_refactor+= (double(finish)-double(start))/CLOCKS_PER_SEC;
+		number_of_klu_refactor++;
+
+		calculated_LU = true;
 	  }
 	  
 	  	  
@@ -508,6 +581,7 @@ public:
 		  }
 	    }
   
+  	    //we have to use klu
 	    return *this;
       }
 
@@ -698,6 +772,19 @@ public:
 	    
 	    return result;
 	}
+
+        Sparse<double> operator*(double val)const{
+	    
+	    Sparse<double> result = *this;
+	  
+	    result.create_ccs();
+	    
+	    for(int i=0; i<nnz; i++){
+		result.Ax[i]*= val;
+	    }
+	    
+	    return result;
+	}
      
 	  friend std::ostream& operator << (std::ostream &out , Sparse<double>& B);
 
@@ -724,7 +811,17 @@ public:
 		  return result;
 	  }
 
-	      
+	  void report_timing(){
+		std::cout<<"Number of klu_analyze done on this matrix = "<<number_of_klu_analyze <<std::endl;
+		std::cout<<"Time to do all klu_analyze= "<<time_to_do_klu_analyze << std::endl;
+      	        
+		std::cout<<"Number of klu_fatcor done on this matrix = "<<number_of_klu_factor <<std::endl;
+		std::cout<<"Time to do all klu_factor= "<<time_to_do_klu_factor <<std::endl;
+
+		std::cout<<"Number of klu_refatcor done on this matrix = "<<number_of_klu_refactor <<std::endl;
+		std::cout<<"Time to do all klu_refactor= "<<time_to_do_klu_refactor <<std::endl;
+	  }
+
       protected:
       void runtime_error(const char* arg1);
 };
