@@ -14,6 +14,7 @@
 
 #include "MWrap.h"
 #include "klu.h"
+#include "DoubleDense.h"
 
 #include <time.h>
 #include <sys/time.h>
@@ -272,7 +273,7 @@ public:
       }
 
       //add a  value in row m and column n to the existing value
-      void add_to_entry(int m, int n, double value){
+      void add_to_entry(int m, int n, T value){
 	  
 	   //search column for the row in case we have added the row already
 	  typename std::list<SparseElement>::iterator row_iterator;
@@ -339,7 +340,7 @@ public:
       //put value in row m and column n
       void put(int m, int n, T value){
 	  
-	  if(value==0.0) return;
+	  //if(value==0.0) return;
 	  
 	  //search column for the row in case we have added the row already
 	  typename std::list<SparseElement>::iterator row_iterator;
