@@ -771,6 +771,23 @@ int klu_scale           /* return TRUE if successful, FALSE otherwise */
     klu_common *Common
 ) ;
 
+#ifdef BLOCKM
+int klu_B_scale           /* return TRUE if successful, FALSE otherwise */
+(
+    /* inputs, not modified */
+    int scale,          /* <0: none, no error check; 0: none, 1: sum, 2: max */
+    int n,
+    int Ap [ ],         /* size n+1, column pointers */
+    int Ai [ ],         /* size nz, row indices */
+    BMatrix::MWrap<double>* Ax,
+    /* outputs, not defined on input */
+    double Rs [ ],
+    /* workspace, not defined on input or output */
+    int W [ ],          /* size n, can be NULL */
+    klu_common *Common
+) ;
+#endif
+
 int klu_z_scale         /* return TRUE if successful, FALSE otherwise */
 (
     /* inputs, not modified */
@@ -786,20 +803,7 @@ int klu_z_scale         /* return TRUE if successful, FALSE otherwise */
     klu_common *Common
 ) ;
 
-int klu_B_scale         /* return TRUE if successful, FALSE otherwise */
-(
-    /* inputs, not modified */
-    int scale,          /* <0: none, no error check; 0: none, 1: sum, 2: max */
-    int n,
-    int Ap [ ],         /* size n+1, column pointers */
-    int Ai [ ],         /* size nz, row indices */
-    double Ax [ ],
-    /* outputs, not defined on input */
-    double Rs [ ],
-    /* workspace, not defined on input or output */
-    int W [ ],          /* size n, can be NULL */
-    klu_common *Common
-) ;
+
 
 SuiteSparse_long klu_l_scale (SuiteSparse_long, SuiteSparse_long,
     SuiteSparse_long *, SuiteSparse_long *, double *,
