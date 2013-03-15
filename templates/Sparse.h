@@ -52,8 +52,9 @@ private:
       klu_symbolic* Symbolic;
       klu_common Common;
       klu_B_numeric* Numeric;
-      bool calculated_LU;
-      bool calculated_Sparse_ordering;
+      
+      bool structure_has_changed;
+      bool values_have_changed;
       
       struct SparseElement{
 	  int row;
@@ -132,9 +133,9 @@ public:
 	  Common.scale=0;
 
 	  ccs_created = false; 
-	  calculated_LU = false;
-	  calculated_Sparse_ordering = false;
-	  
+	  structure_has_changed = true;
+	  values_have_changed = true;
+
 	  nnz = 0;
       }
       
@@ -152,8 +153,8 @@ public:
 	  Common.scale=0;
 
 	  ccs_created = false;
-	  calculated_LU = false;
-	  calculated_Sparse_ordering = false;
+	  structure_has_changed = true;
+	  values_have_changed = true;
 	  
 	  nnz = 0;
       }
@@ -175,8 +176,9 @@ public:
 	  //TODO copy the CCS structure as well
 	  ccs_created = false;
 	  MWrap_Ax = NULL;
-	  calculated_LU = false;
-	  calculated_Sparse_ordering = false;
+	  
+	  structure_has_changed = true;
+	  values_have_changed = true;
 	  
 	  klu_defaults(&Common);
 	  Common.scale=0;
@@ -201,8 +203,8 @@ public:
 	  	Common.scale=0;
 
 		ccs_created = false;
-		calculated_LU = false;
-		calculated_Sparse_ordering = false;
+		structure_has_changed = true;
+	  	values_have_changed = true;
 	  
 		nnz = 0;
 	}
@@ -235,8 +237,8 @@ public:
 	  
 	  //TODO copy the CCS structure as well
 	  ccs_created = false; //for now we just make the new object create the CCS
-	  calculated_LU = false;
-	  calculated_Sparse_ordering = false;
+	  structure_has_changed = true;
+	  values_have_changed = true;
 	  
 	 return *this;
       }
@@ -270,55 +272,19 @@ public:
       }
 
       //add a  value in row m and column n to the existing value
-      void add(int m, int n, T value){
+      void add_to_entry(int m, int n, double value){
 	  
-	  //search column for the row in case we have added the row already
+	   //search column for the row in case we have added the row already
 	  typename std::list<SparseElement>::iterator row_iterator;
-	  
+	  //std::list<SparseElement>::iterator row_iterator;
+
 	 row_iterator = find_if( cols_lists[n].begin(), cols_lists[n].end(), std::bind2nd( FindRow(), m ) );
 	 
 	 
 	 if(row_iterator!=cols_lists[n].end()){ //we have found a value already
 	    row_iterator->value += value;
-	    
-	 }else{  //we have no value at this row. We have to add the row first
-	      row_iterator = cols_lists[n].begin();
-	      while(true){
-		  if(row_iterator->row > m){  //we have found the first row greater than the required row
-		    
-			 SparseElement new_element; //create a new element structure
-			 new_element.row = m;  //add the row to the new element structure
-			 new_element.value = value; //add the value to the new element structure
-			 
-			 cols_lists[n].insert(row_iterator , new_element); 
-			 
-			 nnz++; //increase the number of non zeros in the matrix
-			 
-			 break;
-		  }
-		  row_iterator++;
-	      }
-	      ccs_created = false;
-	}
-	 
-	 
-	 calculated_LU = false;
-	 calculated_Sparse_ordering = false;
-	 
-      }
-      
-      //put value in row m and column n
-      void put(int m, int n, T value){
-	  
-	  //search column for the row in case we have added the row already
-	  typename std::list<SparseElement>::iterator row_iterator;
-	  
-	 row_iterator = find_if( cols_lists[n].begin(), cols_lists[n].end(), std::bind2nd( FindRow(), m ) );
-	 
-	 
-	 if(row_iterator!=cols_lists[n].end()){ //we have found a value already
-	    row_iterator->value = value;
-	    
+	    values_have_changed = true;
+
 	 }else{  //we have no value at this row. We have to add the row first
 	      row_iterator = cols_lists[n].begin();
 	      
@@ -349,7 +315,7 @@ public:
 		      }
 		      row_iterator++;
 		  }
-		  
+
 		  //if we didnot find any larger row, then it means that all the rows are smaller, we have to add the new entry at the end
 		  if(!found_larger_row){
 			  SparseElement new_element; //create a new element structure
@@ -361,12 +327,76 @@ public:
 			  nnz++; //increase the number of non zeros in the matrix
 		  }
 	      }
+
 	      ccs_created = false;
+	      structure_has_changed = true;
 	 }
 	 
 	 
-	 calculated_LU = false;
-	 calculated_Sparse_ordering = false;
+	 
+      }
+      
+      //put value in row m and column n
+      void put(int m, int n, double value){
+	  
+	  if(value==0.0) return;
+	  
+	  //search column for the row in case we have added the row already
+	  typename std::list<SparseElement>::iterator row_iterator;
+	  //std::list<SparseElement>::iterator row_iterator;
+
+	 row_iterator = find_if( cols_lists[n].begin(), cols_lists[n].end(), std::bind2nd( FindRow(), m ) );
+	 
+	 
+	 if(row_iterator!=cols_lists[n].end()){ //we have found a value already
+	    row_iterator->value = value;
+	    values_have_changed = true;
+	 }else{  //we have no value at this row. We have to add the row first
+	      row_iterator = cols_lists[n].begin();
+	      
+	      //if no row has been already added, then just add the row
+	      if(row_iterator==cols_lists[n].end()){
+		  SparseElement new_element; //create a new element structure
+		  new_element.row = m;  //add the row to the new element structure
+		  new_element.value = value; //add the value to the new element structure
+			 
+		  cols_lists[n].insert(row_iterator , new_element); 	 
+		  nnz++; //increase the number of non zeros in the matrix
+		  
+	      }else{
+		  bool found_larger_row = false;
+		  while(row_iterator!=cols_lists[n].end()){
+		      if(row_iterator->row > m){  //we have found the first row greater than the required row
+		    
+			    SparseElement new_element; //create a new element structure
+			    new_element.row = m;  //add the row to the new element structure
+			    new_element.value = value; //add the value to the new element structure
+			 
+			    cols_lists[n].insert(row_iterator , new_element); 
+			 
+			    nnz++; //increase the number of non zeros in the matrix
+			 
+			    found_larger_row = true;
+			    break;
+		      }
+		      row_iterator++;
+		  }
+
+		  //if we didnot find any larger row, then it means that all the rows are smaller, we have to add the new entry at the end
+		  if(!found_larger_row){
+			  SparseElement new_element; //create a new element structure
+			  new_element.row = m;  //add the row to the new element structure
+			  new_element.value = value; //add the value to the new element structure
+			 
+			  cols_lists[n].push_back(new_element); 
+			 
+			  nnz++; //increase the number of non zeros in the matrix
+		  }
+	      }
+
+	      ccs_created = false;
+	      structure_has_changed = true;
+	 }
 	 
       }
 
@@ -378,7 +408,7 @@ public:
 	  
 	  create_ccs();
 	  create_MWrap();
-	  if(!calculated_Sparse_ordering){
+	  if(structure_has_changed){
 		Symbolic = klu_analyze(this->rows, Ap, Ai, &Common) ;
 	  }
 	  
@@ -390,8 +420,12 @@ public:
 
 
 	  //Do LU factorization if not done before
-	  if(!calculated_LU){
+	  if(structure_has_changed){
 	      Numeric  = klu_B_factor ( Ap, Ai, MWrap_Ax, Symbolic, &Common ) ;
+              structure_has_changed = false;
+	  }else if(values_have_changed){
+	      klu_B_refactor ( Ap, Ai, MWrap_Ax, Symbolic, Numeric, &Common ) ;
+	      values_have_changed = false;
 	  }
 	  
 	  
@@ -628,7 +662,7 @@ public:
       			for (int p = B.Ap[i]; p < B.Ap[i+1]; p++) {
         			int j = B.Ai[p];
         			for (int q = this->Ap[j]; q < this->Ap[j+1]; q++) {
-          				result.add(this->Ai[q], i, ((*this->Ax[q])*(*B.Ax[p])));
+          				result.add_to_entry(this->Ai[q], i, ((*this->Ax[q])*(*B.Ax[p])));
         			}
       			}
     		}
