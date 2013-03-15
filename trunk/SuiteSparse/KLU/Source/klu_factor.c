@@ -110,8 +110,12 @@ static void factor2
          * permutation, so that Rs [k] is the scale factor for the kth row of
          * A(p,q) where p and q are the final row and column permutations. */
 	
-        KLU_scale (scale, n, Ap, Ai, (double *) Ax, Rs, Pnum, Common) ;
-        if (Common->status < KLU_OK)
+	#ifdef BLOCKM
+        KLU_scale (scale, n, Ap, Ai, Ax, Rs, Pnum, Common) ;
+        #else
+	KLU_scale (scale, n, Ap, Ai, (double *) Ax, Rs, Pnum, Common) ;
+	#endif
+	if (Common->status < KLU_OK)
         {
             /* matrix is invalid */
             return ;

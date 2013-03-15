@@ -15,6 +15,20 @@
 /* === KLU_refactor ========================================================= */
 /* ========================================================================== */
 
+#ifdef BLOCKM
+Int KLU_refactor        /* returns TRUE if successful, FALSE otherwise */
+(
+    /* inputs, not modified */
+    Int Ap [ ],         /* size n+1, column pointers */
+    Int Ai [ ],         /* size nz, row indices */
+    Entry Ax [ ],
+    KLU_symbolic *Symbolic,
+
+    /* input/output */
+    KLU_numeric *Numeric,
+    KLU_common  *Common
+)
+#else
 Int KLU_refactor        /* returns TRUE if successful, FALSE otherwise */
 (
     /* inputs, not modified */
@@ -27,6 +41,7 @@ Int KLU_refactor        /* returns TRUE if successful, FALSE otherwise */
     KLU_numeric *Numeric,
     KLU_common  *Common
 )
+#endif
 {
     Entry ukk;
     Entry ujk;

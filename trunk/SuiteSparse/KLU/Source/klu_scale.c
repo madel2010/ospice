@@ -16,6 +16,23 @@
 
 #include "klu_internal.h"
 
+#ifdef BLOCKM
+Int KLU_scale           /* return TRUE if successful, FALSE otherwise */
+(
+    /* inputs, not modified */
+    Int scale,          /* 0: none, 1: sum, 2: max */
+    Int n,
+    Int Ap [ ],         /* size n+1, column pointers */
+    Int Ai [ ],         /* size nz, row indices */
+    Entry Ax [ ],
+    /* outputs, not defined on input */
+    double Rs [ ],      /* size n, can be NULL if scale <= 0 */
+    /* workspace, not defined on input or output */
+    Int W [ ],          /* size n, can be NULL */
+    /* --------------- */
+    KLU_common *Common
+)
+#else
 Int KLU_scale           /* return TRUE if successful, FALSE otherwise */
 (
     /* inputs, not modified */
@@ -31,6 +48,7 @@ Int KLU_scale           /* return TRUE if successful, FALSE otherwise */
     /* --------------- */
     KLU_common *Common
 )
+#endif
 {
     double a ;
     Entry *Az ;
