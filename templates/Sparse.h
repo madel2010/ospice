@@ -337,7 +337,7 @@ public:
       }
       
       //put value in row m and column n
-      void put(int m, int n, double value){
+      void put(int m, int n, T value){
 	  
 	  if(value==0.0) return;
 	  
