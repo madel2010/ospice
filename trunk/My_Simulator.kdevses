@@ -1,52 +1,25 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="15" >
-  <Doc0 NumberOfViews="1" URL="file:///home/madel/Dropbox/My_Simulator/main.cpp" >
-   <View0 line="33" Type="Source" />
+ <DocsAndViews NumberOfDocuments="6" >
+  <Doc0 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/My_Simulator/parser.y" >
+   <View0 Type="Source" />
   </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:///home/madel/Dropbox/My_Simulator/src/resistor.h" >
-   <View0 line="77" Type="Source" />
+  <Doc1 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/Hispice_NodeTearing/src/analysis/hopade.cpp" >
+   <View0 Type="Source" />
   </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///home/madel/Dropbox/My_Simulator/src/Circuit.cpp" >
-   <View0 line="116" Type="Source" />
+  <Doc2 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/Doug_simulator/simulator/src/sparse.h" >
+   <View0 Type="Source" />
   </Doc2>
-  <Doc3 NumberOfViews="1" URL="file:///usr/include/c%2B%2B/4.1.1/bits/stl_iterator.h" >
-   <View0 line="663" Type="Source" />
+  <Doc3 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/Doug_simulator/simulator/src/sparse.cc" >
+   <View0 Type="Source" />
   </Doc3>
-  <Doc4 NumberOfViews="1" URL="file:///home/madel/Dropbox/My_Simulator/src/resistor.cpp" >
-   <View0 line="399" Type="Source" />
+  <Doc4 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/My_Simulator/templates/DoubleDense.h" >
+   <View0 Type="Source" />
   </Doc4>
-  <Doc5 NumberOfViews="1" URL="file:///home/madel/Dropbox/My_Simulator/src/Circuit.h" >
-   <View0 line="90" Type="Source" />
+  <Doc5 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/My_Simulator/templates/DoubleSparse.h" >
+   <View0 line="365" Type="Source" />
   </Doc5>
-  <Doc6 NumberOfViews="1" URL="file:///home/madel/Dropbox/My_Simulator/SymbolicC%2B%2B3-3.35/src/cloning.cpp" >
-   <View0 line="35" Type="Source" />
-  </Doc6>
-  <Doc7 NumberOfViews="1" URL="file:///usr/include/c%2B%2B/4.1.1/bits/stl_list.h" >
-   <View0 line="492" Type="Source" />
-  </Doc7>
-  <Doc8 NumberOfViews="1" URL="file:///home/madel/Dropbox/My_Simulator/SymbolicC%2B%2B3-3.35/src/symbolicc%2B%2B.cpp" >
-   <View0 line="204" Type="Source" />
-  </Doc8>
-  <Doc9 NumberOfViews="1" URL="file:///home/madel/Dropbox/My_Simulator/SymbolicC%2B%2B3-3.35/src/symbolic.cpp" >
-   <View0 line="170" Type="Source" />
-  </Doc9>
-  <Doc10 NumberOfViews="1" URL="file:///home/madel/Dropbox/My_Simulator/SymbolicC%2B%2B3-3.35/src/sum.cpp" >
-   <View0 line="242" Type="Source" />
-  </Doc10>
-  <Doc11 NumberOfViews="1" URL="file:///usr/include/c%2B%2B/4.1.1/ext/new_allocator.h" >
-   <View0 line="103" Type="Source" />
-  </Doc11>
-  <Doc12 NumberOfViews="1" URL="file:///home/madel/Dropbox/My_Simulator/SymbolicC%2B%2B3-3.35/src/symbol.cpp" >
-   <View0 line="136" Type="Source" />
-  </Doc12>
-  <Doc13 NumberOfViews="1" URL="file:///home/madel/Dropbox/My_Simulator/SymbolicC%2B%2B3-3.35/src/functions.cpp" >
-   <View0 line="66" Type="Source" />
-  </Doc13>
-  <Doc14 NumberOfViews="1" URL="file:///home/madel/Dropbox/My_Simulator/SymbolicC%2B%2B3-3.35/include/symbolic/functions.h" >
-   <View0 line="82" Type="Source" />
-  </Doc14>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>

@@ -526,6 +526,21 @@ int klu_z_refactor          /* return TRUE if successful, FALSE otherwise */
      klu_common *Common
 ) ;
 
+#ifdef BLOCKM
+int klu_B_refactor            /* return TRUE if successful, FALSE otherwise */
+(
+    /* inputs, not modified */
+    int Ap [ ],         /* size n+1, column pointers */
+    int Ai [ ],         /* size nz, row indices */
+    BMatrix::MWrap<double>* Ax,     /* size nz, numerical values */
+    klu_symbolic *Symbolic,
+    /* input, and numerical values modified on output */
+    klu_B_numeric *Numeric,
+    klu_common *Common
+) ;
+
+#endif
+
 SuiteSparse_long klu_l_refactor (SuiteSparse_long *, SuiteSparse_long *,
     double *, klu_l_symbolic *, klu_l_numeric *, klu_l_common *) ;
 
