@@ -29,8 +29,8 @@ protected:
 	int rows; //number of rows
 	int cols; //number of columns			
 public:
-	int get_number_of_rows(){ return rows;}
-	int get_number_of_cols(){return cols;}
+	int get_number_of_rows()const{ return rows;}
+	int get_number_of_cols()const{return cols;}
 
 	virtual void put(int m, int n, T value)=0; 
 	virtual T get(int m, int n) const=0;
@@ -77,7 +77,6 @@ private:
 	  }  
 	  
 	  Ap[0] = 0; //Ap[0] is always zero
-	  
 	  Ai = new  int[nnz];
 	  Ax = new  T* [nnz]; //here we are using a pointer to T, because we want Ax to just point to the value in SparseElement.value instead of doing Ax[k] = SparseElement[k].value which will invoke operator = 
 	  
@@ -211,10 +210,12 @@ public:
 	}
 	
       ~Sparse(){
-	delete[] Ap;
+	if(Ap)delete[] Ap;
 	Ap=NULL;
-	delete[] Ai;
-	Ai = NULL;	
+	
+	if(Ai) delete[] Ai;
+	Ai = NULL;
+		
       }
 
       Sparse<T>& operator=(T val){}
@@ -329,12 +330,17 @@ public:
 		  }
 	      }
 
-	      ccs_created = false;
+	      
 	      structure_has_changed = true;
 	 }
 	 
-	 
-	 
+	 if(ccs_created){
+		if(Ai) delete[] Ai;
+		Ai = NULL;
+		if(Ax) delete[] Ax;
+		Ax = NULL;
+	 }
+	 ccs_created = false;
       }
       
       //put value in row m and column n
@@ -395,9 +401,17 @@ public:
 		  }
 	      }
 
-	      ccs_created = false;
+	      
 	      structure_has_changed = true;
 	 }
+	
+	 if(ccs_created){
+		if(Ai) delete[] Ai;
+		Ai = NULL;
+		if(Ax) delete[] Ax;
+		Ax = NULL;
+	 }
+	 ccs_created = false;
 	 
       }
 
