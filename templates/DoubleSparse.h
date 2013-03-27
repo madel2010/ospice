@@ -478,6 +478,9 @@ public:
 		last_row[n] = m;
 
 		Last_accessed_ele_in_col[n] = --cols_lists[n].end() ;
+
+		structure_has_changed = true;
+		ccs_created = false;
 	
 		return ;
 	  //check if the row of the new value is less than the last row we have already added
@@ -492,6 +495,9 @@ public:
 		first_row[n] = m;
 
 		Last_accessed_ele_in_col[n] = cols_lists[n].begin();
+
+		structure_has_changed = true;
+		ccs_created = false;
 
 		return ;
 	  }
@@ -576,6 +582,9 @@ public:
 		last_row[n] = m;
 
 		Last_accessed_ele_in_col[n] = --cols_lists[n].end() ;
+
+		structure_has_changed = true;
+		ccs_created = false;
 	
 		return ;
 	  //check if the row of the new value is less than the last row we have already added
@@ -590,6 +599,9 @@ public:
 		first_row[n] = m;
 
 		Last_accessed_ele_in_col[n] = cols_lists[n].begin();
+
+		structure_has_changed = true;
+		ccs_created = false;
 
 		return ;
 	  }
