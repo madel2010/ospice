@@ -30,7 +30,8 @@ class Sparse<std::complex<double> >: public SBase<std::complex<double> >{
 private:
       int nnz; //this will save the number of nonzeros
       bool ccs_created;
-      
+      bool matrix_created;
+
       //For the CCS 
       int* Ap;  //the pointer to columns position
       int* Ai; //the rows data
@@ -63,7 +64,9 @@ private:
 		}
       };
       std::list<SparseElement> *cols_lists;
-      
+      int* first_row; //save the first row we already added for each column. Very useful to speedup put()
+      int* last_row; //save the last row we already added for each column. Very useful to speedup put()
+      std::list<SparseElement>::iterator *Last_accessed_ele_in_col; //This keeps track of the last element accessed in each col. This is useful becuase for example in the multiplicatio we are moving element by element, so we know that the element to be currently accessed is very close to the last element.
             
       //Create the CCS formal from the linked list
       void create_ccs(){
@@ -100,28 +103,58 @@ private:
 	  
       }
       
-      
+  
+      //search col if a row has been added already
+      std::list<SparseElement>::iterator search_column(int col, int row){
+	  std::list<SparseElement>::iterator result;
+	
+	  //we have to get the last accessed element in the col
+	  if(row >= (*Last_accessed_ele_in_col[col]).row){ //this means that we have to search forward
+		result = find_if( Last_accessed_ele_in_col[col], cols_lists[col].end(), std::bind2nd( FindRow(), row ) );
+	  }else if(row < (*Last_accessed_ele_in_col[col]).row){ //we have to search backward
+
+		std::list<SparseElement>::reverse_iterator search_results;
+
+		std::list<SparseElement>::reverse_iterator start(Last_accessed_ele_in_col[col]);
+		search_results = find_if( start , cols_lists[col].rend(), std::bind2nd( FindRow(), row ) );
+
+		result = --search_results.base();
+	  }	
+
+	  return result;
+
+
+      }
+
       void create_MWrap(){}
       
 public:
       Sparse(){
 	  this->rows=0; //Number of rows
 	  this->cols=0; //Number of cols
-	  
+	  nnz = 0;
+
 	  Ap = NULL;
 	  Ai = NULL;
 	  Ax = NULL;
 	  Symbolic = NULL;
 	  Numeric = NULL;
+	  
 
+	  cols_lists = NULL;
+	  first_row = NULL;
+	  last_row = NULL;
+	  Last_accessed_ele_in_col = NULL;
+ 
 	  klu_defaults(&Common);
 	  Common.scale=0;
 
+	  matrix_created = false;
 	  ccs_created = false; 
 	  structure_has_changed = true;
 	  values_have_changed = true;
 
-	  nnz = 0;
+	  
 
 	  //the time report data
 	  time_to_do_klu_analyze = 0;
@@ -135,23 +168,29 @@ public:
       Sparse(int m, int n){
 	  this->rows=m; //Number of rows
 	  this->cols=n; //Number of cols
-	  
+	  nnz = 0;
+
 	  cols_lists = new std::list<SparseElement>[n];
+	  first_row = new int[n];
+	  last_row = new int[n];
+	  Last_accessed_ele_in_col = new std::list<SparseElement>::iterator[n];
 	  
+
 	  Ap = new int[n+1]; //We know that Ap is always (columns_no+1)
 	  Ai = NULL; //we still do not know the rows
 	  Ax = NULL; //we still do not know the values
 	  Symbolic = NULL;
 	  Numeric = NULL;
-
+	  
 	  klu_defaults(&Common);
 	  Common.scale=0;
 
+	  matrix_created = true;
 	  ccs_created = false;
 	  structure_has_changed = true;
 	  values_have_changed = true;
 
-	  nnz = 0;
+	  
 
 	  //the time report data
 	  time_to_do_klu_analyze = 0;
@@ -164,8 +203,23 @@ public:
       
       //copy constructor
       Sparse(const Sparse<std::complex<double> >&A){
-	  create(A.rows, A.cols);
 	  
+	  int n = A.cols;	
+
+	  cols_lists = new std::list<SparseElement>[n];
+	  first_row = new int[n];
+	  last_row = new int[n];
+	  memset(first_row, -1 , n*sizeof(int));
+	  memset(last_row, -1 , n*sizeof(int));
+	  Last_accessed_ele_in_col = new std::list<SparseElement>::iterator[n];
+
+	  Ap = new int[n+1]; //We know that Ap is always (columns_no+1)
+	  Ai = NULL; //we still do not know the rows
+	  Ax = NULL; //we still do not know the values
+	  Symbolic = NULL;
+          Numeric = NULL;
+	  
+
 	  nnz = A.nnz;
 	  this->rows=A.rows; //Number of rows
 	  this->cols=A.cols; //Number of cols
@@ -181,6 +235,8 @@ public:
 	  //TODO copy the CCS structure as well
 	  ccs_created = false;
 	
+	  matrix_created = true;
+
 	  structure_has_changed = true;
 	  values_have_changed = true;
 
@@ -201,14 +257,30 @@ public:
 
        //convert a double matrix to complex matrix
        Sparse(const Sparse<double> &A){
-	  create(A.rows, A.cols);
+
+	  int n = A.cols;	
+	  int m = A.rows;
+
+	  cols_lists = new std::list<SparseElement>[n];
+	  first_row = new int[n];
+	  last_row = new int[n];
+	  memset(first_row, m , n*sizeof(int));
+	  memset(last_row, -1 , n*sizeof(int));
+	  Last_accessed_ele_in_col = new std::list<SparseElement>::iterator[n];
+	  	  
+
+	  Ap = new int[n+1]; //We know that Ap is always (columns_no+1)
+	  Ai = NULL; //we still do not know the rows
+	  Ax = NULL; //we still do not know the values
+	  Symbolic = NULL;
+          Numeric = NULL;
+
+	  matrix_created = true;
 	  
 	  nnz = A.nnz;
 	  this->rows=A.rows; //Number of rows
 	  this->cols=A.cols; //Number of cols
-	  
-	  
-	  
+
 
 	  if(A.cols > 0){
 	      std::list<Sparse<double>::SparseElement>::iterator row_iter;
@@ -218,7 +290,13 @@ public:
 		  		new_element.row = row_iter->row;  //add the row to the new element structure
 		  		new_element.value = row_iter->value; ; //add the value to the new element structure
 			 
-		  		cols_lists[i].push_back(new_element); 	
+		  		cols_lists[i].push_back(new_element); 
+
+				if(row_iter->row > last_row[i]){
+					last_row[i] = row_iter->row;
+				}else if(row_iter->row < first_row[i]){
+					first_row[i] = row_iter->row;
+				}	
 	      		}
 	      }
 	  }  
@@ -243,21 +321,96 @@ public:
 	  number_of_klu_refactor = 0;
       }
       
+	      //copy constructor to convert dense to sparse
+       Sparse(const Dense<std::complex<double> >&A){
+	  int n = A.get_number_of_cols();	
+	  int m = A.get_number_of_rows();
+
+	  cols_lists = new std::list<SparseElement>[n];
+	  first_row = new int[n];
+	  last_row = new int[n];
+	  memset(first_row, m , n*sizeof(int));
+	  memset(last_row, -1 , n*sizeof(int));
+	  Last_accessed_ele_in_col = new std::list<SparseElement>::iterator[n];
+	  	  
+
+	  Ap = new int[n+1]; //We know that Ap is always (columns_no+1)
+	  Ai = NULL; //we still do not know the rows
+	  Ax = NULL; //we still do not know the values
+	  Symbolic = NULL;
+          Numeric = NULL;
+	  matrix_created = true;
+	  
+	  nnz = 0;
+	  if(A.get_number_of_cols() > 0){
+	      for(int i=0 ; i< A.get_number_of_cols(); i++){
+		  for (int j=0;j<A.get_number_of_rows(); j++){
+				std::complex<double> value = A.get(j,i);
+				if(value!=0.0){
+		        		SparseElement new_element; //create a new element structure
+		  			new_element.row = j;  //add the row to the new element structure
+		  			new_element.value = value;  //add the value to the new element structure
+			 		cols_lists[i].push_back(new_element); 	
+
+					
+					if(j> last_row[i]){
+						last_row[i] = j;
+					}else if(j < first_row[i]){
+						first_row[i] = j;
+					}
+		
+					nnz++;
+				}
+	      	   }
+	      }
+
+	  }  
+	  
+	  //TODO copy the CCS structure as well
+	  ccs_created = false;
+	
+	  structure_has_changed = true;
+	  values_have_changed = true;
+
+	  klu_defaults(&Common);
+	  Common.scale=0;
+
+	  //the time report data
+	  time_to_do_klu_analyze = 0;
+      	  time_to_do_klu_factor = 0;
+	  time_to_do_klu_refactor = 0;
+          number_of_klu_analyze = 0;
+          number_of_klu_factor = 0;
+	  number_of_klu_refactor = 0;
+        }
+
 	Sparse<std::complex<double> >* clone(){
 		return new Sparse<std::complex<double> >(*this);
 	}
 	
 	void create(int m, int n){ 
+
+		if(matrix_created){
+			return;
+		}
+
 		this->rows=m; //Number of rows
 		this->cols=n; //Number of cols
 	  
 		cols_lists = new std::list<SparseElement>[n];
+	  	first_row = new int[n];
+	  	last_row = new int[n];
+	  	memset(first_row, -1 , n*sizeof(int));
+	  	memset(last_row, -1 , n*sizeof(int));
+	        Last_accessed_ele_in_col = new std::list<SparseElement>::iterator[n];
 	  
+
 		Ap = new int[n+1]; //We know that Ap is always (columns_no+1)
 		Ai = NULL; //we still do not know the rows
 		Ax = NULL; //we still do not know the values
 		Symbolic = NULL;
         	Numeric = NULL;
+		matrix_created = true;
 
 		klu_defaults(&Common);
 	  	Common.scale=0;
@@ -298,6 +451,30 @@ public:
       
       
       Sparse<std::complex<double> >& operator=(const Sparse<std::complex<double> >&A){
+	  
+	  if(this->rows!= A.rows || this->cols!= A.cols){
+		throw std::runtime_error("Can not equate two sparse matrices with different size");
+	  }
+
+	  if(!matrix_created){
+	  	int n = A.cols;
+		int m = A.rows;
+
+	  	cols_lists = new std::list<SparseElement>[n];
+	  	first_row = new int[n];
+       	  	last_row = new int[n];
+	  	memset(first_row, m , n*sizeof(int));
+	  	memset(last_row, -1 , n*sizeof(int));
+		Last_accessed_ele_in_col = new std::list<SparseElement>::iterator[n];
+
+	  	Ap = new int[n+1]; //We know that Ap is always (columns_no+1)
+	  	Ai = NULL; //we still do not know the rows
+	  	Ax = NULL; //we still do not know the values
+	  	Symbolic = NULL;
+          	Numeric = NULL;
+	  	matrix_created = true;
+	  }
+
 	  nnz = A.nnz;
 	  this->rows=A.rows; //Number of rows
 	  this->cols=A.cols; //Number of cols
@@ -342,112 +519,66 @@ public:
       }
 
       bool is_zero(){
-
+		if (nnz==0){
+			return true;
+		}else{
+			return false;
+		}	
       }
 
       //add a  value in row m and column n to the existing value
       void add_to_entry(int m, int n, std::complex<double> value){
 	  
-	    if(real(value)==0.0 && imag(value)==0.0) return;
-
-	   //search column for the row in case we have added the row already
-	  //typename std::list<SparseElement>::iterator row_iterator;
-	  std::list<SparseElement>::iterator row_iterator;
-
-	 row_iterator = find_if( cols_lists[n].begin(), cols_lists[n].end(), std::bind2nd( FindRow(), m ) );
-	 
-	 
-	 if(row_iterator!=cols_lists[n].end()){ //we have found a value already
-	    row_iterator->value += value;
-	    values_have_changed = true;
-
-	 }else{  //we have no value at this row. We have to add the row first
-	      row_iterator = cols_lists[n].begin();
-	      
-	      //if no row has been already added, then just add the row
-	      if(row_iterator==cols_lists[n].end()){
-		  SparseElement new_element; //create a new element structure
-		  new_element.row = m;  //add the row to the new element structure
-		  new_element.value = value; //add the value to the new element structure
-			 
-		  cols_lists[n].insert(row_iterator , new_element); 	 
-		  nnz++; //increase the number of non zeros in the matrix
-		  
-	      }else{
-		  bool found_larger_row = false;
-		  while(row_iterator!=cols_lists[n].end()){
-		      if(row_iterator->row > m){  //we have found the first row greater than the required row
-		    
-			    SparseElement new_element; //create a new element structure
-			    new_element.row = m;  //add the row to the new element structure
-			    new_element.value = value; //add the value to the new element structure
-			 
-			    cols_lists[n].insert(row_iterator , new_element); 
-			 
-			    nnz++; //increase the number of non zeros in the matrix
-			 
-			    found_larger_row = true;
-			    break;
-		      }
-		      row_iterator++;
-		  }
-
-		  //if we didnot find any larger row, then it means that all the rows are smaller, we have to add the new entry at the end
-		  if(!found_larger_row){
-			  SparseElement new_element; //create a new element structure
-			  new_element.row = m;  //add the row to the new element structure
-			  new_element.value = value; //add the value to the new element structure
-			 
-			  cols_lists[n].push_back(new_element); 
-			 
-			  nnz++; //increase the number of non zeros in the matrix
-		  }
-	      }
-
-	      
-	      structure_has_changed = true;
-	 }
-	 
-	 if(ccs_created){
-		if(Ai) delete[] Ai;
-		Ai = NULL;
-		if(Ax) delete[] Ax;
-		Ax = NULL;
-	 }
-	 ccs_created = false;
-	 
-      }
-      
-      //put value in row m and column n
-      void put(int m, int n, std::complex<double> value){
+	   if(real(value)==0.0 && imag(value)==0.0) return;
 	  
-	  if(real(value)==0.0 && imag(value)==0.0) return;
-	  
+	  //check if the row of the new value is greater than the last row we have already added
+	  if(m > last_row[n]){
+		SparseElement new_element; //create a new element structure
+		new_element.row = m;  //add the row to the new element structure
+		new_element.value = value; //add the value to the new element structure
+			 
+		cols_lists[n].push_back(new_element); 	 
+		nnz++; //increase the number of non zeros in the matrix	
+
+		last_row[n] = m;
+
+		Last_accessed_ele_in_col[n] = --cols_lists[n].end() ;
+	
+		return ;
+	  //check if the row of the new value is less than the last row we have already added
+	  }else if(m < first_row[n]){ 
+		SparseElement new_element; //create a new element structure
+		new_element.row = m;  //add the row to the new element structure
+		new_element.value = value; //add the value to the new element structure
+			 
+		cols_lists[n].push_front(new_element); 	 
+		nnz++; //increase the number of non zeros in the matrix	
+
+		first_row[n] = m;
+
+		Last_accessed_ele_in_col[n] = cols_lists[n].begin();
+
+		return ;
+	  }
+
 	  //search column for the row in case we have added the row already
 	  //typename std::list<SparseElement>::iterator row_iterator;
 	  std::list<SparseElement>::iterator row_iterator;
 
-	  row_iterator = find_if( cols_lists[n].begin(), cols_lists[n].end(), std::bind2nd( FindRow(), m ) );
-	 
+	  //row_iterator = find_if( cols_lists[n].begin(), cols_lists[n].end(), std::bind2nd( FindRow(), m ) );
+	  row_iterator = search_column(n,m);
 	 
 	  if(row_iterator!=cols_lists[n].end()){ //we have found a value already
-	     row_iterator->value = value;
+	     row_iterator->value += value;
 	     values_have_changed = true;
+
+	     Last_accessed_ele_in_col[n] = row_iterator;
+
 	  }else{  //we have no value at this row. We have to add the row first
 	       row_iterator = cols_lists[n].begin();
 	      
-	       //if no row has been already added, then just add the row
-	       if(row_iterator==cols_lists[n].end()){
-		   SparseElement new_element; //create a new element structure
-		   new_element.row = m;  //add the row to the new element structure
-		   new_element.value = value; //add the value to the new element structure
-			 
-		   cols_lists[n].insert(row_iterator , new_element); 	 
-		   nnz++; //increase the number of non zeros in the matrix
-		  
-	       }else{
-		   bool found_larger_row = false;
-		   while(row_iterator!=cols_lists[n].end()){
+	       bool found_larger_row = false;
+	       while(row_iterator!=cols_lists[n].end()){
 		       if(row_iterator->row > m){  //we have found the first row greater than the required row
 		    
 			     SparseElement new_element; //create a new element structure
@@ -458,26 +589,128 @@ public:
 			 
 			     nnz++; //increase the number of non zeros in the matrix
 			 
+			     Last_accessed_ele_in_col[n] = row_iterator;
+
 			     found_larger_row = true;
 			     break;
 		       }
 		       row_iterator++;
-		   }
+		}
 
-		   //if we didnot find any larger row, then it means that all the rows are smaller, we have to add the new entry at the end
-		   if(!found_larger_row){
+		//if we didnot find any larger row, then it means that all the rows are smaller, we have to add the new entry at the end
+		if(!found_larger_row){
 			  SparseElement new_element; //create a new element structure
 			  new_element.row = m;  //add the row to the new element structure
 			  new_element.value = value; //add the value to the new element structure
 			 
 			  cols_lists[n].push_back(new_element); 
 			 
+			  Last_accessed_ele_in_col[n] = --cols_lists[n].end();
+
 			  nnz++; //increase the number of non zeros in the matrix
-		  }
-	       }
+		}
+	  
 	
 	       structure_has_changed = true;
+	}
+	  
+	  if(ccs_created){
+		if(Ai) delete[] Ai;
+		Ai = NULL;
+		if(Ax) delete[] Ax;
+		Ax = NULL;
 	  }
+	  ccs_created = false; 
+	 
+      }
+      
+      //put value in row m and column n
+      void put(int m, int n, std::complex<double> value){
+	  
+	  if(real(value)==0.0 && imag(value)==0.0) return;
+	  
+	  //check if the row of the new value is greater than the last row we have already added
+	  if(m > last_row[n]){
+		SparseElement new_element; //create a new element structure
+		new_element.row = m;  //add the row to the new element structure
+		new_element.value = value; //add the value to the new element structure
+			 
+		cols_lists[n].push_back(new_element); 	 
+		nnz++; //increase the number of non zeros in the matrix	
+
+		last_row[n] = m;
+
+		Last_accessed_ele_in_col[n] = --cols_lists[n].end() ;
+	
+		return ;
+	  //check if the row of the new value is less than the last row we have already added
+	  }else if(m < first_row[n]){ 
+		SparseElement new_element; //create a new element structure
+		new_element.row = m;  //add the row to the new element structure
+		new_element.value = value; //add the value to the new element structure
+			 
+		cols_lists[n].push_front(new_element); 	 
+		nnz++; //increase the number of non zeros in the matrix	
+
+		first_row[n] = m;
+
+		Last_accessed_ele_in_col[n] = cols_lists[n].begin();
+
+		return ;
+	  }
+
+	  //search column for the row in case we have added the row already
+	  //typename std::list<SparseElement>::iterator row_iterator;
+	  std::list<SparseElement>::iterator row_iterator;
+
+	  //row_iterator = find_if( cols_lists[n].begin(), cols_lists[n].end(), std::bind2nd( FindRow(), m ) );
+	  row_iterator = search_column(n,m);
+	 
+	  if(row_iterator!=cols_lists[n].end()){ //we have found a value already
+	     row_iterator->value = value;
+	     values_have_changed = true;
+
+	     Last_accessed_ele_in_col[n] = row_iterator;
+
+	  }else{  //we have no value at this row. We have to add the row first
+	       row_iterator = cols_lists[n].begin();
+	      
+	       bool found_larger_row = false;
+	       while(row_iterator!=cols_lists[n].end()){
+		       if(row_iterator->row > m){  //we have found the first row greater than the required row
+		    
+			     SparseElement new_element; //create a new element structure
+			     new_element.row = m;  //add the row to the new element structure
+			     new_element.value = value; //add the value to the new element structure
+			 
+			     cols_lists[n].insert(row_iterator , new_element); 
+			 
+			     nnz++; //increase the number of non zeros in the matrix
+			 
+			     Last_accessed_ele_in_col[n] = row_iterator;
+
+			     found_larger_row = true;
+			     break;
+		       }
+		       row_iterator++;
+		}
+
+		//if we didnot find any larger row, then it means that all the rows are smaller, we have to add the new entry at the end
+		if(!found_larger_row){
+			  SparseElement new_element; //create a new element structure
+			  new_element.row = m;  //add the row to the new element structure
+			  new_element.value = value; //add the value to the new element structure
+			 
+			  cols_lists[n].push_back(new_element); 
+			 
+			  Last_accessed_ele_in_col[n] = --cols_lists[n].end();
+
+			  nnz++; //increase the number of non zeros in the matrix
+		}
+	  
+	
+	       structure_has_changed = true;
+	}
 	  
 	  if(ccs_created){
 		if(Ai) delete[] Ai;
@@ -780,15 +1013,7 @@ public:
     		return result; 
       }
 
-      SBase<std::complex<double> >* operator*(SBase<std::complex<double> > const &B) const{
-  		const Sparse<std::complex<double> >* BB = dynamic_cast<const Sparse<std::complex<double> >*>(&B);
-
-  		if (BB) {
-    			return new Sparse<std::complex<double> >( *this * *BB  );
-  		}else{
-    			throw std::runtime_error("I can only handle multiblication of Sparse+Sparse");
-  		}
-	}
+     
 
 	Dense<std::complex<double> > operator * (Dense<std::complex<double> >& B){
 	        if (this->cols != B.get_number_of_rows()) {
@@ -842,29 +1067,43 @@ public:
 	
 	Sparse<std::complex<double> > operator/(std::complex<double> val)const{
 	    
-	    Sparse<std::complex<double> > result = *this;
+	    Sparse<std::complex<double> > result(this->rows, this->cols);
 	  
-	    result.create_ccs();
-	    
-	    for(int i=0; i<nnz; i++){
-		result.Ax[i]/= val;
-	    }
+	      std::list<SparseElement>::iterator row_iterator;
+
+	      for(int col=0; col< this->cols; col++){
+	    	  for(row_iterator= this->cols_lists[col].begin() ; row_iterator!=this->cols_lists[col].end(); row_iterator++){
+			
+			SparseElement new_element;
+			new_element.row = row_iterator->row;
+			new_element.value = row_iterator->value/val;
+
+			result.cols_lists[col].push_back( new_element);
+	    	  }
+	      }
 	    
 	    return result;
 	}
 
-        Sparse<std::complex<double> > operator*(std::complex<double> val)const{
+          Sparse<std::complex<double> > operator*(std::complex<double> val)const{
 	    
-	    Sparse<std::complex<double> > result = *this;
+	      Sparse<std::complex<double> > result(this->rows, this->cols);
 	  
-	    result.create_ccs();
-	    
-	    for(int i=0; i<nnz; i++){
-		result.Ax[i]*= val;
-	    }
-	    
-	    return result;
-	}
+	      std::list<SparseElement>::iterator row_iterator;
+
+	      for(int col=0; col< this->cols; col++){
+	    	  for(row_iterator= this->cols_lists[col].begin() ; row_iterator!=this->cols_lists[col].end(); row_iterator++){
+			
+			SparseElement new_element;
+			new_element.row = row_iterator->row;
+			new_element.value = row_iterator->value*val;
+
+			result.cols_lists[col].push_back( new_element);
+	    	  }
+	      }
+
+	      return result;
+	  }
      
 	  friend std::ostream& operator << (std::ostream &out , Sparse<std::complex<double> >& B);
 
@@ -892,6 +1131,7 @@ public:
 	  }
 
 	  void report_timing(){
+		std::cout << "Size= "<< this->rows << "x" << this->cols<<std::endl;
 		std::cout<<"Number of klu_analyze done on this matrix = "<<number_of_klu_analyze <<std::endl;
 		std::cout<<"Time to do all klu_analyze= "<<time_to_do_klu_analyze << std::endl;
       	        
@@ -902,8 +1142,22 @@ public:
 		std::cout<<"Time to do all klu_refactor= "<<time_to_do_klu_refactor <<std::endl;
 	  }
 
+	 klu_symbolic* get_Symbolic(){return Symbolic;}
+	 klu_numeric* get_Numeric(){return Numeric;}
+
+	 void use_Symbolic(klu_symbolic* _symbolic){
+		Symbolic = _symbolic;
+		structure_has_changed = false;
+	 }
+	 void use_Numeric(klu_numeric* _numeric){
+		Numeric = _numeric;
+		structure_has_changed = false;
+	 }
+
       protected:
       void runtime_error(const char* arg1);
+
+      friend class Sparse<double >;
 };
   
   

@@ -18,10 +18,13 @@
 #include <stdexcept>
 #include <string.h>
 
+
 extern "C" void dgetrf_( const int * M,  const int* N, double* A, const int *lda, int* ipiv, int* result );
 extern "C" void dgetrs_( const char* TRANS,  const int* N, const int* nrhs, double* A, const int *lda, int* ipiv, double* B, const int* ldb,  int* result, int tlen);
 
 namespace BMatrix{
+
+
 
 template <class T>
 class DBase{
@@ -31,8 +34,8 @@ protected:
 	int cols; //number of columns		
 	T* data;
 public:
-	int get_number_of_rows(){ return rows;}
-	int get_number_of_cols(){return cols;}
+	int get_number_of_rows() const { return rows;}
+	int get_number_of_cols()const {return cols;}
 
 	virtual void put(int m, int n, T value)=0; 
 	virtual T get(int m, int n) const=0;
@@ -67,6 +70,8 @@ public:
 	virtual DBase<T>* scale (T* val) const = 0;
 	virtual DBase<T>* solve(const DBase<T> &B) = 0;
 	virtual DBase<T>* solve(DBase<T> *B) = 0;
+
+	
 
 	~DBase(){
 	    if(data){
@@ -132,7 +137,13 @@ public:
 		//return new Dense<T>(*this);
 		return new Dense(this->rows, this->cols, this->data);
 	}
-
+	
+	void clear_data(){
+	     if(LU_factors) delete[] LU_factors;
+	     	LU_factors = NULL;
+	     if(this->data) delete[] this->data;
+		this->data = NULL;
+	}
 	~Dense(){
 	    if(LU_factors) delete[] LU_factors;
 	}
@@ -246,6 +257,7 @@ public:
 	}
 
 	void put(int m, int n, T value){
+		
 		this->data[m+this->rows*n] = value;
 		
 		have_LU_factors = false;
@@ -524,6 +536,8 @@ public:
     			throw std::runtime_error("I can only handle addition of Dense+Dense");
   		}
 	}
+
+	
 
 	//// this operator gives result = inv(A)*B
 	Dense<T> operator /(const Dense<T> &B){
