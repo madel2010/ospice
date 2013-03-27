@@ -42,7 +42,8 @@ class Sparse: public SBase<T>{
 private:
       int nnz; //this will save the number of nonzeros
       bool ccs_created;
-      
+      bool matrix_created;
+
       //For the CCS 
       int* Ap;  //the pointer to columns position
       int* Ai; //the rows data
@@ -128,7 +129,8 @@ public:
 	  Ai = NULL;
 	  Ax = NULL;
 	  MWrap_Ax = NULL;
-	  
+	  matrix_created = false;
+
 	  klu_defaults(&Common);
 	  Common.scale=0;
 
@@ -148,6 +150,8 @@ public:
 	  Ap = new int[n+1]; //We know that Ap is always (columns_no+1)
 	  Ai = NULL; //we still do not know the rows
 	  Ax = NULL; //we still do not know the values
+	  matrix_created = true;
+
 	  MWrap_Ax = NULL;
 	  klu_defaults(&Common);
 	  Common.scale=0;
@@ -163,6 +167,8 @@ public:
       
       //copy constructor
       Sparse(const Sparse<T>&A){
+	  create(A.rows, A.cols);
+
 	  nnz = A.nnz;
 	  this->rows=A.rows; //Number of rows
 	  this->cols=A.cols; //Number of cols
@@ -190,6 +196,10 @@ public:
 	}
 	
 	void create(int m, int n){ 
+		if(matrix_created){
+			return;
+		}
+
 		this->rows=m; //Number of rows
 		this->cols=n; //Number of cols
 	  
@@ -198,6 +208,8 @@ public:
 		Ap = new int[n+1]; //We know that Ap is always (columns_no+1)
 		Ai = NULL; //we still do not know the rows
 		Ax = NULL; //we still do not know the values
+		matrix_created = true;
+
 		MWrap_Ax = NULL;
 		klu_defaults(&Common);
 	  	Common.scale=0;
