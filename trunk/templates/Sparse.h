@@ -34,6 +34,9 @@ public:
 
 	virtual void put(int m, int n, T value)=0; 
 	virtual T get(int m, int n) const=0;
+
+	virtual ~SBase(){}
+
 };
 
 template<class T>
