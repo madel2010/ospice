@@ -173,6 +173,8 @@ public:
 	  cols_lists = new std::list<SparseElement>[n];
 	  first_row = new int[n];
 	  last_row = new int[n];
+	  memset(first_row, m , n*sizeof(int));
+	  memset(last_row, -1 , n*sizeof(int));
 	  Last_accessed_ele_in_col = new std::list<SparseElement>::iterator[n];
 	  
 
@@ -436,6 +438,15 @@ public:
 	if(Ai) delete[] Ai;
 	Ai = NULL;
 	if(Ax) delete[] Ax;	
+
+	if(first_row) delete[] first_row;
+	first_row = NULL;
+        
+	if(last_row) delete[] last_row;
+	last_row = NULL;
+
+        if(Last_accessed_ele_in_col) delete[] Last_accessed_ele_in_col;
+	Last_accessed_ele_in_col = NULL;
 
 	klu_free_symbolic (&Symbolic, &Common);
 	Symbolic=NULL;
@@ -746,6 +757,12 @@ public:
 	  int Nrhs = RHS.get_number_of_cols();
 
 	  if(structure_has_changed && !do_klu_refactor ){	
+
+		if(Symbolic){
+			klu_free_symbolic (&Symbolic, &Common);
+			Symbolic=NULL;
+		}
+
 		clock_t start,finish;
 		start = clock();
 
@@ -760,6 +777,11 @@ public:
 	  //Do LU factorization if not done before
 	  if(structure_has_changed && !do_klu_refactor){
 	      
+		if(Numeric){
+			klu_z_free_numeric(&Numeric, &Common); 
+			Numeric=NULL;
+		}
+
 	        clock_t start,finish;
 		start = clock();
 
@@ -1091,6 +1113,7 @@ public:
 			new_element.value = row_iterator->value/val;
 
 			result.cols_lists[col].push_back( new_element);
+			result.nnz++;
 	    	  }
 	      }
 	    
@@ -1111,6 +1134,7 @@ public:
 			new_element.value = row_iterator->value*val;
 
 			result.cols_lists[col].push_back( new_element);
+			result.nnz++;
 	    	  }
 	      }
 
@@ -1144,6 +1168,8 @@ public:
 
 	  void report_timing(){
 		std::cout << "Size= "<< this->rows << "x" << this->cols<<std::endl;
+		std::cout << "NNZ= "<< nnz <<std::endl;
+		
 		std::cout<<"Number of klu_analyze done on this matrix = "<<number_of_klu_analyze <<std::endl;
 		std::cout<<"Time to do all klu_analyze= "<<time_to_do_klu_analyze << std::endl;
       	        

@@ -173,6 +173,8 @@ public:
 	  cols_lists = new std::list<SparseElement>[n];
 	  first_row = new int[n];
 	  last_row = new int[n];
+	  memset(first_row, m , n*sizeof(int));
+	  memset(last_row, -1 , n*sizeof(int));
 	  Last_accessed_ele_in_col = new std::list<SparseElement>::iterator[n];
 	  
 
@@ -372,9 +374,18 @@ public:
 	Ai = NULL;
 	if(Ax) delete[] Ax;	
 
+	if(first_row) delete[] first_row;
+	first_row = NULL;
+        
+	if(last_row) delete[] last_row;
+	last_row = NULL;
+
+        if(Last_accessed_ele_in_col) delete[] Last_accessed_ele_in_col;
+	Last_accessed_ele_in_col = NULL;
+
 	klu_free_symbolic (&Symbolic, &Common);
 	Symbolic=NULL;
-        klu_z_free_numeric (&Numeric, &Common); 
+        klu_free_numeric (&Numeric, &Common); 
 	Numeric=NULL;
 
       }
@@ -568,7 +579,7 @@ public:
       //put value in row m and column n
       void put(int m, int n, double value){
 	  
-	  if(value) return;
+	  if(value==0.0) return;
 	  
 	  //check if the row of the new value is greater than the last row we have already added
 	  if(m > last_row[n]){
@@ -681,6 +692,12 @@ public:
 	  int Nrhs = RHS.get_number_of_cols();
 
 	  if(structure_has_changed && !do_klu_refactor ){	
+
+		if(Symbolic){
+			klu_free_symbolic (&Symbolic, &Common);
+			Symbolic=NULL;
+		}
+
 		clock_t start,finish;
 		start = clock();
 
@@ -695,10 +712,15 @@ public:
 	  //Do LU factorization if not done before
 	  if(structure_has_changed && !do_klu_refactor){
 	      
+		if(Numeric){
+			klu_free_numeric (&Numeric, &Common); 
+			Numeric=NULL;
+		}		
+
 	        clock_t start,finish;
 		start = clock();
 
-	      	Numeric  = klu_z_factor ( Ap, Ai, reinterpret_cast <double*>(Ax), Symbolic, &Common ) ;
+	      	Numeric  = klu_factor ( Ap, Ai, reinterpret_cast <double*>(Ax), Symbolic, &Common ) ;
 
 	      	finish = clock();
 		time_to_do_klu_factor+= (double(finish)-double(start))/CLOCKS_PER_SEC;
@@ -711,7 +733,7 @@ public:
 		clock_t start,finish;
 		start = clock();
 
-		klu_z_refactor ( Ap, Ai, reinterpret_cast <double*>(Ax), Symbolic, Numeric, &Common ) ;
+		klu_refactor ( Ap, Ai, reinterpret_cast <double*>(Ax), Symbolic, Numeric, &Common ) ;
 
 	      	finish = clock();
 		time_to_do_klu_refactor+= (double(finish)-double(start))/CLOCKS_PER_SEC;
@@ -723,7 +745,7 @@ public:
 	  
 	  	  
 	  //Now do the F/B substitution
-	  int result = klu_z_solve(Symbolic, Numeric, this->rows, Nrhs, (double*)(*RHS), &Common);	  
+	  int result = klu_solve(Symbolic, Numeric, this->rows, Nrhs, (double*)(*RHS), &Common);	  
 	  if(!result){
 		std::cerr<<"Cannot do F/B substitution";
 	  }
@@ -1026,6 +1048,7 @@ public:
 			new_element.value = row_iterator->value/val;
 
 			result.cols_lists[col].push_back( new_element);
+			result.nnz++;
 	    	  }
 	      }
 	    
@@ -1046,6 +1069,7 @@ public:
 			new_element.value = row_iterator->value*val;
 
 			result.cols_lists[col].push_back( new_element);
+			result.nnz++;
 	    	  }
 	      }
 
