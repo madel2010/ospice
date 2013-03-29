@@ -2,7 +2,7 @@
 %{
 /*--------------This part is normal C++ code  that would appear before the Bison code-----*/
 #include <stdio.h>
-#include <string.h>
+#include <string>
 #include <iostream>
 #include <fstream>
 #include <stdexcept>
@@ -16,6 +16,8 @@
 #include "SourceFunc.h"
 #include "Analysis.h"
 #include "Probes.h"
+#include <list>
+
 
 #define YYDEBUG 1
 
@@ -26,10 +28,11 @@ void yyerror(const char *str)
         fprintf(stderr,"error: %s\n",str);
 }
   
+int yylex(void);
+
 extern "C"
 {
         int yyparse(void);
-        int yylex(void);  
         int yywrap()
         {
                 return 1;
@@ -50,6 +53,7 @@ Circuit MainCircuit;
 	double dval;
 	char* str;
 	int ival;
+	std::list<char*>*  arg_list;
 }
 
 %token <dval> DVALUE
@@ -70,6 +74,7 @@ Circuit MainCircuit;
 %token <str> NEWLINE
 
 %type <str> node
+%type <arg_list> node_list
 %%
 /*--------------------This is the Bison code part--------------------*/
 statments:
@@ -94,6 +99,7 @@ element:
 	| resistor_statment
 	| inductor_statment
 	| capacitor_statment
+	//| subcircuit_statment
 	;
 	
 source:
@@ -115,7 +121,7 @@ inductor_statment:
 	      MainCircuit<< new Inductor($1, $2, $3, $4);
 	}
 	;
-	;
+	
 
 capacitor_statment:
 	| CAPACITOR node node DVALUE NEWLINE{
@@ -141,6 +147,12 @@ tran_statment:
 	}
 	;
 	
+//subcircuit_statment:
+//	|SUBCKT node_list{
+	
+//	}
+//	;
+
 node:
      | DVALUE{
 	      std::ostringstream n;
@@ -154,6 +166,18 @@ node:
      }
      ;
     
+node_list:
+    |node_list node{ 
+	  $1->push_front($2);
+	  $$ = $1;
+	  printf("asasasas");
+    }
+    |node{
+          $$ = new std::list<char*>;
+          $$->push_back($1);
+    }
+    ;
+
 %%
 
 

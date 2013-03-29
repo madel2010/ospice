@@ -146,10 +146,6 @@ public:
 	}
 	~Dense(){
 	    if(LU_factors) delete[] LU_factors;
-	    if(this->data){
-		delete[] this->data;
-		this->data = NULL;
-	    }
 	}
 	
 	void create(int m, int n){ 

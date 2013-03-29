@@ -44,10 +44,10 @@ class Source;
 class Analysis;
 class DC;
 
-class Circuit
-{
+class CircuitBase{
   
-private:
+  
+protected:
      BMatrix::Sparse<double> G;
      BMatrix::Sparse<double> C;
      BMatrix::Sparse<double> J;
@@ -64,9 +64,6 @@ private:
      //Vector to hold list of non linear elements. This is used to update the vector fx each iteration
      std::vector<NonLinElement*> Non_Linear_Elements;
      
-     //Vector to hold list of analysis to be done on the circuit
-     std::vector<Analysis*> required_analysis;
-     
      //associative array that maps the node name/current_name to its index
      std::map< std::string , int> mna_variable_indices;
      
@@ -79,9 +76,33 @@ private:
      // map<name , <index_of_current,value of inductor> >
      std::map< std::string , std::pair<int,double> > inductors;
      
-     void attach_elements();
-     
      bool is_linear;
+     
+     virtual void attach_elements()=0;     
+     
+     virtual ~CircuitBase(){
+	    std::vector<Element*>::iterator it_el;
+	    for(it_el=components.begin(); it_el!=components.end();it_el++){
+		  delete (*it_el);
+	    } 
+	    
+	    /* we do not need that because sources are also added in the components vectro
+	    std::vector<Source*>::iterator it_src;
+	    for(it_src=sources.begin(); it_src!=sources.end(); it_src++){
+		  delete (*it_src);
+	    } 
+	    */
+     }
+};
+
+class Circuit: public CircuitBase
+{
+  
+private:
+    
+     
+     //Vector to hold list of analysis to be done on the circuit
+     std::vector<Analysis*> required_analysis;
      
      bool have_dc_solution;
      DC* DC_Analysis; //saves a pointer to the DC analysis
@@ -89,6 +110,8 @@ private:
 public:
      Circuit();
     ~Circuit();
+    
+    void attach_elements();
     
     int get_variable_index(std::string node_name); //return the index of the node
     
