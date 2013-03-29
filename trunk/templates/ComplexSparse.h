@@ -506,7 +506,18 @@ public:
       
       //Get a value at row m and column n
       std::complex<double> get(int m, int n) const{
+	  
+	  //check if the row of the new value is greater than the last row we have already added
+	  if(m > last_row[n]){
+		return 0.0;
+	  //check if the row of the new value is less than the last row we have already added
+	  }else if(m < first_row[n]){ 
+		return 0.0;
+	  }
+	  
+	  
 	  std::complex<double> result;
+	  
 	  
 	  //search column for the row
 	  //typename std::list<SparseElement>::iterator row_iterator;
