@@ -1,5 +1,7 @@
 
 %{
+#include <string>
+#include <list>
 #include <stdio.h>
 #include "parser.hpp"
 

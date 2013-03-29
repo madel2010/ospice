@@ -47,6 +47,8 @@ public:
     virtual bool is_linear()=0;
     virtual void add_my_nodes(Circuit* circuit)=0; 
     virtual std::string get_name(){return name;}
+    
+    virtual ~Element(){}
 };
 
 class NonLinElement
@@ -56,6 +58,8 @@ public:
     NonLinElement(){};
     virtual void update_fx(BMatrix::Dense<double>& fx, const double* solution)=0;
     virtual void update_J(BMatrix::Sparse<double>& J, const double* solution)=0;
+    
+    virtual ~NonLinElement(){}
     
 };
 
@@ -78,7 +82,7 @@ public:
     std::string get_n1(){return n1;}
     std::string get_n2(){return n2;}
 
-    
+    virtual ~TwoTerminal(){}
 
 
 };

@@ -127,7 +127,7 @@ endif()
 
 
 BISON_TARGET(OspiceBison parser.y ${PROJECT_SOURCE_DIR}/parser.cpp  VERBOSE yacc.out COMPILE_FLAGS --debug)
-FLEX_TARGET(OspiceFlex parser.l ${PROJECT_SOURCE_DIR}/lex.yy.c)
+FLEX_TARGET(OspiceFlex parser.l ${PROJECT_SOURCE_DIR}/lex.cc)
 ADD_FLEX_BISON_DEPENDENCY(OspiceFlex OspiceBison)
 ##################
 

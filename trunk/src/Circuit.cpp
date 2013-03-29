@@ -37,12 +37,7 @@ Circuit::Circuit()
 }
 
 Circuit::~Circuit()
-{
-     std::vector<Element*>::iterator it_el;
-     for(it_el=components.begin(); it_el!=components.end();it_el++){
-	delete (*it_el);
-     } 
-     
+{ 
      std::vector<Analysis*>::iterator it_an;
      for(it_an=required_analysis.begin(); it_an!=required_analysis.end();it_an++){
 	delete (*it_an);
