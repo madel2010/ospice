@@ -441,8 +441,6 @@ public:
       
       //Get a value at row m and column n
       double get(int m, int n) const{
-	  double result;
-	  
 	  
 	  //check if the row of the new value is greater than the last row we have already added
 	  if(m > last_row[n]){
@@ -451,6 +449,8 @@ public:
 	  }else if(m < first_row[n]){ 
 		return 0.0;
 	  }
+	  
+	  double result;
 	  
 	  //search column for the row
 	  //typename std::list<SparseElement>::iterator row_iterator;
