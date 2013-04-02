@@ -38,14 +38,22 @@ Circuit::Circuit()
 
 Circuit::~Circuit()
 { 
+     std::vector<Element*>::iterator it_el;
+     for(it_el=components.begin(); it_el!=components.end();it_el++){
+	  delete (*it_el);
+     } 
+	    
+     /* we do not need that because sources are also added in the components vectro
+     std::vector<Source*>::iterator it_src;
+     for(it_src=sources.begin(); it_src!=sources.end(); it_src++){
+	  delete (*it_src);
+     } 
+     */
+
      std::vector<Analysis*>::iterator it_an;
      for(it_an=required_analysis.begin(); it_an!=required_analysis.end();it_an++){
 	delete (*it_an);
      }     
-}
-
-void Circuit::operator << (Element* E){
-    components.push_back(E);
 }
 
 void Circuit::add_mna_variable(std::string node_name){
