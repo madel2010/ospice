@@ -44,16 +44,15 @@ class Source;
 class Analysis;
 class DC;
 
-class CircuitBase{
-  
-  
+
+
+class Circuit
+{
+
+
 protected:
-     BMatrix::Sparse<double> G;
-     BMatrix::Sparse<double> C;
-     BMatrix::Sparse<double> J;
-     BMatrix::Dense<double> fx; //the non linear vector
-     BMatrix::Dense<double> B; 
-     
+     bool is_linear;
+
      
      //Vector to hold list of elemets
      std::vector<Element*> components;
@@ -64,62 +63,42 @@ protected:
      //Vector to hold list of non linear elements. This is used to update the vector fx each iteration
      std::vector<NonLinElement*> Non_Linear_Elements;
      
-     //associative array that maps the node name/current_name to its index
-     std::map< std::string , int> mna_variable_indices;
-     
-     //Vector to hold list of elemets
-     std::vector<Probe*> Probes;
-     
      //associative array that saves the elements that addes extra nodes for currents like inductors. 
      //This is usefeull when we need to add mutual inductance. 
      //In this case we do not need to search in all elements
      // map<name , <index_of_current,value of inductor> >
      std::map< std::string , std::pair<int,double> > inductors;
-     
-     bool is_linear;
-     
-     virtual void attach_elements()=0;     
-     
-     virtual ~CircuitBase(){
-	    std::vector<Element*>::iterator it_el;
-	    for(it_el=components.begin(); it_el!=components.end();it_el++){
-		  delete (*it_el);
-	    } 
-	    
-	    /* we do not need that because sources are also added in the components vectro
-	    std::vector<Source*>::iterator it_src;
-	    for(it_src=sources.begin(); it_src!=sources.end(); it_src++){
-		  delete (*it_src);
-	    } 
-	    */
-     }
-};
 
-class Circuit: public CircuitBase
-{
-  
+
 private:
-    
+     BMatrix::Sparse<double> G;
+     BMatrix::Sparse<double> C;
+     BMatrix::Sparse<double> J;
+     BMatrix::Dense<double> fx; //the non linear vector
+     BMatrix::Dense<double> B; 
      
+     //associative array that maps the node name/current_name to its index
+     std::map< std::string , int> mna_variable_indices;
+     
+     //Vector to hold list of elemets
+     std::vector<Probe*> Probes;
+
      //Vector to hold list of analysis to be done on the circuit
      std::vector<Analysis*> required_analysis;
      
      bool have_dc_solution;
      DC* DC_Analysis; //saves a pointer to the DC analysis
-     
+ 
+     virtual void attach_elements();
 public:
      Circuit();
     ~Circuit();
-    
-    void attach_elements();
     
     int get_variable_index(std::string node_name); //return the index of the node
     
     void add_mna_variable(std::string node_name);
     
-    inline void add_probe(Probe* _Probe){
-	  Probes.push_back(_Probe);
-    }
+    
     
     void add_inductor_index(std::string inductor_name, double value);
     
@@ -136,17 +115,20 @@ public:
     inline void add_NonLinElement(NonLinElement* E){
       Non_Linear_Elements.push_back(E);
     }
+    
+     inline void add_probe(Probe* _Probe){
+	  Probes.push_back(_Probe);
+     }
 
-    
-    void operator << (Element* E);
-    
+     inline void operator << (Element* E){
+    		components.push_back(E);
+     }
+
     inline void operator << (Analysis* an){
 	  required_analysis.push_back(an);
     }
     
     int size_of_mna(){return mna_variable_indices.size(); }
-    
-    bool is_circ_linear() {return is_linear; }
     
     void update_probes(double time, const double* solution);
     
@@ -161,6 +143,8 @@ public:
     void plot_probes();
     
     const BMatrix::Dense<double>& get_dc_solution();
+
+    bool is_circ_linear() {return is_linear; }
 };
 
 #endif // CIRCUIT_H

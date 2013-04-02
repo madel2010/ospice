@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "Circuit.h"
+#include "subcircuit.h"
 #include "resistor.h"
 #include "Capacitor.h"
 #include "Inductor.h"
@@ -12,7 +13,8 @@
 int main(int argc, char **argv) {
     
     Circuit C1;
-    
+    SubCircuit S1;
+
     C1<< new resistor("R1" , "n1" , "n2", 1);
     
     
@@ -29,7 +31,8 @@ int main(int argc, char **argv) {
     C1<< new DC;
     
     C1<< new  transient(0, 10 , 0.01);
-    
+    S1<< new  transient(0, 10 , 0.01);
+
     C1 << new VoltageProbe("V(R2)" , "n1" , "0");
     
     C1.start_analysis();
