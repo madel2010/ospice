@@ -31,37 +31,35 @@
 
 /*----------_Inductor Class -----------------*/
 void Inductor::write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, Circuit* circ){
-    int n1_index = circ->get_variable_index(n1);
-    int n2_index = circ->get_variable_index(n2);
-    
-    std::string current = name + ".I";
-    int curr_index = circ->get_variable_index(current);
+
     
     if(n1_index > -1){
-	G.put(n1_index , curr_index , 1);
-	G.put(curr_index , n1_index , -1);
+	G.put(n1_index , current_index , 1);
+	G.put(current_index , n1_index , -1);
     }
     
     if(n2_index > -1) {
-        G.put(n2_index , curr_index , -1);
-	G.put(curr_index , n2_index , 1);
+        G.put(n2_index , current_index , -1);
+	G.put(current_index , n2_index , 1);
     }
     
-    C.put(curr_index , curr_index , value);
+    C.put(current_index , current_index , value);
     
 }
 
 
-void Inductor::add_my_nodes(Circuit* circuit){
-    circuit->add_mna_variable(n1);
-    circuit->add_mna_variable(n2);
+void Inductor::add_my_nodes(Circuit* circuit, const std::vector<std::string>& append_to_node_name){
+    n1_index = circuit->add_mna_variable(append_to_node_name[0]+n1);
+    n2_index = circuit->add_mna_variable(append_to_node_name[1]+n2);
     
     //add extra variable for current
-    std::string current = name + ".I";
-    circuit->add_mna_variable(current);
+    std::string current = append_to_node_name[3] + name + ".I";
+    current_index = circuit->add_mna_variable(current);
     
     //we have to add the current element in case we need it for the mutual_inductances
-    circuit->add_inductor_index(name,value);
+    circuit->add_inductor_index(append_to_node_name[3]+name,value);
+    circuit->add_inductor_index(append_to_node_name[3]+name,value);
+  
     
 }
 

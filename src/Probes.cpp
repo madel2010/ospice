@@ -45,9 +45,7 @@ VoltageProbe::VoltageProbe(TwoTerminal* element){
 }
 
 void VoltageProbe::write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C , Circuit* circ){
-    n1_index = circ->get_variable_index(n1);
-    n2_index = circ->get_variable_index(n2);
-    
+   
     circ->add_probe(this);
     
 }

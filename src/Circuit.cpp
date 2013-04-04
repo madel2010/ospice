@@ -33,7 +33,8 @@
 
 Circuit::Circuit()
 {
-
+    //thie circuit is linear until we start adding elements using <<
+    is_linear = true;
 }
 
 Circuit::~Circuit()
@@ -56,19 +57,24 @@ Circuit::~Circuit()
      }     
 }
 
-void Circuit::add_mna_variable(std::string node_name){
+int Circuit::add_mna_variable(std::string node_name){
     
     if(node_name=="0" || node_name=="gnd"){
-	return;
+	return -1;
     }
     
+     int index;
     //check if the node is already added
     if(mna_variable_indices.find(node_name)==mna_variable_indices.end()){
     
-	  int index = mna_variable_indices.size();
+	  index = mna_variable_indices.size();
     
 	  mna_variable_indices[node_name]= index ;
+    }else{
+	index = mna_variable_indices[node_name];
     }
+    
+    return index;
 }
 
 //this function adds a has map that maps every inductor to its added current, so that it would be easy when we use the mutual inductor
@@ -94,20 +100,27 @@ int Circuit::get_variable_index(std::string variable_name){
     }
 }
 
+void Circuit::operator << (Element* E){
+    	components.push_back(E);
+	if(!E->is_linear()){
+		is_linear = false;
+	}
+}
+     
 void Circuit::attach_elements(){
      std::vector<Element*>::iterator iter;
-     
-     
+
+     std::vector<std::string> append_to_node_names; //just create empty vector
+      
      //check if there is any component that needs to add an extra variable
-     is_linear = true;
      for(iter=components.begin(); iter!=components.end(); iter++){
-	  
-	  if(!(*iter)->is_linear()){
-	    is_linear = false;
-	  }
+	 
+	  //Since this is the main circuit, we do not have to append any string to the nodes. Appending only done for the subcircuits. Check subcircuit.h
+	  //Therefore we only need to create an empty vector with the size of the element terminsls and pass it to add_my_nodes_function
+          std::vector<std::string> append_to_node_names ((*iter)->get_terminals_name().size() , "");
 	  
 	  //first add the nodes of this element
-	  (*iter)->add_my_nodes(this);
+	  (*iter)->add_my_nodes(this , append_to_node_names);
 	  
      }
      

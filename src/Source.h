@@ -72,8 +72,19 @@ public:
     
     double update_B(BMatrix::Dense<double> &B, double time);
     
-    void add_my_nodes(Circuit* circuit);
+    ///add the requird nodes to the main circuit, with the option of appending something to the node names
+    ///(ex: you can append the subcircuit name which this element exist). Note that (append_to_node_name) is by default = "" in element.h
+    void add_my_nodes(Circuit* circuit, const std::vector<std::string>& append_to_node_name);
     
+    //Returns the names of the terminals 
+    std::vector<std::string> get_terminals_name(){
+	    std::vector<std::string> result;
+	    result.push_back(n1);
+	    result.push_back(n2);
+	    
+	    return result;
+    }
+	
     void write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, Circuit* circ);
     
     bool is_linear(){ return true;} ;
@@ -103,9 +114,23 @@ public:
     
     double update_B(BMatrix::Dense<double> &B, double time);
     
-    void add_my_nodes(Circuit* circuit);
+    ///add the requird nodes to the main circuit, with the option of appending something to the node names
+    ///(ex: you can append the subcircuit name which this element exist). Note that (append_to_node_name) is by default = "" in element.h
+    void add_my_nodes(Circuit* circuit, const std::vector<std::string>& append_to_node_name);
     
     void write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, Circuit* circ);
+    
+    //Returns the names of the terminals 
+    std::vector<std::string> get_terminals_name(){
+	    std::vector<std::string> result;
+	    result.push_back(n1);
+	    result.push_back(n2);
+	    
+	    //the current
+	    result.push_back(name + ".I");
+	    
+	    return result;
+    }
     
     bool is_linear(){ return true;} ;
     

@@ -96,7 +96,7 @@ public:
     
     int get_variable_index(std::string node_name); //return the index of the node
     
-    void add_mna_variable(std::string node_name);
+    int add_mna_variable(std::string node_name);
     
     
     
@@ -120,9 +120,7 @@ public:
 	  Probes.push_back(_Probe);
      }
 
-     inline void operator << (Element* E){
-    		components.push_back(E);
-     }
+     void operator << (Element* E);
 
     inline void operator << (Analysis* an){
 	  required_analysis.push_back(an);
