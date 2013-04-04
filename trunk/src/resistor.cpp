@@ -38,8 +38,6 @@ using boost::bad_lexical_cast;
     
 /*-------------Linear Resisor--------------*/
 void resistor::write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, Circuit* circ){
-    int n1_index = circ->get_variable_index(n1);
-    int n2_index = circ->get_variable_index(n2);
     
     if(n1_index > -1){
 	G.add_to_entry(n1_index , n1_index , 1/value);
@@ -56,17 +54,15 @@ void resistor::write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &
 }
 
 
-void resistor::add_my_nodes(Circuit* circuit){
-    circuit->add_mna_variable(n1);
-    circuit->add_mna_variable(n2);
+void resistor::add_my_nodes(Circuit* circuit , const std::vector<std::string>& append_to_node_name){
+    n1_index = circuit->add_mna_variable(append_to_node_name[0]+n1);
+    n2_index = circuit->add_mna_variable(append_to_node_name[1]+n2);
 }
 
 
 
 /*-------------Non Linear Resisor--------------*/
 void nonlin_resistor::write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, Circuit* circ){
-    n1_index = circ->get_variable_index(n1);
-    n2_index = circ->get_variable_index(n2);
     
     circ->add_NonLinElement(this);
     
@@ -81,9 +77,9 @@ void nonlin_resistor::write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<do
 }
 
 
-void nonlin_resistor::add_my_nodes(Circuit* circuit){
-    circuit->add_mna_variable(n1);
-    circuit->add_mna_variable(n2);
+void nonlin_resistor::add_my_nodes(Circuit* circuit , const std::vector<std::string>& append_to_node_name){
+    n1_index = circuit->add_mna_variable(append_to_node_name[0]+n1);
+    n2_index = circuit->add_mna_variable(append_to_node_name[1]+n2);
 }
 
 

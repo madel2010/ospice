@@ -36,7 +36,7 @@ class Inductor : public TwoTerminal
 {
 private:
 	double value;
-
+	int current_index;
 	
 public:
 		
@@ -53,9 +53,20 @@ public:
 	
 	virtual void write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, Circuit* circ);
 	
-	void add_my_nodes(Circuit* circuit);
+	///add the requird nodes to the main circuit, with the option of appending something to the node names
+ 	///(ex: you can append the subcircuit name which this element exist). Note that (append_to_node_name) is by default = "" in element.h
+	void add_my_nodes(Circuit* circuit, const std::vector<std::string>& append_to_node_name);
 	
-
+	std::vector<std::string> get_terminals_name(){
+	    std::vector<std::string> result;
+	    result.push_back(n1);
+	    result.push_back(n2);
+	    
+	    //the current_index
+	    result.push_back(name + ".I");
+	    
+	    return result;
+	}
 	
 };
 
@@ -81,9 +92,19 @@ public:
 	
 	virtual void write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, Circuit* circ);
 	
-	void add_my_nodes(Circuit* circuit){};
+	///add the requird nodes to the main circuit, with the option of appending something to the node names
+ 	///(ex: you can append the subcircuit name which this element exist). Note that (append_to_node_name) is by default = "" in element.h
+	void add_my_nodes(Circuit* circuit, const std::vector<std::string>& append_to_node_name){
+	  //in case this mutual inductor is in subcircuit, then we have to change the name of the inductors to reflect the subcircuit name
+	  n1  = append_to_node_name[0] + n1;
+	  n2  = append_to_node_name[1] + n2;
+	};
 	
-
+	std::vector<std::string> get_terminals_name(){
+	    std::vector<std::string> result;
+	    
+	    return result;
+	}
 	
 };
 

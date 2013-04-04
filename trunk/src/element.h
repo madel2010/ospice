@@ -45,8 +45,18 @@ public:
     Element(){};
     virtual void write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, Circuit* circ)=0;
     virtual bool is_linear()=0;
-    virtual void add_my_nodes(Circuit* circuit)=0; 
+    
+    ///add the node name to the circuit, 
+    ///with the option of appending a string to the begining of the node names (ex: appending the subcircuit_name).
+    ///the append_node_name is a vector that should be equal to the size of the element terminals. Each terminal corresponds to an entry in the vector
+    virtual void add_my_nodes(Circuit* circuit, const std::vector<std::string>& append_to_node_name)=0; 
+    
+    ///get the name of the element
     virtual std::string get_name(){return name;}
+    
+    ///Get the terminals of this element. 
+    ///It returns the names of the terminals of this element
+    virtual std::vector<std::string> get_terminals_name()=0;
     
     virtual ~Element(){}
 };
@@ -69,8 +79,12 @@ class TwoTerminal : public Element
 {
 
 protected:
-    std::string n1; //First node
-    std::string n2; //second node
+    std::string n1; //First node name
+    std::string n2; //second node name
+    
+    int n1_index; //the index of the first node
+    int n2_index; //the index of the second node
+    
 public:
   
     TwoTerminal(){};

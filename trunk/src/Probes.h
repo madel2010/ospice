@@ -67,11 +67,27 @@ public:
     
     bool is_linear(){return true;}
     
-    void add_my_nodes(Circuit* circuit){};
+    ///add the requird nodes to the main circuit, with the option of appending something to the node names
+    ///(ex: you can append the subcircuit name which this element exist). Note that (append_to_node_name) is by default = "" in element.h
+    void add_my_nodes(Circuit* circuit, const std::vector<std::string>& append_to_node_name){
+	  //in case this probe is in subcircuit, then we have to change the name of the nodes to reflect the subcircuit name
+	  
+	  n1_index = circuit->add_mna_variable(append_to_node_name[0]+n1);
+	  n2_index = circuit->add_mna_variable(append_to_node_name[1]+n2);
+    };
     
     void get_data(double time , const double* solution);
     
     void plot();
+    
+    //Returns the names of the terminals 
+    std::vector<std::string> get_terminals_name(){
+	    std::vector<std::string> result;
+	    result.push_back(n1);
+	    result.push_back(n2);
+	    
+	    return result;
+    }
 };
 
 #endif // PROBES_H
