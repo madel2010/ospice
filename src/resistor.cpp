@@ -54,9 +54,9 @@ void resistor::write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &
 }
 
 
-void resistor::add_my_nodes(Circuit* circuit , const std::vector<std::string>& append_to_node_name){
-    n1_index = circuit->add_mna_variable(append_to_node_name[0]+n1);
-    n2_index = circuit->add_mna_variable(append_to_node_name[1]+n2);
+void resistor::add_my_nodes(Circuit* circuit){
+    n1_index = circuit->add_mna_variable(n1);
+    n2_index = circuit->add_mna_variable(n2);
 }
 
 
@@ -77,9 +77,9 @@ void nonlin_resistor::write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<do
 }
 
 
-void nonlin_resistor::add_my_nodes(Circuit* circuit , const std::vector<std::string>& append_to_node_name){
-    n1_index = circuit->add_mna_variable(append_to_node_name[0]+n1);
-    n2_index = circuit->add_mna_variable(append_to_node_name[1]+n2);
+void nonlin_resistor::add_my_nodes(Circuit* circuit ){
+    n1_index = circuit->add_mna_variable(n1);
+    n2_index = circuit->add_mna_variable(n2);
 }
 
 

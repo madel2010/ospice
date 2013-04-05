@@ -110,17 +110,17 @@ void Circuit::operator << (Element* E){
 void Circuit::attach_elements(){
      std::vector<Element*>::iterator iter;
 
-     std::vector<std::string> append_to_node_names; //just create empty vector
+     
       
      //check if there is any component that needs to add an extra variable
      for(iter=components.begin(); iter!=components.end(); iter++){
 	 
 	  //Since this is the main circuit, we do not have to append any string to the nodes. Appending only done for the subcircuits. Check subcircuit.h
 	  //Therefore we only need to create an empty vector with the size of the element terminsls and pass it to add_my_nodes_function
-          std::vector<std::string> append_to_node_names ((*iter)->get_terminals_name().size() , "");
+          std::vector<std::string> append_to_node_names ((*iter)->get_terminals_name().size());
 	  
 	  //first add the nodes of this element
-	  (*iter)->add_my_nodes(this , append_to_node_names);
+	  (*iter)->add_my_nodes(this);
 	  
      }
      

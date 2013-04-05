@@ -45,9 +45,9 @@ void Capacitor::write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> 
 }
 
 
-void Capacitor::add_my_nodes(Circuit* circuit, const std::vector<std::string>& append_to_node_name){
-    n1_index = circuit->add_mna_variable(append_to_node_name[0]+n1);
-    n2_index = circuit->add_mna_variable(append_to_node_name[1]+n2);
+void Capacitor::add_my_nodes(Circuit* circuit){
+    n1_index = circuit->add_mna_variable(n1);
+    n2_index = circuit->add_mna_variable(n2);
 }
 
 
