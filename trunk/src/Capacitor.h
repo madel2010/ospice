@@ -53,9 +53,8 @@ public:
 	
 	virtual void write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, Circuit* circ);
 	
-	///add the requird nodes to the main circuit, with the option of appending something to the node names
- 	///(ex: you can append the subcircuit name which this element exist). Note that (append_to_node_name) is by default = "" in element.h
-	void add_my_nodes(Circuit* circuit, const std::vector<std::string>& append_to_node_name);
+	///add the requird nodes to the main circuit, 
+	void add_my_nodes(Circuit* circuit);
 	
 	//Returns the names of the terminals 
 	std::vector<std::string> get_terminals_name(){

@@ -47,9 +47,7 @@ public:
     virtual bool is_linear()=0;
     
     ///add the node name to the circuit, 
-    ///with the option of appending a string to the begining of the node names (ex: appending the subcircuit_name).
-    ///the append_node_name is a vector that should be equal to the size of the element terminals. Each terminal corresponds to an entry in the vector
-    virtual void add_my_nodes(Circuit* circuit, const std::vector<std::string>& append_to_node_name)=0; 
+    virtual void add_my_nodes(Circuit* circuit)=0; 
     
     ///get the name of the element
     virtual std::string get_name(){return name;}

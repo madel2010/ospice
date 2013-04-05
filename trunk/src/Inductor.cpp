@@ -48,17 +48,17 @@ void Inductor::write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &
 }
 
 
-void Inductor::add_my_nodes(Circuit* circuit, const std::vector<std::string>& append_to_node_name){
-    n1_index = circuit->add_mna_variable(append_to_node_name[0]+n1);
-    n2_index = circuit->add_mna_variable(append_to_node_name[1]+n2);
+void Inductor::add_my_nodes(Circuit* circuit){
+    n1_index = circuit->add_mna_variable(n1);
+    n2_index = circuit->add_mna_variable(n2);
     
     //add extra variable for current
-    std::string current = append_to_node_name[3] + name + ".I";
+    std::string current = name + ".I";
     current_index = circuit->add_mna_variable(current);
     
     //we have to add the current element in case we need it for the mutual_inductances
-    circuit->add_inductor_index(append_to_node_name[3]+name,value);
-    circuit->add_inductor_index(append_to_node_name[3]+name,value);
+    circuit->add_inductor_index(name,value);
+    circuit->add_inductor_index(name,value);
   
     
 }
