@@ -55,13 +55,13 @@ protected:
 
      
      //Vector to hold list of elemets
-     std::vector<Element*> components;
+     std::list<Element*> components;
      
      //Vector to hold list of elemets
-     std::vector<Source*> sources;
+     std::list<Source*> sources;
      
      //Vector to hold list of non linear elements. This is used to update the vector fx each iteration
-     std::vector<NonLinElement*> Non_Linear_Elements;
+     std::list<NonLinElement*> Non_Linear_Elements;
      
      //associative array that saves the elements that addes extra nodes for currents like inductors. 
      //This is usefeull when we need to add mutual inductance. 
@@ -80,8 +80,11 @@ private:
      //associative array that maps the node name/current_name to its index
      std::map< std::string , int> mna_variable_indices;
      
+     //associative array that saves if there are nodes have different names but same inex. very usefull in subcircuits
+     std::map< std::string , std::string> similar_nodes;
+     
      //Vector to hold list of elemets
-     std::vector<Probe*> Probes;
+     std::list<Probe*> Probes;
 
      //Vector to hold list of analysis to be done on the circuit
      std::vector<Analysis*> required_analysis;
@@ -94,10 +97,13 @@ public:
      Circuit();
     ~Circuit();
     
-    int get_variable_index(std::string node_name); //return the index of the node
+    //returns node_index if exists, -1 if ground , -2 if not exists
+    int get_variable_index(std::string var_name); //return the index of the node
     
-    int add_mna_variable(std::string node_name);
+    int add_mna_variable(std::string var_name);
     
+    //This makes two node have the same index.
+    void alias_two_nodes(std::string node1 , std::string node2 ){similar_nodes[node1] = node2;}
     
     
     void add_inductor_index(std::string inductor_name, double value);

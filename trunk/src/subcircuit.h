@@ -45,19 +45,22 @@ private:
     SubCircuit* my_subcircuit;
     std::vector<std::string> terminals;
     
-    int num_nodes_to_add; //This is the number of nodes that the subcircuit needs. 
-			 //Note: this number should execlude the terminals nodes as they are already in the main circuit
+    std::string prepend_to_nodes; //a string that would be prepended to all nodes of this instance
+    
+    std::list<Element*> cloned_elements;
     
 public:
     SubCircuitInstance() {}
+    ~SubCircuitInstance();
     
     SubCircuitInstance(std::string _name,  std::vector<std::string> _terminals, SubCircuit* _subcircuit):terminals(_terminals){
 	name = _name;
 	my_subcircuit = _subcircuit;
-	
-	num_nodes_to_add = 0;
+	prepend_to_nodes = "";
     }
   
+    SubCircuitInstance* clone(){ return new SubCircuitInstance(*this); }
+     
     /////Start:Must be defined as it it inherited from Element Base class
     void write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, Circuit* circ);
     inline bool is_linear(){return my_subcircuit->is_linear;}
@@ -65,9 +68,13 @@ public:
     /////END:Must be defined as it it inherited from Element Base class
 
     //Returns the names of the terminals 
-    std::vector<std::string> get_terminals_name(){    
+    std::vector<std::string> get_terminals(){    
 	    return terminals;
     }
+    
+    void prepend_name(std::string p){name = p + name;}
+    
+    void prepend_nodes(std::string p){ prepend_to_nodes = p; }
 };
 
 #endif

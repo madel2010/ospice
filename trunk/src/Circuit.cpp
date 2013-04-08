@@ -39,7 +39,7 @@ Circuit::Circuit()
 
 Circuit::~Circuit()
 { 
-     std::vector<Element*>::iterator it_el;
+     std::list<Element*>::iterator it_el;
      for(it_el=components.begin(); it_el!=components.end();it_el++){
 	  delete (*it_el);
      } 
@@ -57,21 +57,22 @@ Circuit::~Circuit()
      }     
 }
 
-int Circuit::add_mna_variable(std::string node_name){
+int Circuit::add_mna_variable(std::string var_name){
     
-    if(node_name=="0" || node_name=="gnd"){
+    if( get_variable_index(var_name)==-1 ){ //means it is ground
 	return -1;
     }
     
-     int index;
-    //check if the node is already added
-    if(mna_variable_indices.find(node_name)==mna_variable_indices.end()){
+    
+    //check if the variable has already been added
+    int index = get_variable_index(var_name);
+    
+    if( index == -2 ){ //if the var_name doesnot exist
     
 	  index = mna_variable_indices.size();
     
-	  mna_variable_indices[node_name]= index ;
-    }else{
-	index = mna_variable_indices[node_name];
+	  mna_variable_indices[var_name]= index ;
+	  
     }
     
     return index;
@@ -92,12 +93,34 @@ void Circuit::add_inductor_index(std::string inductor_name, double value){
     }
 }
 
-int Circuit::get_variable_index(std::string variable_name){
-    if(variable_name=="0" || variable_name=="gnd"){
-	return -1; //means it is a ground
+//returns node_index if exists, -1 if ground , -2 if not exists
+int Circuit::get_variable_index(std::string var_name){
+    int result = -2 ;
+    if(var_name=="0" || var_name=="gnd"){
+	result = -1; //means it is a ground
     }else{
-	return mna_variable_indices[variable_name];
+	//search the map first, may be we can find it
+	std::map< std::string , int>::iterator it=mna_variable_indices.find(var_name);
+	
+	if(it!=mna_variable_indices.end()){
+	    result = it->second;
+	}else{ //Another chance, may be it is in the alias map (a map that has nodes with the same indices)
+	      std::map< std::string , std::string>::iterator  similar_nodes_iter;
+	      
+	      for(similar_nodes_iter = similar_nodes.begin(); similar_nodes_iter!=similar_nodes.end(); similar_nodes_iter++){
+		  if(similar_nodes_iter->first == var_name){
+		      result = get_variable_index(similar_nodes_iter->second); //we have to get the index of the similar node
+		  }else if(similar_nodes_iter->second == var_name){
+		      result = get_variable_index(similar_nodes_iter->first); //we have to get the index of the similar node
+		  }
+	      }
+	  
+	}
+	
     }
+    
+
+    return result;
 }
 
 void Circuit::operator << (Element* E){
@@ -108,19 +131,16 @@ void Circuit::operator << (Element* E){
 }
      
 void Circuit::attach_elements(){
-     std::vector<Element*>::iterator iter;
+     std::list<Element*>::iterator iter;
 
      
       
      //check if there is any component that needs to add an extra variable
      for(iter=components.begin(); iter!=components.end(); iter++){
 	 
-	  //Since this is the main circuit, we do not have to append any string to the nodes. Appending only done for the subcircuits. Check subcircuit.h
-	  //Therefore we only need to create an empty vector with the size of the element terminsls and pass it to add_my_nodes_function
-          std::vector<std::string> append_to_node_names ((*iter)->get_terminals_name().size());
-	  
 	  //first add the nodes of this element
-	  (*iter)->add_my_nodes(this);
+	  (*iter)->add_my_nodes(this); //Note that components is a list, sho if an element appended elemets to the circuit (subcircuit) 
+					//that wont affect the iterator. This is only for lists but others like vectors the iterator could change if we append to it
 	  
      }
      
@@ -139,8 +159,10 @@ void Circuit::attach_elements(){
 }
 
 
+
+
 void Circuit::update_probes(double time, const double* solution){
-    std::vector<Probe*>::iterator iter;
+    std::list<Probe*>::iterator iter;
     for(iter= Probes.begin(); iter!= Probes.end(); iter++){
 	(*iter)->get_data(time, solution);
     }
@@ -150,7 +172,7 @@ void Circuit::update_probes(double time, const double* solution){
 
 ///This function calls the source.update_B() to put the new values of the sources in the B vector at time 
 void Circuit::update_sources(double time){
-    std::vector<Source*>::iterator iter;
+    std::list<Source*>::iterator iter;
     
     for(iter= sources.begin(); iter!= sources.end(); iter++){
 	(*iter)->update_B( B , time); //this is a function of all sources to update the B vector
@@ -161,7 +183,7 @@ void Circuit::update_sources(double time){
 ///This function calls the NonLinElement.update_fx() to put the new values of the non linear expression in the fx vector at time 
 ///Note: that the function NonLinElement.update_fx() is only defined for nonlinear elements as they are also inherited from "NonLinElement" class
 void Circuit::update_fx(const double* solution){
-    std::vector<NonLinElement*>::iterator iter;
+    std::list<NonLinElement*>::iterator iter;
     
     for(iter= Non_Linear_Elements.begin(); iter!= Non_Linear_Elements.end(); iter++){
 	(*iter)->update_fx( fx , solution); //this is a function of all nonlinear elements to update the fx vector
@@ -171,7 +193,7 @@ void Circuit::update_fx(const double* solution){
 ///This function calls the NonLinElement.update_J() to put the new values of the non linear Jacobian matrix in the G matrix at time 
 ///Note: that the function NonLinElement.update_J() is only defined for nonlinear elements as they are also inherited from "NonLinElement" class
 void Circuit::update_J(const double* solution){
-    std::vector<NonLinElement*>::iterator iter;
+    std::list<NonLinElement*>::iterator iter;
     
     for(iter= Non_Linear_Elements.begin(); iter!= Non_Linear_Elements.end(); iter++){
 	(*iter)->update_J( J , solution); 
@@ -196,7 +218,7 @@ void Circuit::start_analysis(){
 }
 
 void Circuit::plot_probes(){
-    std::vector<Probe*>::iterator iter;
+    std::list<Probe*>::iterator iter;
   
     for(iter= Probes.begin(); iter!= Probes.end(); iter++){
 	(*iter)->plot();

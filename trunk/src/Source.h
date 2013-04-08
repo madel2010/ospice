@@ -70,6 +70,8 @@ public:
      };
      
     
+    CurrentSource* clone(){ return new CurrentSource(*this); }
+     
     double update_B(BMatrix::Dense<double> &B, double time);
     
     ///add the requird nodes to the main circuit
@@ -110,6 +112,7 @@ public:
 	  name = _name;
      };
      
+    VoltageSource* clone(){ return new VoltageSource(*this); }
     
     double update_B(BMatrix::Dense<double> &B, double time);
     
