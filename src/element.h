@@ -43,6 +43,9 @@ protected:
 
 public:
     Element(){};
+    
+    virtual Element* clone()=0;
+    
     virtual void write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, Circuit* circ)=0;
     virtual bool is_linear()=0;
     
@@ -52,9 +55,13 @@ public:
     ///get the name of the element
     virtual std::string get_name(){return name;}
     
+    virtual void prepend_name(std::string p){name = p + name;}
+    
+    virtual void prepend_nodes(std::string p)=0;
+    
     ///Get the terminals of this element. 
     ///It returns the names of the terminals of this element
-    virtual std::vector<std::string> get_terminals_name()=0;
+    virtual std::vector<std::string> get_terminals()=0;
     
     virtual ~Element(){}
 };
@@ -96,7 +103,17 @@ public:
 
     virtual ~TwoTerminal(){}
 
-
+    virtual std::vector<std::string> get_terminals(){
+	std::vector <std::string> result;
+	result.push_back(n1);
+	result.push_back(n2);
+	return result;
+    }
+    
+    virtual void prepend_nodes(std::string p){
+	n1 = p + n1;
+	n2 = p + n2;
+    }
 };
 
 

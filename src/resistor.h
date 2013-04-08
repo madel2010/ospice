@@ -54,6 +54,7 @@ public:
 	  name =_name;
 	};
 
+	resistor* clone(){ return new resistor(*this); }
 	
 	bool is_linear(){return true;}
 	
@@ -121,6 +122,7 @@ public:
 	     
 	};
 
+	nonlin_resistor* clone(){ return new nonlin_resistor(*this); }
 	
 	bool is_linear(){return false;}
 	

@@ -63,6 +63,8 @@ public:
     VoltageProbe(std::string _name, std::string _n1, std::string _n2);
     VoltageProbe(TwoTerminal* element);  
    
+    VoltageProbe* clone(){ return new VoltageProbe(*this); }
+    
     void write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, Circuit* circ);
     
     bool is_linear(){return true;}

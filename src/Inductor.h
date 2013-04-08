@@ -48,6 +48,7 @@ public:
 	  name = _name;
 	};
 	
+	Inductor* clone(){return new Inductor(*this);} 
 	
 	bool is_linear(){return true;}
 	
