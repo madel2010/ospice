@@ -18,7 +18,7 @@
 /*-------------------SubCircuitInstance Class functions------------------------*/
 
 ///Create an instance of this subicrcuit with the name "name"
-SubCircuitInstance* SubCircuit::create_instance(std::string name , std::vector<std::string> terminals){
+SubCircuitInstance* SubCircuit::create_instance(std::string name , std::vector<std::string>& terminals){
       return new SubCircuitInstance(name, terminals, this);
 }
 
@@ -38,6 +38,10 @@ void SubCircuitInstance::add_my_nodes(Circuit* circuit){
          Element* newelem = (*iter)->clone();
 	 newelem->prepend_name(name+".");
 	 newelem->prepend_nodes(name+".");
+	 
+	 //add the nodes of this new element to the main circuit
+	 newelem->add_my_nodes(circuit);
+	 
          cloned_elements.push_back(newelem);
      } 
   

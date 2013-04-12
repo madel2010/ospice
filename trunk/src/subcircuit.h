@@ -33,7 +33,7 @@ public:
 	SubCircuit(std::string _name, std::vector<std::string> _terminals):name(_name), terminals(_terminals){};
 	
 	///Create an instance of this subicrcuit with the name "name"
-	SubCircuitInstance* create_instance(std::string name , std::vector<std::string> terminals);
+	SubCircuitInstance* create_instance(std::string name , std::vector<std::string>& terminals);
 	  
 	
 };
@@ -53,7 +53,7 @@ public:
     SubCircuitInstance() {}
     ~SubCircuitInstance();
     
-    SubCircuitInstance(std::string _name,  std::vector<std::string> _terminals, SubCircuit* _subcircuit):terminals(_terminals){
+    SubCircuitInstance(std::string _name,  std::vector<std::string>& _terminals, SubCircuit* _subcircuit):terminals(_terminals){
 	name = _name;
 	my_subcircuit = _subcircuit;
 	prepend_to_nodes = "";
