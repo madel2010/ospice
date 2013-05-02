@@ -1,28 +1,52 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="7" >
-  <Doc0 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/My_Simulator/parser.y" >
+ <DocsAndViews NumberOfDocuments="15" >
+  <Doc0 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/My_Simulator/src/Analysis.cpp" >
    <View0 Type="Source" />
   </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/Hispice_NodeTearing/src/analysis/hopade.cpp" >
+  <Doc1 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/My_Simulator/src/Analysis.h" >
    <View0 Type="Source" />
   </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/Doug_simulator/simulator/src/sparse.h" >
+  <Doc2 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/My_Simulator/src/element.h" >
    <View0 Type="Source" />
   </Doc2>
-  <Doc3 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/Doug_simulator/simulator/src/sparse.cc" >
+  <Doc3 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/My_Simulator/src/Circuit.cpp" >
    <View0 Type="Source" />
   </Doc3>
-  <Doc4 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/My_Simulator/templates/DoubleDense.h" >
+  <Doc4 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/My_Simulator/src/Circuit.h" >
    <View0 Type="Source" />
   </Doc4>
-  <Doc5 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/My_Simulator/templates/DoubleSparse.h" >
-   <View0 line="365" Type="Source" />
+  <Doc5 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/My_Simulator/src/subcircuit.h" >
+   <View0 Type="Source" />
   </Doc5>
-  <Doc6 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/Hispice_linear_parallel/netlists/cmos_inverter_cond.sp" >
-   <View0 line="0" Type="Source" />
+  <Doc6 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/My_Simulator/src/CMakeLists.txt" >
+   <View0 Type="Source" />
   </Doc6>
+  <Doc7 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/My_Simulator/src/subcircuit.cpp" >
+   <View0 Type="Source" />
+  </Doc7>
+  <Doc8 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/My_Simulator/src/Probes.cpp" >
+   <View0 Type="Source" />
+  </Doc8>
+  <Doc9 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/My_Simulator/main.cpp" >
+   <View0 Type="Source" />
+  </Doc9>
+  <Doc10 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/My_Simulator/src/resistor.cpp" >
+   <View0 Type="Source" />
+  </Doc10>
+  <Doc11 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/My_Simulator/src/Inductor.h" >
+   <View0 Type="Source" />
+  </Doc11>
+  <Doc12 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/My_Simulator/src/resistor.h" >
+   <View0 Type="Source" />
+  </Doc12>
+  <Doc13 NumberOfViews="1" URL="file:///usr/include/c%2B%2B/4.1.1/bits/stl_vector.h" >
+   <View0 Type="Source" />
+  </Doc13>
+  <Doc14 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/Hispice_uottawa/HiSPICE/Hispice/netlists/cmos_inverter_cond.sp" >
+   <View0 line="0" Type="Source" />
+  </Doc14>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
@@ -45,6 +69,9 @@
     <breakpoint5 location="/home/madel/Dropbox/My_Simulator/src/resistor.cpp:394" type="1" tracingFormatString="" traceFormatStringEnabled="0" condition="" tracingEnabled="0" enabled="1" >
      <tracedExpressions/>
     </breakpoint5>
+    <breakpoint6 location="/home/madel/C++_projects/My_Simulator/main.cpp:34" type="1" tracingFormatString="" traceFormatStringEnabled="0" condition="" tracingEnabled="0" enabled="1" >
+     <tracedExpressions/>
+    </breakpoint6>
    </breakpointList>
   </kdevdebugger>
   <kdevbookmarks>

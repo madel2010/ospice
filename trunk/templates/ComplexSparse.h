@@ -439,6 +439,9 @@ public:
 	Ai = NULL;
 	if(Ax) delete[] Ax;	
 
+	if(cols_lists)	delete[] cols_lists;
+	cols_lists = NULL;
+
 	if(first_row) delete[] first_row;
 	first_row = NULL;
         
@@ -962,29 +965,19 @@ public:
 		throw std::runtime_error("Can not subtract two sparse matrices with different sizes");
 	    }
 	
-	    create_ccs();
+	    //create_ccs();
 	    const_cast<Sparse<std::complex<double> >&>(A).create_ccs();
 
 
-	    for (int i = 0; i < A.rows; i++) {
-		  int an = Ap[i];
-		  int bn = A.Ap[i];
+	    for (int i = 0; i < A.cols; i++) {
+		  int an = A.Ap[i];
 
-		  while (an < Ap[i+1] && bn < A.Ap[i+1]) {
-		      if (Ai[an] == A.Ai[bn]) {
-			  put(i, Ai[an], ((Ax[an]) + A.Ax[bn]) );
-			  an++;
-			  bn++;
-		      }else {
-			  put(i, A.Ai[bn], A.Ax[bn] );
-			  bn++;
-		      }
+		  while (an < A.Ap[i+1]) {
+			add_to_entry(A.Ai[an] , i, A.Ax[an] );
+			an++;
 		  }
 	   
-		  while (bn < A.Ap[i+1]) {
-			put(i, A.Ai[bn], A.Ax[bn] );
-			bn++;
-		  }
+		  
 	    }
   
 	    return *this;
