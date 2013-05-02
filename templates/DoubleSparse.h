@@ -895,22 +895,18 @@ public:
       
       Sparse<double >& operator+=(const Sparse<double > &A){
 	    if(this->rows!=A.rows || this->cols!=A.cols){
-		throw std::runtime_error("Can not subtract two sparse matrices with different sizes");
+		throw std::runtime_error("Can not add two sparse matrices with different sizes");
 	    }
 	
 	    //create_ccs();
-	    const_cast<Sparse<double >&>(A).create_ccs();
-
+	    //const_cast<Sparse<double >&>(A).create_ccs();
+  
+	    std::list<SparseElement>::iterator A_cols_lists_iter;
 
 	    for (int i = 0; i < A.cols; i++) {
-		  int an = A.Ap[i];
-
-		  while (an < A.Ap[i+1]) {
-			add_to_entry(A.Ai[an] , i, A.Ax[an] );
-			an++;
-		  }
-	   
-		  
+		  for(A_cols_lists_iter=A.cols_lists[i].begin();A_cols_lists_iter!=A.cols_lists[i].end(); A_cols_lists_iter++) {
+			add_to_entry(A_cols_lists_iter->row , i, A_cols_lists_iter->value );
+		  }  
 	    }
   
 	    return *this;
