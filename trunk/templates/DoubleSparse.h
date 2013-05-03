@@ -898,15 +898,14 @@ public:
 		throw std::runtime_error("Can not add two sparse matrices with different sizes");
 	    }
 	
-	    //create_ccs();
-	    //const_cast<Sparse<double >&>(A).create_ccs();
-  
-	    std::list<SparseElement>::iterator A_cols_lists_iter;
+	    if(A.nnz>0){  
+		std::list<SparseElement>::iterator A_cols_lists_iter;
 
-	    for (int i = 0; i < A.cols; i++) {
-		  for(A_cols_lists_iter=A.cols_lists[i].begin();A_cols_lists_iter!=A.cols_lists[i].end(); A_cols_lists_iter++) {
-			add_to_entry(A_cols_lists_iter->row , i, A_cols_lists_iter->value );
-		  }  
+		for (int i = 0; i < A.cols; i++) {
+		    for(A_cols_lists_iter=A.cols_lists[i].begin();A_cols_lists_iter!=A.cols_lists[i].end(); A_cols_lists_iter++) {
+			  add_to_entry(A_cols_lists_iter->row , i, A_cols_lists_iter->value );
+		    }  
+		}
 	    }
   
 	    return *this;
