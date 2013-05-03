@@ -1126,16 +1126,18 @@ public:
 	  
 	      std::list<SparseElement>::iterator row_iterator;
 
-	      for(int col=0; col< this->cols; col++){
-	    	  for(row_iterator= this->cols_lists[col].begin() ; row_iterator!=this->cols_lists[col].end(); row_iterator++){
+	      if(nnz>0){
+		  for(int col=0; col< this->cols; col++){
+		      for(row_iterator= this->cols_lists[col].begin() ; row_iterator!=this->cols_lists[col].end(); row_iterator++){
 			
-			SparseElement new_element;
-			new_element.row = row_iterator->row;
-			new_element.value = row_iterator->value*val;
+			    SparseElement new_element;
+			    new_element.row = row_iterator->row;
+			    new_element.value = row_iterator->value*val;
 
-			result.cols_lists[col].push_back( new_element);
-			result.nnz++;
-	    	  }
+			    result.cols_lists[col].push_back( new_element);
+			    result.nnz++;
+		      }
+		  }
 	      }
 
 	      return result;
