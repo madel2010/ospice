@@ -1,7 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="15" >
+ <DocsAndViews NumberOfDocuments="22" >
   <Doc0 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/My_Simulator/src/Analysis.cpp" >
    <View0 Type="Source" />
   </Doc0>
@@ -45,8 +45,29 @@
    <View0 Type="Source" />
   </Doc13>
   <Doc14 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/Hispice_uottawa/HiSPICE/Hispice/netlists/cmos_inverter_cond.sp" >
-   <View0 line="0" Type="Source" />
+   <View0 Type="Source" />
   </Doc14>
+  <Doc15 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/My_Simulator/parser.y" >
+   <View0 Type="Source" />
+  </Doc15>
+  <Doc16 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/My_Simulator/SuiteSparse/KLU/Include/klu_version.h" >
+   <View0 Type="Source" />
+  </Doc16>
+  <Doc17 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/Doug_simulator/simulator/src/matrix.cc" >
+   <View0 line="53" Type="Source" />
+  </Doc17>
+  <Doc18 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/My_Simulator/templates/DoubleDense.h" >
+   <View0 line="25" Type="Source" />
+  </Doc18>
+  <Doc19 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/My_Simulator/templates/MatrixBase.h" >
+   <View0 line="585" Type="Source" />
+  </Doc19>
+  <Doc20 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/My_Simulator/templates/MWrap.h" >
+   <View0 line="0" Type="Source" />
+  </Doc20>
+  <Doc21 NumberOfViews="1" URL="file:///home/madel/C%2B%2B_projects/My_Simulator/templates/ComplexDense.h" >
+   <View0 line="22" Type="Source" />
+  </Doc21>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>

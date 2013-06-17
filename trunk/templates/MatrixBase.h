@@ -52,6 +52,7 @@ public:
 	virtual T* operator*() const =0;
 	virtual DBase<T>& operator=(T val)=0;
 	virtual DBase<T>& operator/=(T val)=0;
+	
 
 	virtual DBase<T>* clone()=0; //clone and return pointer to the new cloned matrix
 
@@ -71,7 +72,9 @@ public:
 	virtual DBase<T>* solve(const DBase<T> &B) = 0;
 	virtual DBase<T>* solve(DBase<T> *B) = 0;
 
-	
+	//Some Blas Routines
+	//computes this = alpha*A*B + Beta*this
+	virtual void BlasProduct(T alpha, T Beta, DBase<T>& A, DBase<T>& B)=0;
 
 	virtual ~DBase(){
 	    if(data){
@@ -233,6 +236,16 @@ public:
 		for(int j=0; j< this->cols; j++){
 		    for(int i=0; i< this->rows; i++){
 			result.data[i+this->rows*j] = this->data[i+this->rows*j] / val;
+		    }  
+		} 
+  		return result;
+	}
+
+	Dense<T> operator *(T val){
+		Dense<T> result(this->rows, this->cols);
+		for(int j=0; j< this->cols; j++){
+		    for(int i=0; i< this->rows; i++){
+			result.data[i+this->rows*j] = this->data[i+this->rows*j] * val;
 		    }  
 		} 
   		return result;
@@ -555,7 +568,28 @@ public:
 		return true;
 	}
 	template<class U> friend std::ostream& operator<< (std::ostream &out, const Dense<U> &B);
-	
+
+	/*-----------------------START: BLAS routines--------------------------------*/
+	//compyutes this = alpha*A*B + Beta*this
+	virtual void BlasProduct(T Alpha, T Beta, DBase<T>& A, DBase<T>& B){
+		DBase<T>* AB = A*B;
+		AB = AB->scale(&Alpha);
+		DBase<T>* scale_me = this->scale(&Beta);
+		
+		DBase<T>* result = (*AB)+(*scale_me);
+
+		Dense<T>* casted_result = dynamic_cast<Dense<T>*>(result);
+
+		if(casted_result){
+			*this = (*casted_result);
+		}else{
+			throw std::runtime_error("Something Wrong in Dense<T>::BlasProduct");
+		}
+		delete AB;
+		delete scale_me;
+		delete result;
+	}	
+	/*-----------------------END: BLAS routines--------------------------------*/
 };
 
 
