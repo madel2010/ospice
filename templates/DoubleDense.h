@@ -23,6 +23,7 @@
 extern "C" void dgetrf_( const int * M,  const int* N, double* A, const int *lda, int* ipiv, int* result );
 extern "C" void dgetrs_( const char* TRANS,  const int* N, const int* nrhs, double* A, const int *lda, int* ipiv, double* B, const int* ldb,  int* result, int tlen);
 extern "C" double dnrm2_(const int*N , double*A ,const int* incx);
+extern "C" void dgemm_( const char* transa,  const char* transb, const int* m, const int* n, const int* k, double* alpha, double* a, const int* lda, double* b, const int* ldb, const double* beta, double* c, const int* ldc, int transalen, int transblen);
 
 namespace BMatrix{
 
@@ -221,7 +222,24 @@ inline Dense<double> Dense<double>::operator / (const Dense<double> &B){
     
 }
 
-
+/*-----------------------START: BLAS routines--------------------------------*/
+//computes this = alpha*A*B + Beta*this
+template<>
+inline void Dense<double>::BlasProduct(double Alpha, double Beta, DBase<double>& A, DBase<double>& B){
+	
+	if(A.get_number_of_cols()!=B.get_number_of_rows() ||
+	   A.get_number_of_rows() != this->get_number_of_rows() ||
+	   B.get_number_of_cols()!=this->get_number_of_cols()){
+		throw std::runtime_error("BlasProduct is trying to multibly two matrices with different cols and rows");
+	}
+	
+	int m = A.get_number_of_rows();
+	int n = B.get_number_of_cols();
+	int k = A.get_number_of_cols();
+	int ldb = B.get_number_of_rows();
+	dgemm_("N", "N", &m, &n, &k, &Alpha, *A, &m, *B, &ldb, &Beta, this->data, &(this->rows),1,1);
+}	
+/*-----------------------END: BLAS routines--------------------------------*/
 
 }
 
