@@ -173,7 +173,7 @@ public:
 	  cols_lists = new std::list<SparseElement>[n];
 	  first_row = new int[n];
 	  last_row = new int[n];
-	  memset(first_row, m , n*sizeof(int));
+	  memset(first_row, -1 , n*sizeof(int));
 	  memset(last_row, -1 , n*sizeof(int));
 	  Last_accessed_ele_in_col = new std::list<SparseElement>::iterator[n];
 	  
