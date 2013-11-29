@@ -474,9 +474,10 @@ public:
 		throw std::runtime_error("Can not equate two sparse matrices with different size");
 	  }
 
+	  int n = A.cols;
+	  int m = A.rows;
 	  if(!matrix_created){
-	  	int n = A.cols;
-		int m = A.rows;
+	  	
 
 	  	cols_lists = new std::list<SparseElement>[n];
 	  	first_row = new int[n];
@@ -518,7 +519,7 @@ public:
       std::complex<double> get(int m, int n) const{
 	  
 	  //check if the row of the new value is greater/less than the last/first row we have already added
-	  if(m > last_row[n] || m < first_row[n] || nnz=0){
+	  if(m > last_row[n] || m < first_row[n] || nnz==0){
 		return 0.0;
 	  }
 	  
@@ -882,7 +883,7 @@ public:
 			throw std::runtime_error("Can not add two sparse matrices with different sizes");
     		}
 	
-    		Sparse<double > result = *this;
+    		Sparse<std::complex<double> > result = *this;
 		
 		if(B.nnz>0){
 		    std::list<SparseElement>::iterator B_cols_lists_iter;
@@ -902,14 +903,14 @@ public:
 			throw std::runtime_error("Can not add two sparse matrices with different sizes");
     		}
 	
-    		Sparse<double > result = *this;
+    		Sparse<std::complex<double> > result = *this;
 		
 		if(B.nnz>0){
 		    std::list<SparseElement>::iterator B_cols_lists_iter;
 		
 		    for (int i = 0; i < B.cols; i++) {
 			for(B_cols_lists_iter = B.cols_lists[i].begin(); B_cols_lists_iter!=B.cols_lists[i].end(); B_cols_lists_iter++){
-			    result.add_to_entry(B_cols_lists_iter->row , i , -1*(B_cols_lists_iter->value) );
+			    result.add_to_entry(B_cols_lists_iter->row , i , -1.0*(B_cols_lists_iter->value) );
 			}
 		    }
 		}
@@ -928,7 +929,7 @@ public:
 		
 		  for (int i = 0; i < A.cols; i++) {
 		      for(A_cols_lists_iter = A.cols_lists[i].begin(); A_cols_lists_iter!=A.cols_lists[i].end(); A_cols_lists_iter++){
-			    add_to_entry(A_cols_lists_iter->row , i , -1*(A_cols_lists_iter->value));
+			    add_to_entry(A_cols_lists_iter->row , i , -1.0*(A_cols_lists_iter->value));
 			}
 		  }
 	    }
