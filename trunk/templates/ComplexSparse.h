@@ -909,7 +909,7 @@ public:
 		
 		    for (int i = 0; i < B.cols; i++) {
 			for(B_cols_lists_iter = B.cols_lists[i].begin(); B_cols_lists_iter!=B.cols_lists[i].end(); B_cols_lists_iter++){
-			    result.add_to_entry(B_cols_lists_iter->row , i , -1*B_cols_lists_iter->value);
+			    result.add_to_entry(B_cols_lists_iter->row , i , -1*(B_cols_lists_iter->value) );
 			}
 		    }
 		}
@@ -928,7 +928,7 @@ public:
 		
 		  for (int i = 0; i < A.cols; i++) {
 		      for(A_cols_lists_iter = A.cols_lists[i].begin(); A_cols_lists_iter!=A.cols_lists[i].end(); A_cols_lists_iter++){
-			    add_to_entry(A_cols_lists_iter->row , i , -1*A_cols_lists_iter->value);
+			    add_to_entry(A_cols_lists_iter->row , i , -1*(A_cols_lists_iter->value));
 			}
 		  }
 	    }
