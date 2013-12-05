@@ -849,7 +849,7 @@ public:
 		//we have done initial LU so set structure_has_changed=false to prevent another full LU if same nz_structure
 		structure_has_changed = false;
 
-	  }else if(values_have_changed || do_klu_refactor){
+	  }else{
 		clock_t start,finish;
 		start = clock();
 
@@ -861,6 +861,7 @@ public:
 
 		//we have done LU so set values_has_changed=false to prevent another LU if same values
 		values_have_changed = false;
+		structure_has_changed = false;
 	  }
 	  
 	  	  
