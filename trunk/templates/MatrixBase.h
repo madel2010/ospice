@@ -283,11 +283,13 @@ public:
 	}
 
 	double det(){
-	      
+	      throw std::runtime_error("Please code me Dense<>.det()");
+	      return 0.0;
 	}
 	
 	double norm(int col=0){ //col is the column to calculate the norm for
 	      throw std::runtime_error("Please code me Dense<>.norm()");
+	      return 0.0;
 	}
 
 	bool is_zero(){
