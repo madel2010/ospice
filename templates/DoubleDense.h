@@ -160,8 +160,8 @@ inline DBase<double>* Dense<double>::solve (DBase<double>* _RHS){
 	if(Dense<double>* Casted_RHS=dynamic_cast<Dense<double>* >(_RHS)){
 		
 
-		Dense<double>* RHS = new Dense<double>;
-		(RHS) = (Casted_RHS);
+		//Dense<double>* RHS = (Casted_RHS);
+		
 	
 		if(this->rows==1){
 			Casted_RHS->data[0] /= this->data[0];

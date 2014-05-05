@@ -36,6 +36,8 @@ public:
     SourceFunc(){};
 
     virtual double get_value(double time)=0;
+    
+    virtual ~SourceFunc(){};
   
 };
 

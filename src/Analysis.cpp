@@ -32,7 +32,6 @@
 ///THE DC ANALYSIS
 DC::DC(){
     simulation_done = false;
-    dc_solution = NULL;
 }
 
 

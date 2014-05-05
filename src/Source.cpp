@@ -41,7 +41,7 @@ void CurrentSource::add_my_nodes(Circuit* circuit){
     n2_index = circuit->add_mna_variable(n2);
 }
 
-double CurrentSource::update_B(BMatrix::Dense<double> &B, double time){
+void CurrentSource::update_B(BMatrix::Dense<double> &B, double time){
     double value = Func->get_value(time);
     if(n1_index > -1) B.put(n1_index,0,value);
     if(n2_index > -1) B.put(n2_index,0,-value);
@@ -83,7 +83,7 @@ void VoltageSource::add_my_nodes(Circuit* circuit ){
     
 }
 
-double VoltageSource::update_B(BMatrix::Dense<double> &B, double time){
+void VoltageSource::update_B(BMatrix::Dense<double> &B, double time){
     double value = Func->get_value(time);
     
     B.put(current_index,0,-value);

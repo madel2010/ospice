@@ -67,10 +67,11 @@ class transient: public Analysis
  
 private:  
     BMatrix::Dense<double> tr_solution; //the solution to the DC
-    double h; //the step size
+
     
     double start_time; //the starting time of the simulation_done
     double end_time; //the end time of the simulation
+    double h; //the step size
     
 public:
     transient(double _start_time, double _end_time , double _h):start_time(_start_time), end_time(_end_time), h(_h){};

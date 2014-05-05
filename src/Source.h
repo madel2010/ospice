@@ -45,7 +45,7 @@ public:
     ~Source(){
 	delete Func;
     };
-    virtual double update_B(BMatrix::Dense<double> &B,double time)=0;
+    virtual void update_B(BMatrix::Dense<double> &B,double time)=0;
 };
 
 
@@ -72,7 +72,7 @@ public:
     
     CurrentSource* clone(){ return new CurrentSource(*this); }
      
-    double update_B(BMatrix::Dense<double> &B, double time);
+    void update_B(BMatrix::Dense<double> &B, double time);
     
     ///add the requird nodes to the main circuit
     void add_my_nodes(Circuit* circuit);
@@ -114,7 +114,7 @@ public:
      
     VoltageSource* clone(){ return new VoltageSource(*this); }
     
-    double update_B(BMatrix::Dense<double> &B, double time);
+    void update_B(BMatrix::Dense<double> &B, double time);
     
     ///add the requird nodes to the main circuit
     void add_my_nodes(Circuit* circuit);

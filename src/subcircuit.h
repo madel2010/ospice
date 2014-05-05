@@ -26,9 +26,9 @@ class SubCircuit : public Circuit
 friend class SubCircuitInstance;
   
 private:
-	std::vector<std::string> terminals;
 	std::string name;
-
+        std::vector<std::string> terminals;
+	
 public:
 	SubCircuit(std::string _name, std::vector<std::string> _terminals):name(_name), terminals(_terminals){};
 	
