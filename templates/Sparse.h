@@ -30,22 +30,7 @@ protected:
 	int rows; //number of rows
 	int cols; //number of columns	
 	
-	int nnz; //this will save the number of nonzeros
-        bool ccs_created;
-        bool matrix_created;
-
-        //For the CCS 
-        int* Ap;  //the pointer to columns position
-        int* Ai; //the rows data
-        T** Ax; 		//The values
-      
-        //For KLU
-        klu_symbolic* Symbolic;
-        klu_common Common;
-        void* Numeric;
-      
-        bool structure_has_changed;
-        bool values_have_changed;
+	
 public:
 	int get_number_of_rows()const{ return rows;}
 	int get_number_of_cols()const{return cols;}
@@ -62,6 +47,24 @@ class Sparse: public SBase<T>{
 
 private:
           
+      int nnz; //this will save the number of nonzeros
+      bool ccs_created;
+      bool matrix_created;
+
+      //For the CCS 
+      int* Ap;  //the pointer to columns position
+      int* Ai; //the rows data
+      T* Ax; 		//The values
+      
+      
+      //For KLU
+      klu_symbolic* Symbolic;
+      klu_common Common;
+      void* Numeric;
+      
+      bool structure_has_changed;
+      bool values_have_changed;
+	
       BMatrix::MWrap<double>* MWrap_Ax; //The Mwrap class that holdes tha Ax values. It is used in the KLU routines
        
       //the following numbers are for storing the time for doing sparse order and LU factorization.
@@ -96,7 +99,7 @@ private:
 	  this->Ap[0] = 0; //this->Ap[0] is always zero
 	  
 	  this->Ai = new  int[this->nnz];
-	  this->Ax = new  T*[this->nnz]; 
+	  this->Ax = new  T[this->nnz]; 
 	  
 	  
 	  //typedef typename std::list<SparseElement>::iterator row_iter;
@@ -110,7 +113,7 @@ private:
 	      
 	      for(row_iter = this->cols_lists[i].begin(); row_iter!=this->cols_lists[i].end(); row_iter++){
 		  this->Ai[k] = row_iter->row;
-		  this->Ax[k] = &row_iter->value; 
+		  this->Ax[k] = row_iter->value; 
 		  
 		  k++;
 	      }
@@ -157,7 +160,7 @@ private:
 	  //This function should put the Ax vector in the Mwrap format to be ready for KLU routines
 	  MWrap_Ax = new  BMatrix::MWrap<double>[this->nnz];
 	  for(int i=0; i<this->nnz; i++){
-	      MWrap_Ax[i] = dynamic_cast<DBase<double>*>(this->Ax[i]);
+	      MWrap_Ax[i] = dynamic_cast<DBase<double>*>(&this->Ax[i]);
 	  }
       }
       
@@ -962,20 +965,19 @@ public:
       			throw std::runtime_error("Can not multibly two sparse matrices with different rows and columns");
     		}
 
-    		const_cast<Sparse<T >&>(*this).create_ccs();
-    		const_cast<Sparse<T >&>(B).create_ccs();
-    
-
     		int m = this->rows;
     		int n = B.cols;
  
     		Sparse<T > result(m, n);
 
+		typename std::list<SparseElement>::iterator row_iterator , row_iterator_B;
+		
     		for (int i = 0; i < B.cols; i++) {
-      			for (int p = B.Ap[i]; p < B.Ap[i+1]; p++) {
-        			int j = B.Ai[p];
-        			for (int q = this->Ap[j]; q < this->Ap[j+1]; q++) {
-          				result.add_to_entry(this->Ai[q], i, (this->Ax[q] * B.Ax[p]));
+		        for(row_iterator_B= B.cols_lists[i].begin() ; row_iterator_B!=B.cols_lists[i].end(); row_iterator_B++){
+				int j = row_iterator_B->row;
+				
+				for (row_iterator = this->cols_lists[j].begin(); row_iterator = this->cols_lists[j].end(); row_iterator++) {
+          				result.add_to_entry(row_iterator->row, i, (row_iterator->value * row_iterator_B->value));
         			}
       			}
     		}
@@ -989,26 +991,20 @@ public:
 	        if (this->cols != B.get_number_of_rows()) {
 			throw std::runtime_error("Can not multible Sparse*Dense with inconsistence sizes");
 		}
-
-		create_ccs();
 		
 		Dense<T > result (this->rows, B.get_number_of_cols());
 
+		typename std::list<SparseElement>::iterator row_iterator;
+
 		
 		for (int j = 0; j < B.get_number_of_cols(); j++) {	    
-			    for (int i = 0; i < this->cols; i++) {
-				  if (this->Ap[i] < this->Ap[i+1]) {
-				  int an = this->Ap[i];
-                    
-				  while (an < this->Ap[i+1]) {
-					result.add_to_entry (this->Ai[an] ,j, (*(this->Ax[an])) * B.get(i,j) );
-					an++;
-				  }
-                    
-				  
+			    for(int col=0; col< this->cols; col++){
+			        for(row_iterator= this->cols_lists[col].begin() ; row_iterator!=this->cols_lists[col].end(); row_iterator++){
+					result.add_to_entry (row_iterator->row ,j, row_iterator->value * B.get(col,j) );
+				}
 			    }
-			}
 		}
+		
 
 		return result;
 	}
@@ -1087,19 +1083,18 @@ public:
 			    throw std::runtime_error("Can not Add Dense+Sparse with different sizes");
 		  }
 
-		  create_ccs();
 		  
 		  BMatrix::Dense<T > result = A;
     
-    
-		  for (int i = 0; i < this->cols; i++) {
-		      int bn = this->Ap[i];
-
-		      while (bn < this->Ap[i+1]) {
-			    result.add_to_entry(this->Ai[bn] , i, this->Ax[bn] );
-			    bn++;
+                  typename std::list<SparseElement>::iterator row_iterator;
+		  
+		    
+		  for (int col = 0; col < this->cols; col++) {
+		      for(row_iterator=this->cols_lists[col].begin(); row_iterator!=this->cols_lists[col].end(); col++){
+			  result.add_to_entry(row_iterator->row , col, row_iterator->value );
 		      }
 		  }
+		  	      
 		  
 		  return result;
 	  }
@@ -1155,7 +1150,7 @@ template<class U> std::ostream& operator << (std::ostream &out , Sparse<U>& B){
       
       out<<"this->this->Ax=[";
       for(int i=0; i<B.nnz; i++){
-	  out<<(*B.Ax[i])<<" ";
+	  out<<(B.Ax[i])<<" ";
       }
       out<<"]"<<std::endl;
       
