@@ -160,6 +160,11 @@ public:
 	virtual double is_zero(){
 		return A->is_zero();
 	}
+	
+	//computes A = alpha*B*C + Beta*A
+	virtual void multibly_AB_add_this(double Alpha, double Beta, MWrap<T>& B, MWrap<T>& C){
+		A->multibly_AB_add_this(Alpha, Beta, *B, *C);
+	}
 
 };
 

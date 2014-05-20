@@ -313,8 +313,14 @@ typedef BMatrix::MWrap<double> Unit ;
 #define DECREMENT(c,a)              { (c) -= (a) ; }
 #define MULT(c,a,b)                 { c = a * b; } 
 #define MULT_CONJ(c,a,b)            { c = a * b; } //multibly a*b and put result in c if not NULL
-#define MULT_SUB(c,a,b)             { (c) -= a * b ; }
-#define MULT_SUB_CONJ(c,a,b)        { (c) -= a * b ; }
+
+//#define MULT_SUB(c,a,b)           { (c) -= a * b ; }
+#define MULT_SUB(c,a,b)             { (c).multibly_AB_add_this(-1,1,a,b);}// c = alpha*a*b + Beta*c, alpha=-1, beta=1
+ 
+
+//#define MULT_SUB_CONJ(c,a,b)      { (c) -= a * b ; }
+#define MULT_SUB_CONJ(c,a,b)        { (c).multibly_AB_add_this(-1,1,a,b);}// c = alpha*a*b + Beta*c, alpha=-1, beta=1
+
 #define DIV(c,a,b)                  { (c) = b.solve(a) ; } ///TODO:must be checked
 #define RECIPROCAL(c)               { (c) = 1.0 / (c) ; }
 #define DIV_CONJ(c,a,b)             { (c) = b.solve(a) ; }

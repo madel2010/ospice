@@ -74,19 +74,19 @@ inline Dense<std::complex<double> >& Dense<std::complex<double> >::operator = (c
 /*-----------------------START: BLAS routines--------------------------------*/
 //computes this = alpha*A*B + Beta*this
 template<>
-inline void Dense<std::complex<double> >::BlasProduct(std::complex<double> Alpha, std::complex<double> Beta, DBase<std::complex<double> >& A, DBase<std::complex<double> >& B){
+inline void Dense<std::complex<double> >::multibly_AB_add_this(std::complex<double> Alpha, std::complex<double> Beta, DBase<std::complex<double> >* A, DBase<std::complex<double> >* B){
 	
-	if(A.get_number_of_cols()!=B.get_number_of_rows() ||
-	   A.get_number_of_rows() != this->get_number_of_rows() ||
-	   B.get_number_of_cols()!=this->get_number_of_cols()){
+	if(A->get_number_of_cols()!=B->get_number_of_rows() ||
+	   A->get_number_of_rows() != this->get_number_of_rows() ||
+	   B->get_number_of_cols()!=this->get_number_of_cols()){
 		throw std::runtime_error("BlasProduct is trying to multibly two matrices with different cols and rows");
 	}
 	
-	int m = A.get_number_of_rows();
-	int n = B.get_number_of_cols();
-	int k = A.get_number_of_cols();
-	int ldb = B.get_number_of_rows();
-	zgemm_("N", "N", &m, &n, &k, &Alpha, *A, &m, *B, &ldb, &Beta, this->data, &(this->rows),1,1);
+	int m = A->get_number_of_rows();
+	int n = B->get_number_of_cols();
+	int k = A->get_number_of_cols();
+	int ldb = B->get_number_of_rows();
+	zgemm_("N", "N", &m, &n, &k, &Alpha, **A, &m, **B, &ldb, &Beta, this->data, &(this->rows),1,1);
 }	
 /*-----------------------END: BLAS routines--------------------------------*/
 
