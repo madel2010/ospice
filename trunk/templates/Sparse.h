@@ -153,14 +153,14 @@ private:
 	  if(this->nnz==0) return;
 	  
 	  //First check that T is a block not scalar and it is Dense
-	  if (!dynamic_cast<Dense<double>*>(this->Ax[0])) {
+	  if (!dynamic_cast<Dense<double>*>(&(this->Ax[0]))) {
 	      throw std::runtime_error("Solving a Block matrix with non-Dense blocks");
 	  } 
 	  
 	  //This function should put the Ax vector in the Mwrap format to be ready for KLU routines
 	  MWrap_Ax = new  BMatrix::MWrap<double>[this->nnz];
 	  for(int i=0; i<this->nnz; i++){
-	      MWrap_Ax[i] = dynamic_cast<DBase<double>*>(&this->Ax[i]);
+	      MWrap_Ax[i] = dynamic_cast<DBase<double>*>(&(this->Ax[i]));
 	  }
       }
       
@@ -494,9 +494,11 @@ public:
       //Get a value at row m and column n
       T get(int m, int n) const{
 	  
+	  
+	  
 	  //check if the row of the new value is greater/less than the last/first row we have already added
 	  if(m > last_row[n] || m < first_row[n] || this->nnz==0){
-		return 0.0;
+	     return 0.0;
 	  }
 	  
 	  T result;
@@ -655,7 +657,7 @@ public:
       //put value in row m and column n
       void put(int m, int n, T value){
 	  
-	  if(value==0.0) return;
+	  //if(value==0.0) return;
 	  
 	  //check if this is the first element
 	  if(this->nnz==0){
@@ -817,7 +819,8 @@ public:
       }
       
       void sparse_free_numeric(){
-	  klu_B_free_numeric(&((klu_B_numeric*)this->Numeric) ,  &this->Common);
+	  klu_B_numeric* my_numeric = (klu_B_numeric*)this->Numeric ;
+	  klu_B_free_numeric(&my_numeric ,  &(this->Common));
       }
       
       SBase<T>* solve(const SBase<T> &B) const{

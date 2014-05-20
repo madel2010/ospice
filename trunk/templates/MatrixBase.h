@@ -74,7 +74,7 @@ public:
 
 	//Some Blas Routines
 	//computes this = alpha*A*B + Beta*this
-	virtual void BlasProduct(T alpha, T Beta, DBase<T>& A, DBase<T>& B)=0;
+	virtual void multibly_AB_add_this(T alpha, T Beta, DBase<T>* A, DBase<T>* B)=0;
 
 	virtual ~DBase(){
 	    if(data){
@@ -96,6 +96,16 @@ public:
 		this->rows=0;
 		this->cols=0;
 		this->data = NULL;
+		this->LU_factors = NULL;
+		have_LU_factors = false;
+		
+	}
+	
+	Dense(T val){ 
+		this->rows=1;
+		this->cols=1;
+		this->data = new T[1];
+		this->data[0] = val;
 		this->LU_factors = NULL;
 		have_LU_factors = false;
 		
@@ -573,24 +583,35 @@ public:
 
 	/*-----------------------START: BLAS routines--------------------------------*/
 	//compyutes this = alpha*A*B + Beta*this
-	virtual void BlasProduct(T Alpha, T Beta, DBase<T>& A, DBase<T>& B){
-		DBase<T>* AB = A*B;
-		AB = AB->scale(&Alpha);
-		DBase<T>* scale_me = this->scale(&Beta);
+	virtual void multibly_AB_add_this(T Alpha, T Beta, Dense<T>* A, Dense<T>* B){
 		
-		DBase<T>* result = (*AB)+(*scale_me);
+		*this = (*A)*(*B)*Alpha + *this*Beta;
+	
 
-		Dense<T>* casted_result = dynamic_cast<Dense<T>*>(result);
-
-		if(casted_result){
-			*this = (*casted_result);
-		}else{
-			throw std::runtime_error("Something Wrong in Dense<T>::BlasProduct");
-		}
-		delete AB;
-		delete scale_me;
-		delete result;
 	}	
+	
+	virtual void multibly_AB_add_this(T Alpha, T Beta, DBase<T>* A, DBase<T>* B){
+		
+		
+		  DBase<T>* AB = (*A)*(*B);
+		  AB = AB->scale(&Alpha);
+		  DBase<T>* scale_me = this->scale(&Beta);
+		
+		  DBase<T>* result = (*AB)+(*scale_me);
+
+		  Dense<T>* casted_result = dynamic_cast<Dense<T>*>(result);
+
+		  if(casted_result){
+			*this = (*casted_result);
+		  }else{
+			throw std::runtime_error("Something Wrong in Dense<T>::BlasProduct");
+		  }
+		  delete AB;
+		  delete scale_me;
+		  delete result;
+		
+	}	
+	
 	/*-----------------------END: BLAS routines--------------------------------*/
 };
 
