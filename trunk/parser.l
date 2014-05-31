@@ -31,6 +31,9 @@
 
 -?[0-9]+("."[0-9])*|-?"."[0-9]+|-?[0-9]+E[-+]?[0-9]+|-?[0-9]+"."[0-9]*E[-+]?[0-9]+|-?"."[0-9]+E[-+]?[0-9]+ { yylval.dval = atof(yytext) ; return DVALUE;} 
 
+^\.[Ss][Uu][Bb][Cc][Kk][Tt] {return SUBCKT;}
+^\.[Ee][Nn][Dd][Ss] {return END_SUBCKT;}
+
 
 \n   {return NEWLINE;}                   /* ignore end of line */;
 [ \t]+                  /* ignore whitespace */;

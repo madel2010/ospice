@@ -30,14 +30,19 @@ protected:
 	int rows; //number of rows
 	int cols; //number of columns	
 	
+	T zero_element; //we want to know what a zero element is, this is usefull for the case of matrices of matrices when we use put anf get
 	
 public:
+     
 	int get_number_of_rows()const{ return rows;}
 	int get_number_of_cols()const{return cols;}
 
 	virtual void put(int m, int n, T value)=0; 
 	virtual T get(int m, int n) const=0;
 
+	SBase(T _zero_element){zero_element=_zero_element;}
+	SBase(){zero_element=0.0;};
+	
 	virtual ~SBase(){}
 
 };
@@ -202,7 +207,7 @@ public:
       }
       
       Sparse(int m, int n){
-	  this->rows=m; //Number of rows
+	  /*this->rows=m; //Number of rows
 	  this->cols=n; //Number of cols
 	  this->nnz = 0;
 
@@ -237,6 +242,9 @@ public:
           number_of_klu_analyze = 0;
           number_of_klu_factor = 0;
 	  number_of_klu_refactor = 0;
+	  */
+	  this->matrix_created = false;
+	  create(m, n);
       }
       
       //copy constructor
@@ -297,6 +305,10 @@ public:
 	  number_of_klu_refactor = 0;
       }
 
+      Sparse(int m, int n,T zero_element):SBase<T>(zero_element){
+	  this->matrix_created = false;
+	  create(m, n);
+      }
 
        //convert dense to sparse
        Sparse(const Dense<T >&A){
@@ -498,7 +510,7 @@ public:
 	  
 	  //check if the row of the new value is greater/less than the last/first row we have already added
 	  if(m > last_row[n] || m < first_row[n] || this->nnz==0){
-	     return 0.0;
+	     return this->zero_element;
 	  }
 	  
 	  T result;
@@ -513,7 +525,7 @@ public:
 	    result = row_iterator->value;
 	    
 	 }else{
-	    result = 0;
+	    result = this->zero_element;
 	 }
 	 
 	 return result;
@@ -657,7 +669,7 @@ public:
       //put value in row m and column n
       void put(int m, int n, T value){
 	  
-	  //if(value==0.0) return;
+	  if(value==0.0) return;
 	  
 	  //check if this is the first element
 	  if(this->nnz==0){
