@@ -579,6 +579,19 @@ public:
 		}
 		return true;
 	}
+	
+	bool operator==(T val){
+		//we only check the diagonals
+		for(int i=0; i< this->rows; i++){
+		    if(this->data[i+this->rows*i]!=val){
+			return false;
+		    }
+		}
+		return true;
+	}
+	
+	
+	
 	template<class U> friend std::ostream& operator<< (std::ostream &out, const Dense<U> &B);
 
 	/*-----------------------START: BLAS routines--------------------------------*/

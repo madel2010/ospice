@@ -1,6 +1,9 @@
+%debug
 
 %{
 /*--------------This part is normal C++ code  that would appear before the Bison code-----*/
+
+
 #include <stdio.h>
 #include <string>
 #include <iostream>
@@ -17,6 +20,13 @@
 #include "Analysis.h"
 #include "Probes.h"
 #include <list>
+#include <string>
+
+
+//declare the list of crcuit classes to add the elements to it
+//this is also usefull when we add subcircuits. The first element in this list is always the main circtui
+std::list<Circuit*> Circuit_lists(1,new Circuit);
+Circuit* CurrentCircuit = Circuit_lists.front();
 
 
 #define YYDEBUG 1
@@ -41,8 +51,7 @@ extern "C"
 }
 
 
-//declare the main crcuit class to add the elements to it
-Circuit MainCircuit;
+
 
 %}
 
@@ -53,8 +62,10 @@ Circuit MainCircuit;
 	double dval;
 	char* str;
 	int ival;
-	std::list<char*>*  arg_list;
+	std::list<std::string>*  arg_list;
 }
+%destructor { delete $$; } <arg_list> 
+
 
 %token <dval> DVALUE
 %token <str> STRING
@@ -64,6 +75,8 @@ Circuit MainCircuit;
 %token <str> INDUCTOR
 %token <str> CAPACITOR
 %token <str> MUTUALINDUCTOR
+%token <str> SUBCKT
+%token <str> END_SUBCKT
 
 %token <str> VOLTAGESOURCE
 %token <str> CURRENTSOURCE
@@ -99,7 +112,7 @@ element:
 	| resistor_statment
 	| inductor_statment
 	| capacitor_statment
-	//| subcircuit_statment
+	| subcircuit_statment
 	;
 	
 source:
@@ -108,50 +121,53 @@ source:
 	
 command:
 	| tran_statment
+	| end_subckt_statment
 	;
 	
 resistor_statment:
 	| RESISTOR node node DVALUE NEWLINE{
-	      MainCircuit<< new resistor($1, $2, $3, $4);
+	      (*CurrentCircuit)<< new resistor($1, $2, $3, $4);
 	}
 	;
 	
 inductor_statment:
 	| INDUCTOR node node DVALUE NEWLINE{
-	      MainCircuit<< new Inductor($1, $2, $3, $4);
+	      (*CurrentCircuit)<< new Inductor($1, $2, $3, $4);
 	}
 	;
 	
 
 capacitor_statment:
 	| CAPACITOR node node DVALUE NEWLINE{
-	      MainCircuit<< new Capacitor($1, $2, $3, $4);
+	      (*CurrentCircuit)<< new Capacitor($1, $2, $3, $4);
 	}
 	;
 
 voltagesource_statment:
 	| VOLTAGESOURCE node node DVALUE{ //DC voltage source
-	      MainCircuit<< new VoltageSource ($1, $2, $3 , new DCSource($4) ) ;
+	      (*CurrentCircuit)<< new VoltageSource ($1, $2, $3 , new DCSource($4) ) ;
 	}
 	;
 	
 voltagesource_statment:
 	| CURRENTSOURCE node node DVALUE{ //DC voltage source
-	       MainCircuit<< new CurrentSource ($1, $2, $3 , new DCSource($4) ) ;
+	       (*CurrentCircuit)<< new CurrentSource ($1, $2, $3 , new DCSource($4) ) ;
 	}	
 	;
 	
 tran_statment:
 	| TRAN DVALUE DVALUE{
-	      MainCircuit<< new transient(0, $3 , $2);
+	      (*CurrentCircuit)<< new transient(0, $3 , $2);
 	}
 	;
 	
-//subcircuit_statment:
-//	|SUBCKT node_list{
-	
-//	}
-//	;
+subcircuit_statment:
+	|SUBCKT STRING node_list{
+	    std::vector<std::string> terminals{ std::make_move_iterator(std::begin($3)), std::make_move_iterator(std::end($3)) };
+	    Circuit_lists.push_back(new SubCircuit S1($2 , terminals));
+	    CurrentCircuit = Circuit_lists.back();
+	}
+	;
 
 node:
      | DVALUE{
@@ -168,12 +184,12 @@ node:
     
 node_list:
     |node_list node{ 
-	  $1->push_front($2);
+	  $1->push_back($2);
 	  $$ = $1;
-	  printf("asasasas");
+	  free($1);
     }
     |node{
-          $$ = new std::list<char*>;
+          $$ = new std::list<std::string>;
           $$->push_back($1);
     }
     ;
@@ -200,8 +216,8 @@ int yydebug = 0;
         yyparse();
 	
 	//Start simulating the circuit
-	MainCircuit.start_analysis();
-	MainCircuit.plot_probes();
+	CurrentCircuit->start_analysis();
+	CurrentCircuit->plot_probes();
 	
 	return 0;
 } 
