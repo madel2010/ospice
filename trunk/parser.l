@@ -25,6 +25,9 @@
 
 ^[iI][A-Za-z0-9_]+ {yylval.str=strdup(yytext); return CURRENTSOURCE;}
 
+^[xX][A-Za-z0-9_]+ {yylval.str=strdup(yytext); return SUBCKT_INSTANCE;}
+
+
 [A-Za-z_]+[0-9]* {yylval.str=strdup(yytext); return STRING;}
 
 ^\.[tT][rR][aA][nN] {return TRAN;}

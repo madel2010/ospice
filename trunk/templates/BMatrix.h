@@ -11,4 +11,6 @@
 #include "DoubleSparse.h"
 #include "ComplexSparse.h"
 
+#include "DefinedMatrices.h"
+
 #endif

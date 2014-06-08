@@ -42,10 +42,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/spider/C++_projects/My_Simulator
+CMAKE_SOURCE_DIR = /home/spider/C++_projects/ospice
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/spider/C++_projects/My_Simulator
+CMAKE_BINARY_DIR = /home/spider/C++_projects/ospice
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -72,9 +72,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/spider/C++_projects/My_Simulator/CMakeFiles /home/spider/C++_projects/My_Simulator/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/spider/C++_projects/ospice/CMakeFiles /home/spider/C++_projects/ospice/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/spider/C++_projects/My_Simulator/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/spider/C++_projects/ospice/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -126,19 +126,6 @@ OspiceParser: cmake_check_build_system
 OspiceParser/fast:
 	$(MAKE) -f CMakeFiles/OspiceParser.dir/build.make CMakeFiles/OspiceParser.dir/build
 .PHONY : OspiceParser/fast
-
-#=============================================================================
-# Target rules for targets named doc
-
-# Build rule for target.
-doc: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 doc
-.PHONY : doc
-
-# fast build rule for target.
-doc/fast:
-	$(MAKE) -f CMakeFiles/doc.dir/build.make CMakeFiles/doc.dir/build
-.PHONY : doc/fast
 
 #=============================================================================
 # Target rules for targets named suitesparse
@@ -259,7 +246,6 @@ help:
 	@echo "... depend"
 	@echo "... Ospice"
 	@echo "... OspiceParser"
-	@echo "... doc"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... suitesparse"

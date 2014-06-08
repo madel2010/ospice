@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 2.6)
 SET(CMAKE_VERBOSE_MAKEFILE ON)
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules)
 
-SET(CMAKE_CXX_FLAGS "-O0 -g -fopenmp -Wall")
+SET(CMAKE_CXX_FLAGS "-O0 -g -fopenmp -Wall -std=c++11")
 SET(CMAKE_C_FLAGS "-O0 -g -fopenmp -Wall")
 SET(LIBS gomp)
 
