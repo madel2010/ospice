@@ -34,6 +34,8 @@ public:
 	
 	///Create an instance of this subicrcuit with the name "name"
 	SubCircuitInstance* create_instance(std::string name , std::vector<std::string>& terminals);
+	
+	std::string get_name() const{return name;}
 	  
 	
 };

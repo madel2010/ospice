@@ -991,7 +991,7 @@ public:
 		        for(row_iterator_B= B.cols_lists[i].begin() ; row_iterator_B!=B.cols_lists[i].end(); row_iterator_B++){
 				int j = row_iterator_B->row;
 				
-				for (row_iterator = this->cols_lists[j].begin(); row_iterator = this->cols_lists[j].end(); row_iterator++) {
+				for (row_iterator = this->cols_lists[j].begin(); row_iterator != this->cols_lists[j].end(); row_iterator++) {
           				result.add_to_entry(row_iterator->row, i, (row_iterator->value * row_iterator_B->value));
         			}
       			}

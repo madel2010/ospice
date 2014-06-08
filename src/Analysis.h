@@ -32,6 +32,8 @@
 #include "Circuit.h"
 #include "BMatrix.h"
 
+class envelope_following;
+
 class Analysis
 {
 protected:
@@ -61,23 +63,78 @@ public:
      const BMatrix::Dense<double>& get_solution() { return dc_solution ; }
 };
 
-///This class is for the DC Analysis
+///This class is for the transient Analysis
 class transient: public Analysis
 {
- 
+ friend envelope_following;
 private:  
     BMatrix::Dense<double> tr_solution; //the solution to the DC
-
     
+    bool set_initial_condition; //if we want to set an initial condition not to use the DC analysis
+    BMatrix::Dense<double> my_initial_condition; //an initial condition for the circuit
+        
     double start_time; //the starting time of the simulation_done
     double end_time; //the end time of the simulation
     double h; //the step size
     
+    //time points to save solution for
+    std::vector<double> save_solution_at;
+    std::vector<BMatrix::Dense<double> > saved_solution;
+    
+    //to do the transient analysis. this is called from simulate(). it can also compute the Sensitivty Matrix
+    void perform_simulate(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, BMatrix::Sparse<double> &J, BMatrix::Dense<double> &B, BMatrix::Dense<double> &fx, Circuit* circ, BMatrix::Sparse< double >* Sensitivty_Matrix);
+    
 public:
-    transient(double _start_time, double _end_time , double _h):start_time(_start_time), end_time(_end_time), h(_h){};
+    transient(double _start_time, double _end_time , double _h):start_time(_start_time), end_time(_end_time), h(_h){
+      set_initial_condition = false;
+    };
 
     void simulate(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, BMatrix::Sparse<double> &J, BMatrix::Dense<double> &B, BMatrix::Dense<double> &fx, Circuit* circ);
     
+    //this function if we want to return the Sensitivty Matrix
+    void simulate(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, BMatrix::Sparse<double> &J, BMatrix::Dense<double> &B, BMatrix::Dense<double> &fx, Circuit* circ, BMatrix::Sparse< double >& _Sensitivty_Matrix);
+    
+    void set_save_solution_time(std::vector<double> _save_solution_at){save_solution_at = _save_solution_at;}
+
+    std::vector<BMatrix::Dense<double> > get_saved_solution(){return saved_solution;};
+    
+    void use_initial_condition(BMatrix::Dense<double>& initial_condition){
+      my_initial_condition = initial_condition;
+      set_initial_condition = true;
+    }
+    
+    
+};
+
+
+///This class is for Enveope Following Analaysis
+class envelope_following: public Analysis
+{
+    
+private:
+      double start_time;
+      double end_time;
+      double H; //The jump
+      double h; //the small step size for normal transient anlysis
+      double T; //The period of high frequency component
+    
+      transient * my_transient; //the transient analysis that will be used
+
+      
+public:
+     envelope_following(double _start_time, double _end_time , double _H, double _h, double _T):start_time(_start_time), end_time(_end_time), H(_H), h(_h), T(_T){
+        my_transient = new  transient(start_time, start_time+T , h);
+
+    };
+     
+     envelope_following(double _start_time, double _end_time , double _H, double _T):start_time(_start_time), end_time(_end_time), H(_H), T(_T){
+       h = T/100;
+       my_transient = new  transient(start_time, start_time+T , h);
+
+    };
+
+     void simulate(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, BMatrix::Sparse<double> &J, BMatrix::Dense<double> &B, BMatrix::Dense<double> &fx, Circuit* circ);
+
 };
 
 #endif // ANALYSIS_H
