@@ -82,7 +82,7 @@ private:
     std::vector<BMatrix::Dense<double> > saved_solution;
     
     //to do the transient analysis. this is called from simulate(). it can also compute the Sensitivty Matrix
-    void perform_simulate(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, BMatrix::Sparse<double> &J, BMatrix::Dense<double> &B, BMatrix::Dense<double> &fx, Circuit* circ, BMatrix::Sparse< double >* Sensitivty_Matrix);
+    void perform_BE(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, BMatrix::Sparse<double> &J, BMatrix::Dense<double> &B, BMatrix::Dense<double> &fx, Circuit* circ, BMatrix::Sparse< double >* Sensitivty_Matrix);
     
 public:
     transient(double _start_time, double _end_time , double _h):start_time(_start_time), end_time(_end_time), h(_h){
@@ -99,8 +99,8 @@ public:
     std::vector<BMatrix::Dense<double> > get_saved_solution(){return saved_solution;};
     
     void use_initial_condition(BMatrix::Dense<double>& initial_condition){
-      my_initial_condition = initial_condition;
-      set_initial_condition = true;
+	my_initial_condition = initial_condition;
+	set_initial_condition = true;
     }
     
     

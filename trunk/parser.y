@@ -36,6 +36,7 @@ Circuit* CurrentCircuit = Circuit_lists.front();
 //<Name of instance , std::pair< name of subcircuit , terminals>
 std::map<std::string , std::pair<std::string , std::list<std::string> > > subckt_instances;
 
+//function to search for subcircuit name
 struct FindSubckt: public std::binary_function< Circuit*, std::string, bool > {
 		    bool operator () ( const Circuit* element, const std::string name ) const {
 		    const SubCircuit* sub_circuit = dynamic_cast<const SubCircuit*>(element);
@@ -47,10 +48,8 @@ struct FindSubckt: public std::binary_function< Circuit*, std::string, bool > {
 
 extern "C" FILE *yyin;
 
-void yyerror(const char *str)
-{
-        fprintf(stderr,"error: %s\n",str);
-}
+
+
   
 int yylex(void);
 
@@ -61,11 +60,15 @@ extern "C"
         {
                 return 1;
         }
-	int yylinno;
+	//int yylineno;
+	//char* yytext;
 }
 
-
-
+void yyerror(const char *str){
+        extern int yylineno;  
+	extern char *yytext;
+        printf("Line %d: %s at %s\n", yylineno, str, yytext);
+}
 
 %}
 
@@ -161,13 +164,13 @@ capacitor_statment:
 	;
 
 voltagesource_statment:
-	| VOLTAGESOURCE node node DVALUE{ //DC voltage source
+	| VOLTAGESOURCE node node DVALUE NEWLINE{ //DC voltage source
 	      (*CurrentCircuit)<< new VoltageSource ($1, $2, $3 , new DCSource($4) ) ;
 	}
 	;
 	
 voltagesource_statment:
-	| CURRENTSOURCE node node DVALUE{ //DC voltage source
+	| CURRENTSOURCE node node DVALUE NEWLINE{ //DC voltage source
 	       (*CurrentCircuit)<< new CurrentSource ($1, $2, $3 , new DCSource($4) ) ;
 	}	
 	;
@@ -186,7 +189,7 @@ subckt_instance_statment:
 	;
 	
 subcircuit_statment:
-	|SUBCKT STRING node_list{
+	|SUBCKT STRING node_list NEWLINE{
 	    //Initialize vecor from list. Note we are using C++11 syntax.
 	    //{}  calls what is called an std::initializer_list
 	    std::vector<std::string> terminals {std::make_move_iterator($3->begin()), std::make_move_iterator($3->end())};
@@ -196,7 +199,7 @@ subcircuit_statment:
 	;
 	
 end_subckt_statment:
-	|END_SUBCKT{
+	|END_SUBCKT NEWLINE{
 	   CurrentCircuit = Circuit_lists.front();
 	}
 	;
@@ -218,7 +221,7 @@ node_list:
     |node_list node{ 
 	  $1->push_back($2);
 	  $$ = $1;
-	  free($1);
+	  
     }
     |node{
           $$ = new std::list<std::string>;
@@ -247,18 +250,22 @@ int yydebug = 0;
 	printf("Parsing file %s\n",argv[1]);
         yyparse();
 	
-	//create the subcircuit subckt_instances
-	 //find the subckt. We start from second becuase first one is main
-	      /*std::list<Circuit*>::iterator result = find_if( Circuit_lists.begin()++ , Circuit_lists.end(), std::bind2nd( FindSubckt(), $3 ) );
+	///START: create the subcircuit instances from the map of saved instances
+	for(auto instance : subckt_instances){ //this is a new C++11 syntax
+	      //find the subckt. We start from second becuase first one is main circuit
+	      std::list<Circuit*>::iterator result = find_if( ++Circuit_lists.begin() , Circuit_lists.end(), std::bind2nd( FindSubckt(), instance.second.first ) );
 	      SubCircuit* casted_result;
 	      if(result!=Circuit_lists.end()){
 		  casted_result = dynamic_cast<SubCircuit*>(*result);
 	      }else{ //can not find the subcircuit
-		  throw std::runtime_error(std::string("Subcircuit ")+$3+std::string(" is not defined"));
+		  throw std::runtime_error(std::string("Subcircuit ")+instance.second.first+std::string(" is not defined"));
 	      }
-	      std::vector<std::string> inst_term {std::make_move_iterator($2->begin()), std::make_move_iterator($2->end())};
-	      (*CurrentCircuit)<< casted_result->create_instance($1 , inst_term);*/
-	      
+	      //create the termination as a vector
+	      std::vector<std::string> inst_termination {std::make_move_iterator(instance.second.second.begin()), std::make_move_iterator(instance.second.second.end())};
+	      (*CurrentCircuit)<< casted_result->create_instance(instance.first , inst_termination);
+	}     
+	///END: create the subcircuit instances from the map of saved instances
+
 	      
 	      
 	//Start simulating the circuit
