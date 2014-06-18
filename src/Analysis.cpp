@@ -82,16 +82,16 @@ void DC::simulate(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, BMatri
 
 /*--------------------The transient analysis------------*/
 void transient::simulate(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, BMatrix::Sparse<double> &J, BMatrix::Dense<double> &B, BMatrix::Dense<double> &fx, Circuit* circ){
-      perform_simulate(G, C, J, B, fx, circ, NULL);
+      perform_BE(G, C, J, B, fx, circ, NULL);
 
 }
 
 void transient::simulate(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, BMatrix::Sparse<double> &J, BMatrix::Dense<double> &B, BMatrix::Dense<double> &fx, Circuit* circ, BMatrix::Sparse< double >& _Sensitivty_Matrix){
       BMatrix::Sparse< double >* Sensitivty_Matrix = &_Sensitivty_Matrix;
-      perform_simulate(G, C, J, B, fx, circ, Sensitivty_Matrix);
+      perform_BE(G, C, J, B, fx, circ, Sensitivty_Matrix);
 }
 
-void transient::perform_simulate(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, BMatrix::Sparse<double> &J, BMatrix::Dense<double> &B, BMatrix::Dense<double> &fx, Circuit* circ, BMatrix::Sparse< double >* Sensitivty_Matrix){
+void transient::perform_BE(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, BMatrix::Sparse<double> &J, BMatrix::Dense<double> &B, BMatrix::Dense<double> &fx, Circuit* circ, BMatrix::Sparse< double >* Sensitivty_Matrix){
      BMatrix::Sparse<double> scaled_C = C/h; // let us save the C/h because we have constant step size
      BMatrix::Sparse<double> temp, G_p_C_p_J;
     
