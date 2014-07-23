@@ -50,6 +50,17 @@ void VoltageProbe::write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<doubl
     
 }
 
+void VoltageProbe::add_my_nodes(Circuit* circuit){
+	  //in case this probe is in subcircuit, then we have to change the name of the nodes to reflect the subcircuit name
+	 
+	  n1_index = circuit->get_variable_index(n1);
+	  n2_index = circuit->get_variable_index(n2);
+	  
+	  if(n1_index==-2 || n2_index==-2){
+	    throw std::runtime_error(std::string("Voltage Probe node does not exist: ")+n1+std::string("or ")+n2);
+	  }
+};
+    
 ///This function gets the solution at each time step from the Circuit class and put it in the probes vectors
 void VoltageProbe::get_data(double time, const double* solution){
       double value;

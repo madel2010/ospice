@@ -27,8 +27,12 @@ void SubCircuitInstance::add_my_nodes(Circuit* circuit){
      
       //Alias the terminal nodes to be the same as the nodes it is attached to
       for(int i=0; i<my_subcircuit->terminals.size(); i++){
-	  std::string node_name = name + my_subcircuit->terminals[i];
+	  //first check that the nodes of the main circuit attached to the terminals are already added
+	  circuit->add_mna_variable(this->terminals[i]);
+	
+	  std::string node_name = name + "." + my_subcircuit->terminals[i];
 	  circuit->alias_two_nodes( node_name , this->terminals[i]);
+	  
       }
       
      //Add the elements to the main circuit with new names and nodes reflectin the subcircuit instance

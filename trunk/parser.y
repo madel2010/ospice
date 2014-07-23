@@ -25,8 +25,7 @@
 #include <list>
 #include <vector>
 #include <string>
-#include <map>
-
+#include <unordered_map>
 
 //declare the list of crcuit classes to add the elements to it
 //this is also usefull when we add subcircuits. The first element in this list is always the main circtui
@@ -34,7 +33,7 @@ std::list<Circuit*> Circuit_lists(1,new Circuit);
 Circuit* CurrentCircuit = Circuit_lists.front();
 
 //<Name of instance , std::pair< name of subcircuit , terminals>
-std::map<std::string , std::pair<std::string , std::list<std::string> > > subckt_instances;
+std::unordered_map<std::string , std::pair<std::string , std::list<std::string> > > subckt_instances;
 
 //function to search for subcircuit name
 struct FindSubckt: public std::binary_function< Circuit*, std::string, bool > {
@@ -101,12 +100,17 @@ void yyerror(const char *str){
 %token <str> CURRENTSOURCE
 
 %token <str> TRAN
+%token <str> PRINT_TRAN
 
 %token <str> COMMENT
 %token <str> NEWLINE
+%token <str> LBRACKET
+%token <str> RBRACKET
+%token <str> V_VARIABLE
 
 %type <str> node
 %type <arg_list> node_list
+%type <arg_list> v_node_list
 %%
 /*--------------------This is the Bison code part--------------------*/
 statments:
@@ -142,6 +146,7 @@ command:
 	| tran_statment
 	| subcircuit_statment
 	| end_subckt_statment
+	| print_statment
 	;
 	
 resistor_statment:
@@ -204,6 +209,14 @@ end_subckt_statment:
 	}
 	;
 
+	
+print_statment:
+       |PRINT_TRAN v_node_list{
+	  for(std::string _node : (*$2)){
+	    (*CurrentCircuit)<< new VoltageProbe(std::string("V(")+_node+std::string(")") , _node , "0");
+	  }
+       }
+       ;
 node:
      | DVALUE{
 	      std::ostringstream n;
@@ -228,6 +241,17 @@ node_list:
           $$->push_back($1);
     }
     ;
+    
+v_node_list:
+    |v_node_list V_VARIABLE LBRACKET node RBRACKET{
+          $1->push_back($4);
+	  $$ = $1;
+    }
+    |V_VARIABLE LBRACKET node RBRACKET{
+          $$ = new std::list<std::string>;
+          $$->push_back($3);
+    }
+    ;    
 
 %%
 

@@ -1,15 +1,19 @@
 V1 n1 0 1
 R1 n1 n2 2
-L1 n2 n3 1
-C1 n2 0 1
-X1 n2 0 Mina
+Xa1 n2 n3 Mina2
+*C1 n2 0 1
+Xb1 n3 0 Mina
 
 
 
 .subckt Mina n1 n2
 R1 n1 n2 10
- 
+.ends
+
+.subckt Mina2 n1 n2
+L1 n1 n2 1
 .ends
 
  
-.tran 1 1
+.tran 0.1 1
+.print tran V(n1)

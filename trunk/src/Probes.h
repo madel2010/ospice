@@ -47,6 +47,11 @@ protected:
     
     Plot my_plot; //this keeps the class of the plot window of gnuplot
 public:
+    
+    //element_order_index is defined in Element class. It gives an order to the elements to write in the MNA first. 
+    //we need probes to be the last elements to make sure that all nodes are added first.
+    Probe(){element_order_index=2;};
+    
     virtual void get_data(double time , const double* solution)=0;
     virtual void plot()=0;
     
@@ -70,12 +75,7 @@ public:
     bool is_linear(){return true;}
     
     ///add the requird nodes to the main circuit
-    void add_my_nodes(Circuit* circuit){
-	  //in case this probe is in subcircuit, then we have to change the name of the nodes to reflect the subcircuit name
-	  
-	  n1_index = circuit->add_mna_variable(n1);
-	  n2_index = circuit->add_mna_variable(n2);
-    };
+    void add_my_nodes(Circuit* circuit);
     
     void get_data(double time , const double* solution);
     

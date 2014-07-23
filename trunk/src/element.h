@@ -40,9 +40,15 @@ class Element
   
 protected:
       std::string name; //The name of the element
-
+      
+      //this is if we need to sort the elements of the circuit. 
+      //For example, the probes should be sorted at the end, so we give it index 2
+      //Any element by default = 1; probes = 2
+      int element_order_index; 
+      
 public:
-    Element(){};
+    //base constructor is called first
+    Element(){element_order_index=1;};
     
     virtual Element* clone()=0;
     
@@ -54,6 +60,9 @@ public:
     
     ///get the name of the element
     virtual std::string get_name(){return name;}
+    
+    //get the order of this element in the circuit_elements list
+    int get_order_index(){return element_order_index;}
     
     virtual void prepend_name(std::string p){name = p + name;}
     
@@ -116,5 +125,52 @@ public:
     }
 };
 
+/*------------------------------------------*/
+///Four Terminal Element Class
+class FourTerminal : public Element
+{
+
+protected:
+    std::string in1; //First input node name
+    std::string in2; //second input node name
+    
+    std::string out1; //First output node name
+    std::string out2; //second output node name
+    
+    int in1_index; //the index of the first input node
+    int in2_index; //the index of the second input node
+    
+    int out1_index; //the index of the first output node
+    int out2_index; //the index of the second output node
+    
+public:
+  
+    FourTerminal(){};
+    FourTerminal(std::string _in1, std::string _in2, std::string _out1, std::string _out2 ){
+	in1 = _in1;
+	in2 = _in2;
+	out1 = _out1;
+	out2 = _out2;
+    }
+    
+    std::string get_in1(){return in1;}
+    std::string get_in2(){return in2;}
+    std::string get_out1(){return out1;}
+    std::string get_out2(){return out2;}
+
+    virtual ~FourTerminal(){}
+
+    virtual std::vector<std::string> get_terminals(){
+	std::vector <std::string> result{in1 , in2, out1, out2};
+	return result;
+    }
+    
+    virtual void prepend_nodes(std::string p){
+	in1 = p + in1;
+	in2 = p + in2;
+	out1 = p + out1;
+	out2 = p + out2;
+    }
+};
 
 #endif // ELEMENT_H
