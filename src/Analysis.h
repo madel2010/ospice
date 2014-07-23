@@ -43,7 +43,7 @@ public:
     Analysis(){};
     virtual ~Analysis(){};
     
-    virtual void simulate(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, BMatrix::Sparse<double> &J, BMatrix::Dense<double> &B, BMatrix::Dense<double> &fx, Circuit* circ)=0;
+    virtual void simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double> &C, const BMatrix::Sparse<double> &J, const BMatrix::Dense<double> &B, const BMatrix::Dense<double> &fx, Circuit* circ)=0;
 };
 
 
@@ -58,7 +58,7 @@ public:
     DC();
 
     ~DC(){};
-    void simulate(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, BMatrix::Sparse<double> &J, BMatrix::Dense<double> &B, BMatrix::Dense<double> &fx, Circuit* circ);
+    void simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double> &C, const BMatrix::Sparse<double> &J, const BMatrix::Dense<double> &B, const BMatrix::Dense<double> &fx, Circuit* circ);
      
      const BMatrix::Dense<double>& get_solution() { return dc_solution ; }
 };
@@ -82,17 +82,17 @@ private:
     std::vector<BMatrix::Dense<double> > saved_solution;
     
     //to do the transient analysis. this is called from simulate(). it can also compute the Sensitivty Matrix
-    void perform_BE(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, BMatrix::Sparse<double> &J, BMatrix::Dense<double> &B, BMatrix::Dense<double> &fx, Circuit* circ, BMatrix::Sparse< double >* Sensitivty_Matrix);
-    
+    bool perform_BE(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double> &C, const BMatrix::Sparse<double> &J,const BMatrix::Dense<double> &B, const BMatrix::Dense<double> &fx, 
+			   BMatrix::Dense<double>& solution, double h, Circuit* circ, BMatrix::Sparse< double >* Sensitivty_Matrix);
 public:
     transient(double _start_time, double _end_time , double _h):start_time(_start_time), end_time(_end_time), h(_h){
       set_initial_condition = false;
     };
 
-    void simulate(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, BMatrix::Sparse<double> &J, BMatrix::Dense<double> &B, BMatrix::Dense<double> &fx, Circuit* circ);
+    void simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double> &C, const BMatrix::Sparse<double> &J, const BMatrix::Dense<double> &B, const BMatrix::Dense<double> &fx, Circuit* circ);
     
     //this function if we want to return the Sensitivty Matrix
-    void simulate(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, BMatrix::Sparse<double> &J, BMatrix::Dense<double> &B, BMatrix::Dense<double> &fx, Circuit* circ, BMatrix::Sparse< double >& _Sensitivty_Matrix);
+    void simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double> &C, const BMatrix::Sparse<double> &J, const BMatrix::Dense<double> &B, const BMatrix::Dense<double> &fx, Circuit* circ, BMatrix::Sparse< double >* Sensitivty_Matrix);
     
     void set_save_solution_time(std::vector<double> _save_solution_at){save_solution_at = _save_solution_at;}
 
@@ -133,7 +133,7 @@ public:
 
     };
 
-     void simulate(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, BMatrix::Sparse<double> &J, BMatrix::Dense<double> &B, BMatrix::Dense<double> &fx, Circuit* circ);
+     void simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double> &C, const BMatrix::Sparse<double> &J, const BMatrix::Dense<double> &B, const BMatrix::Dense<double> &fx, Circuit* circ);
 
 };
 

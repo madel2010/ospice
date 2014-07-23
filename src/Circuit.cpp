@@ -59,15 +59,11 @@ Circuit::~Circuit()
 
 int Circuit::add_mna_variable(std::string var_name){
     
-    if( get_variable_index(var_name)==-1 ){ //means it is ground
-	return -1;
-    }
-    
-    
-    //check if the variable has already been added
     int index = get_variable_index(var_name);
     
-    if( index == -2 ){ //if the var_name doesnot exist
+    if(index==-1 ){ //means it is ground
+	return -1;
+    }else if( index == -2 ){ //if the var_name doesnot exist
     
 	  index = mna_variable_indices.size();
     
@@ -131,6 +127,10 @@ void Circuit::operator << (Element* E){
 }
      
 void Circuit::attach_elements(){
+  
+     //let us first sort the elements by their parsing order.
+     components.sort([](Element* e1, Element* e2) { return e1->get_order_index() < e2->get_order_index(); });
+     
      std::list<Element*>::iterator iter;
 
      

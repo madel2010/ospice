@@ -37,14 +37,14 @@ DC::DC(){
 
 
 
-void DC::simulate(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, BMatrix::Sparse<double> &J, BMatrix::Dense<double> &B, BMatrix::Dense<double> &fx, Circuit* circ){
+void DC::simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double> &C, const BMatrix::Sparse<double> &J, const BMatrix::Dense<double> &B, const BMatrix::Dense<double> &fx, Circuit* circ){
 
-    if(circ->is_circ_linear()){
-      
-	circ->update_sources(0);
+    circ->update_sources(0);
+    
+    if(circ->is_circ_linear() && 1==2){
 	
 	dc_solution = B;
-	G.solve(dc_solution);  //Note: solve function rewrites the dc_solution
+	const_cast<BMatrix::Sparse<double>&>(G).solve(dc_solution);  //Note: solve function rewrites the dc_solution
 	
 	//Now update the probes of the circuit with the solution
 	circ->update_probes( 0 , (*dc_solution) ); //this function takes the time and the solution vector
@@ -62,14 +62,14 @@ void DC::simulate(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, BMatri
 	    circ->update_fx((*dc_solution));
 	    circ->update_J((*dc_solution));
 	    
-	    //G here is actually G+J (check  circ->update_G_P_J())
+	    
 	    Phi = G*dc_solution + fx - B;
 
 	    if(Phi.norm()<=1e-12){
 		convergence = true;
 	    }else{
 	   
-	    	//G here is actually G+J (check  circ->update_G_P_J())
+	    	
 		(G+J).solve(Phi);  //Note: solve function rewrites the Phi
 		dc_solution -= Phi;
 	    }
@@ -81,115 +81,96 @@ void DC::simulate(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, BMatri
 }
 
 /*--------------------The transient analysis------------*/
-void transient::simulate(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, BMatrix::Sparse<double> &J, BMatrix::Dense<double> &B, BMatrix::Dense<double> &fx, Circuit* circ){
-      perform_BE(G, C, J, B, fx, circ, NULL);
-
+void transient::simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double> &C, const BMatrix::Sparse<double> &J, const BMatrix::Dense<double> &B, const BMatrix::Dense<double> &fx, Circuit* circ){
+      simulate(G,C, J,B, fx,  circ, nullptr);
 }
 
-void transient::simulate(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, BMatrix::Sparse<double> &J, BMatrix::Dense<double> &B, BMatrix::Dense<double> &fx, Circuit* circ, BMatrix::Sparse< double >& _Sensitivty_Matrix){
-      BMatrix::Sparse< double >* Sensitivty_Matrix = &_Sensitivty_Matrix;
-      perform_BE(G, C, J, B, fx, circ, Sensitivty_Matrix);
-}
-
-void transient::perform_BE(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, BMatrix::Sparse<double> &J, BMatrix::Dense<double> &B, BMatrix::Dense<double> &fx, Circuit* circ, BMatrix::Sparse< double >* Sensitivty_Matrix){
-     BMatrix::Sparse<double> scaled_C = C/h; // let us save the C/h because we have constant step size
-     BMatrix::Sparse<double> temp, G_p_C_p_J;
-    
-    if(circ->is_circ_linear()){
-	double time = start_time+h;
-	
-	BMatrix::Sparse<double> G_p_C = G+scaled_C; // G_p_C = G+C/h
-    
-        if(!set_initial_condition){
-	  tr_solution = circ->get_dc_solution();
-	}else{
-	  tr_solution = my_initial_condition;
-	}
-	
-	while(time <= end_time){
-
-	    circ->update_sources(time);
-	    
-	    tr_solution = ( scaled_C*tr_solution ) + B;
-	    
-	    G_p_C.solve(tr_solution);
-	    
-	    //calculate sensitivity matrix
-	    if(Sensitivty_Matrix){
-	        //sensetivity_matrix = (J\(C/h)) * sensetivity_matrix;
-	        temp  = scaled_C;
-	        G_p_C.solve(temp);
-		(*Sensitivty_Matrix) = temp*(*Sensitivty_Matrix);
-	    }
-	    
-	    circ->update_probes(time , (*tr_solution) ); //This function should send to all the probes in the circuit the solution to add its value
-	    time+= h;
-	}
-    }else{
-	  double time = start_time+h;
-	
-	  if(!set_initial_condition){
-	    tr_solution = circ->get_dc_solution();
-	  }else{
-	    tr_solution = my_initial_condition;
-	  }
-	
-	  BMatrix::Dense<double> Phi(circ->size_of_mna(),1), pre_tr_solution(circ->size_of_mna(),1);
+void transient::simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double> &C, const BMatrix::Sparse<double> &J, const BMatrix::Dense<double> &B, const BMatrix::Dense<double> &fx, Circuit* circ, BMatrix::Sparse< double >* Sensitivty_Matrix){
+     
+      
+      if(!set_initial_condition){
+	   tr_solution = circ->get_dc_solution();
+      }else{
+	   tr_solution = my_initial_condition;
+      }
 	  
-	  while(time <= end_time){
-  
-	      std::cout<<"Current time = "<<time<<std::endl;
-	      
-	      circ->update_sources(time);
-	    
-	      BMatrix::Sparse<double> G_p_C = G+scaled_C; // let us save the C/h because we have constant step size
-    
-	      pre_tr_solution = tr_solution;
-	      
-	      bool convergence=false;
-	      int number_of_iterations = 0;;
-	      while(!convergence){
-	    
-		  circ->update_fx((*tr_solution));
-		  circ->update_J((*tr_solution));
-		  
-		  Phi = G_p_C*tr_solution + fx - B - ( scaled_C*pre_tr_solution );
+      double time = start_time+h;
+      bool convergence;
+      while(time <= end_time){	  
+	std::cout<<"Current time = "<<time<<std::endl;
+	
+	circ->update_sources(time);
+	
+	convergence = perform_BE(G, C, J, B, fx, tr_solution ,h, circ, Sensitivty_Matrix);
+	
+	circ->update_probes(time , (*tr_solution) ); //This function should send to all the probes in the circuit the solution to add its value
 
-		  if(Phi.norm()<=1e-12 || (number_of_iterations>15) ){
-		      convergence = true;
+	if(std::find(save_solution_at.begin(),save_solution_at.end(),time)!=save_solution_at.end()){
+	    saved_solution.push_back(tr_solution);
+	}
+	 
+	time+= h;
+      }
+}
+
+//solution should be the previous point and is overwritten by the new solution
+bool transient::perform_BE(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double> &C, const BMatrix::Sparse<double> &J, const BMatrix::Dense<double> &B, const BMatrix::Dense<double> &fx, 
+			   BMatrix::Dense<double>& solution, double h, Circuit* circ, BMatrix::Sparse< double >* Sensitivty_Matrix){
+  
+     int MNA_size = circ->size_of_mna();
+     
+     BMatrix::Sparse<double> scaled_C = C/h; // let us save the C/h because we have constant step size
+     BMatrix::Sparse<double> temp, G_p_C_p_J(MNA_size,MNA_size);
+    
+     BMatrix::Dense<double> Phi(MNA_size,1);
+     BMatrix::Dense<double> scaled_C_times_pre_solution = scaled_C*solution;
+	  
+     BMatrix::Sparse<double> G_p_C = G+scaled_C; // let us save the C/h because we have constant step size
+    
+     
+      
+     bool convergence=false;
+     int number_of_iterations = 0;
+     while(!convergence){
+	 
+        //if the number of iterations exeeded a certain value, then stop
+        if(number_of_iterations>30){
+	    convergence=false;
+	    break;
+	}
+	
+	circ->update_fx((*solution));
+	circ->update_J((*solution));
+		  
+	Phi = G_p_C*solution + fx - B - ( scaled_C_times_pre_solution );
+
+	if(Phi.norm()<=1e-12){
+	      convergence = true;
 		      
-		  //calculate sensitivity matrix
-		  if(Sensitivty_Matrix){
+	      //calculate sensitivity matrix
+	      if(Sensitivty_Matrix){
 		      //sensetivity_matrix = (J\(C/h)) * sensetivity_matrix;
 		      temp  = scaled_C;
 		      G_p_C_p_J.solve(temp);
 		      (*Sensitivty_Matrix) = temp*(*Sensitivty_Matrix);
-		     
-		  }
+	      }
 	    
-		  }else{
-		      G_p_C_p_J = G_p_C+J;
-		      G_p_C_p_J.solve(Phi);  //Note: solve function rewrites the Phi
+        }else{
+	      G_p_C_p_J = G_p_C+J;
+	      G_p_C_p_J.solve(Phi);  //Note: solve function rewrites the Phi
 
-		      tr_solution -= Phi;
+	      tr_solution -= Phi;
      
-		}
-		number_of_iterations++;
-	      }
-
-	      circ->update_probes(time , (*tr_solution) ); //This function should send to all the probes in the circuit the solution to add its value
-
-	      if(std::find(save_solution_at.begin(),save_solution_at.end(),time)!=save_solution_at.end()){
-		  saved_solution.push_back(tr_solution);
-	      }
-	      time+= h;
 	}
-	
+	number_of_iterations++;
     }
+
+    return convergence;
+    
 }
 
 /*************Envelope Following Class -------------------------*/
-void envelope_following::simulate(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, BMatrix::Sparse<double> &J, BMatrix::Dense<double> &B, BMatrix::Dense<double> &fx, Circuit* circ){
+void envelope_following::simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double> &C, const BMatrix::Sparse<double> &J, const BMatrix::Dense<double> &B, const BMatrix::Dense<double> &fx, Circuit* circ){
   int MNA_size = circ->size_of_mna();
   
   my_transient->save_solution_at.push_back(start_time);
@@ -229,7 +210,7 @@ void envelope_following::simulate(BMatrix::Sparse<double> &G, BMatrix::Sparse<do
 		  my_transient->save_solution_at.clear();
 		  my_transient->save_solution_at.push_back(my_time+T);
 		  
-		  my_transient->simulate(G, C, J, B, fx,circ,dyn1dyn);
+		  my_transient->simulate(G, C, J, B, fx,circ,&dyn1dyn);
 		  
 		  
 		  Yn1 = my_transient->saved_solution[0];

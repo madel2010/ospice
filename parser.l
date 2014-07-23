@@ -13,6 +13,10 @@
 %%
 \*.* {return COMMENT;}
 
+[Vv] {return V_VARIABLE;}
+\( {return LBRACKET;}
+\) {return RBRACKET;}
+
 [rR][A-Za-z0-9_]+ {yylval.str=strdup(yytext); return RESISTOR;}
 
 [lL][A-Za-z0-9_]+ {yylval.str=strdup(yytext); return INDUCTOR;}
@@ -37,10 +41,14 @@
 \.[Ss][Uu][Bb][Cc][Kk][Tt] {return SUBCKT;}
 \.[eE][nN][dD][sS] {return END_SUBCKT;}
 
+\.[Pp][Rr][Ii][Nn][Tt][ \t]+[Tt][Rr][Aa][Nn] {return PRINT_TRAN;} /* Print statments*/
+
+
+
+
 
 \n   {return NEWLINE;}                   /* ignore end of line */;
 [ \t]+                  /* ignore whitespace */;
-
 
 
 %%

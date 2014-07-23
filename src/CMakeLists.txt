@@ -1,4 +1,4 @@
-set(SIMULATOR_SOURCES Probes.cpp SourceFunc.cpp Source.cpp Analysis.cpp Inductor.cpp Capacitor.cpp Circuit.cpp resistor.cpp subcircuit.cpp plot.cc)
+set(SIMULATOR_SOURCES ControledSources.cpp Probes.cpp SourceFunc.cpp Source.cpp Analysis.cpp Inductor.cpp Capacitor.cpp Circuit.cpp resistor.cpp subcircuit.cpp plot.cc)
 
 add_library(simulator STATIC ${SIMULATOR_SOURCES})
 

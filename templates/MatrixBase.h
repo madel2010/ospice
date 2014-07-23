@@ -131,6 +131,7 @@ public:
 		have_LU_factors = false;
 	}
 
+	//copy constructor
  	Dense(const Dense<T> &B){ 
 		this->rows= B.rows;
 		this->cols= B.cols;
@@ -144,6 +145,22 @@ public:
 		
 		this->LU_factors = NULL;
 		have_LU_factors = false;
+	}
+	
+	//Move Constructor
+	Dense(Dense<T> && B){ 
+		this->rows= B.rows;
+		this->cols= B.cols;
+		
+		this->data = B.data;
+		B.data = nullptr;
+		
+		
+		
+		this->LU_factors = B.LU_factors;
+		B.LU_factors = nullptr;
+		
+		have_LU_factors = B.LU_factors;
 	}
 
 	Dense<T>* clone(){
@@ -206,6 +223,22 @@ public:
 
 		this->LU_factors = NULL;
 		have_LU_factors = false;
+		
+		return *this;
+	}  
+	
+	//Move assignment operator
+	Dense<T>& operator = (Dense<T> &&A){
+		this->rows= A.rows;
+		this->cols= A.cols;
+		
+		this->data = A.data;
+		A.data = nullptr;
+		
+		this->LU_factors = A.LU_factors;
+		A.LU_factors = nullptr;
+		
+		have_LU_factors = A.LU_factors;
 		
 		return *this;
 	}  

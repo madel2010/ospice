@@ -59,13 +59,13 @@ void VoltageSource::write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<doub
     
     //write the G matrix stamp
     if(n1_index > -1){
-	G.put(current_index , n1_index , 1);
-	G.put(n1_index, current_index , -1);
+	G.put(current_index , n1_index , -1);
+	G.put(n1_index, current_index , 1);
     }
     
     if(n2_index > -1){
-	G.put(current_index , n2_index , -1);
-	G.put(n2_index, current_index , 1);
+	G.put(current_index , n2_index , 1);
+	G.put(n2_index, current_index , -1);
     }
     
     circ->add_source(this);

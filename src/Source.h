@@ -53,10 +53,6 @@ public:
 class CurrentSource : public Source
 {
 private:
-      int n1_index; //the index of node1
-      int n2_index; //the index of node2
-      
-      
       
 public:
      CurrentSource(std::string _n1, std::string _n2, SourceFunc* _Func):Source(_n1,_n2){
@@ -96,8 +92,7 @@ public:
 class VoltageSource : public Source
 {
 private:
-      int n1_index; //the index of node1
-      int n2_index; //the index of node2
+
       int current_index; //the index of the extra current variable
       
       

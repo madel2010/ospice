@@ -1002,7 +1002,7 @@ public:
 
      
 
-	Dense<T > operator * (Dense<T >& B){
+	Dense<T > operator * (const Dense<T >& B) const{
 	        if (this->cols != B.get_number_of_rows()) {
 			throw std::runtime_error("Can not multible Sparse*Dense with inconsistence sizes");
 		}
@@ -1090,7 +1090,7 @@ public:
 	      return result;
 	  }
      
-	  friend std::ostream& operator << (std::ostream &out , Sparse<T >& B);
+	 
 
 	  Dense<T > operator + (BMatrix::Dense<T >& A){
 		  if (A.get_number_of_rows() != this->rows
@@ -1141,15 +1141,18 @@ public:
       protected:
       void runtime_error(const char* arg1);
 
+      template<class U>
+	friend std::ostream& operator << (std::ostream &out ,  Sparse<U >& B);
 };
   
   
 
   
-  
-template<class U> std::ostream& operator << (std::ostream &out , Sparse<U>& B){
+ 
+template<class U> 
+std::ostream& operator << (std::ostream &out ,  Sparse<U>& B){
 
-      const_cast<Sparse<U>&>(B).create_ccs();
+      /*const_cast<Sparse<U>&>(B).create_ccs();
       
       out<<"this->this->Ap=[";
       for(int i=0; i<B.cols+1; i++){
@@ -1167,13 +1170,16 @@ template<class U> std::ostream& operator << (std::ostream &out , Sparse<U>& B){
       for(int i=0; i<B.nnz; i++){
 	  out<<(B.Ax[i])<<" ";
       }
-      out<<"]"<<std::endl;
+      out<<"]"<<std::endl;*/
+      
+      for(int i=0; i<B.cols; i++ ){
+	  for(auto e : B.cols_lists[i]){
+	      out << e.row<<" "<<i<<" "<<e.value <<std::endl;
+	  }
+      }
       
       return out;
 } 
-
-  
-
   
 };
 
