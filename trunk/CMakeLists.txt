@@ -19,11 +19,9 @@ if (CMAKE_COMPILER_IS_GNUCC)
     
    if(GCC_MAJOR LESS 4)
 	message(FATAL_ERROR "GCC compiler less than 4")
-   elseif(GCC_MAJOR EQUAL 4 AND GCC_MINOR LESS 3)
-	message(FATAL_ERROR "GCC compiler less than 4.3")
-   elseif( (GCC_MAJOR EQUAL 4 OR GCC_MAJOR GREATER 4) AND (GCC_MINOR GREATER 3 OR GCC_MINOR EQUAL 3) )
-	SET(GCC_C11_FLAG "-std=c++0x")
-   elseif( (GCC_MAJOR EQUAL 4 OR GCC_MAJOR GREATER 4) AND (GCC_MINOR GREATER 7 OR GCC_MINOR EQUAL 7))
+   elseif(GCC_MAJOR EQUAL 4 AND GCC_MINOR LESS 6)
+	message(FATAL_ERROR "GCC compiler less than 4.6")
+   elseif( (GCC_MAJOR EQUAL 4 OR GCC_MAJOR GREATER 4) AND (GCC_MINOR GREATER 6 OR GCC_MINOR EQUAL 6))
 	SET(GCC_C11_FLAG "-std=c++11")
    endif()
 
@@ -157,7 +155,7 @@ FLEX_TARGET(OspiceFlex parser.l ${PROJECT_SOURCE_DIR}/lex.cc)
 ADD_FLEX_BISON_DEPENDENCY(OspiceFlex OspiceBison)
 ##################
 
-include_directories(${PROJECT_SOURCE_DIR}/SuiteSparse/KLU/templates)
+#include_directories(${PROJECT_SOURCE_DIR}/SuiteSparse/KLU/templates)
 include_directories(${INCLUDE_DIRS})
 include_directories(${PROJECT_SOURCE_DIR}/src)
 include_directories(${PROJECT_SOURCE_DIR}/templates)
