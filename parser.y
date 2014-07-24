@@ -12,6 +12,7 @@
 #include "resistor.h"
 #include "Inductor.h"
 #include "Capacitor.h"
+#include "ControledSources.h"
 
 #include "Circuit.h"
 #include "subcircuit.h"
@@ -91,6 +92,7 @@ void yyerror(const char *str){
 %token <str> INDUCTOR
 %token <str> CAPACITOR
 %token <str> MUTUALINDUCTOR
+%token <str> E_ELEMENT
 
 %token <str> SUBCKT_INSTANCE
 %token <str> SUBCKT
@@ -136,6 +138,7 @@ element:
 	| inductor_statment
 	| capacitor_statment
 	| subckt_instance_statment
+	| vcvs_statment
 	;
 	
 source:
@@ -165,6 +168,12 @@ inductor_statment:
 capacitor_statment:
 	| CAPACITOR node node DVALUE NEWLINE{
 	      (*CurrentCircuit)<< new Capacitor($1, $2, $3, $4);
+	}
+	;
+	
+vcvs_statment:
+	| E_ELEMENT node node node node DVALUE NEWLINE{
+	      (*CurrentCircuit)<< new VCVS($1, $4, $5, $2, $3,$6);
 	}
 	;
 

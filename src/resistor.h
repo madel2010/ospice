@@ -75,14 +75,11 @@ public:
 };
 
 /*----------Class of non Linear Resistors---------------*/
-class nonlin_resistor: public TwoTerminal, NonLinElement
+class nonlin_resistor: public TwoTerminal, public NonLinElement
 {
   
 private:
-      int n1_index; //the index of node1
-      int n2_index; //the index of node2
-      std::string Curr_Expression;
-	
+
       Symbolic F; //The non linear function 
       std::vector<Symbolic> dFdx; //The derivative of df/dx with respect to each node that F depends on
       
@@ -104,21 +101,26 @@ private:
       static Symbolic do_operator( vector<Symbolic>::iterator left , const char* op );
 public:
 		
-	nonlin_resistor(std::string _n1, std::string _n2, const char* _curr_expression):TwoTerminal(_n1,_n2),Curr_Expression(_curr_expression){
+	nonlin_resistor(std::string _n1, std::string _n2, const char* _curr_expression):TwoTerminal(_n1,_n2){
 	     name = std::string("nlR")+".+"+n1+".-"+n2;
 	     
+	     Expression= _curr_expression;
+	     
 	     //add paranthesis to the expression. It is required for the  shunting_yard algorithm to make sure the expression is done
-	     Curr_Expression = std::string("(") + Curr_Expression;
-	     Curr_Expression += ")";
+	     Expression = std::string("(") + Expression;
+	     Expression += ")";
 	     
 	}
 	
-	nonlin_resistor(std::string _name, std::string _n1, std::string _n2, const char* _curr_expression):TwoTerminal(_n1,_n2),Curr_Expression(_curr_expression){
+	nonlin_resistor(std::string _name, std::string _n1, std::string _n2, const char* _curr_expression):TwoTerminal(_n1,_n2){
+	
 	     name =_name;
 	     
+	     Expression = _curr_expression;
+	     
 	     //add paranthesis to the expression. It is required for the  shunting_yard algorithm to make sure the expression is done
-	     Curr_Expression = std::string("(") + Curr_Expression;
-	     Curr_Expression += ")";
+	     Expression = std::string("(") + Expression;
+	     Expression += ")";
 	     
 	};
 
@@ -143,6 +145,14 @@ public:
 	    result.push_back(n2);
 	    
 	    return result;
+       }
+       
+       //nonlinear resistor will have its own copy of prepend_nodes
+       void prepend_nodes(std::string p){
+	  n1 = p + n1;
+	  n2 = p + n2;
+	  
+	  prepend_expression(p);
        }
 };
 

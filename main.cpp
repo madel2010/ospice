@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
     C1<< new VCVS("E1","n1","0","n2","0",100);
     C1<< new resistor("R2" , "n2" , "0", 1);
     
-    //C1<< new nonlin_resistor("R2" , "n2" , "0", "(10^(-12))*(exp(40*v(n2))-1)");
+    C1<< new nonlin_resistor("R2" , "n2" , "0", "(10^(-12))*(exp(40*v(n2))-1)");
     
     std::vector<std::string> inst_term;
     inst_term.push_back("n1");

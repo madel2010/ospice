@@ -32,6 +32,7 @@
 #include "Sparse.h"
 #include "MatrixBase.h"
 #include "Circuit.h"
+#include <regex>
 
 class Circuit;
 
@@ -77,11 +78,19 @@ public:
 
 class NonLinElement
 {
-
+protected:
+    std::string Expression;
+    
 public:
     NonLinElement(){};
     virtual void update_fx(BMatrix::Dense<double>& fx, const double* solution)=0;
     virtual void update_J(BMatrix::Sparse<double>& J, const double* solution)=0;
+    
+    //add p before the node or currents in thenonlinear expression. Used when we have subcircuits
+    virtual void prepend_expression(std::string p){
+      std::regex e ("([vV])\(([A-Za-z_]?[0-9]*)\)");   
+      Expression = std::regex_replace (Expression,e,std::string("$1(")+p+".$2)");
+    }
     
     virtual ~NonLinElement(){}
     
@@ -119,6 +128,7 @@ public:
 	return result;
     }
     
+    //add p before the node names. Used when we have subcircuits
     virtual void prepend_nodes(std::string p){
 	n1 = p + n1;
 	n2 = p + n2;
