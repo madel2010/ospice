@@ -143,30 +143,30 @@ std::string nonlin_resistor::get_expression_token(int& pos){
     bool first_chr_is_digit = false;
     
     //if it is "-" then check the char before it. if it is operator or "(" then it is a negative sign
-    if(Curr_Expression[pos]=='-' && (Curr_Expression[pos-1]=='(' || is_operator(Curr_Expression[pos-1]) ) ){ 
+    if(Expression[pos]=='-' && (Expression[pos-1]=='(' || is_operator(Expression[pos-1]) ) ){ 
 	    //get the number becuase it is a negative sign
 	    token = "-";
 	    pos++;
-	    while(pos < Curr_Expression.size() && !is_operator(Curr_Expression[pos]) && !is_function(token) && Curr_Expression[pos]!=')' ){
-	    	token+= Curr_Expression[pos];
+	    while(pos < Expression.size() && !is_operator(Expression[pos]) && !is_function(token) && Expression[pos]!=')' ){
+	    	token+= Expression[pos];
 	    	pos++;
 	    }
-    }else if(is_operator(Curr_Expression[pos])){ //it is an operator
-	    token = Curr_Expression[pos];
+    }else if(is_operator(Expression[pos])){ //it is an operator
+	    token = Expression[pos];
 	    pos++;
-    }else if(Curr_Expression[pos]=='('){ //it is a paranthesis
-	    token = Curr_Expression[pos];
+    }else if(Expression[pos]=='('){ //it is a paranthesis
+	    token = Expression[pos];
 	    pos++;
-    }else if(Curr_Expression[pos]==')'){ //it is a paranthesis
-	    token = Curr_Expression[pos];
+    }else if(Expression[pos]==')'){ //it is a paranthesis
+	    token = Expression[pos];
 	    pos++;
-    }else if(tolower(Curr_Expression[pos])=='v' || tolower(Curr_Expression[pos])=='i'){ //If it is a refernece to voltage node or branch current
-	while(Curr_Expression[pos]!=')' ){
-	    token+= Curr_Expression[pos];
+    }else if(tolower(Expression[pos])=='v' || tolower(Expression[pos])=='i'){ //If it is a refernece to voltage node or branch current
+	while(Expression[pos]!=')' ){
+	    token+= Expression[pos];
 	    pos++;
-	    if(pos >= Curr_Expression.size()){
+	    if(pos >= Expression.size()){
 		std::string Err = "Wrong expression: ";
-		Err+= Curr_Expression;
+		Err+= Expression;
 		throw std::runtime_error(Err);
 	    } 
 	}
@@ -175,8 +175,8 @@ std::string nonlin_resistor::get_expression_token(int& pos){
 	pos++;
 	
     }else{
-	while(pos < Curr_Expression.size() && !is_operator(Curr_Expression[pos]) && !is_function(token) && Curr_Expression[pos]!=')' ){
-	    token+= Curr_Expression[pos];
+	while(pos < Expression.size() && !is_operator(Expression[pos]) && !is_function(token) && Expression[pos]!=')' ){
+	    token+= Expression[pos];
 	    pos++;
 	}
     }
@@ -261,13 +261,13 @@ Symbolic nonlin_resistor::do_operator( vector<Symbolic>::iterator left  , const 
 
 void nonlin_resistor::shunting_yard(Circuit* circ)
 {
-    int strpos = 0 , strend = Curr_Expression.size();
+    int strpos = 0 , strend = Expression.size();
     
     //the output and operator stack
     //Note: we initialize it with the size of the Expression, becuase we know that we can not exceed the size of the Expression. 
     //Initializing the size provides better performance
-    //std::vector<std::string> output(Curr_Expression.size()) ;
-    std::vector<std::string> stack(Curr_Expression.size()); 
+    //std::vector<std::string> output(Expression.size()) ;
+    std::vector<std::string> stack(Expression.size()); 
     
     std::vector<Symbolic> Tree; //this vector would hold the parsed expression tree
     Symbolic Temp_F;
@@ -355,7 +355,7 @@ void nonlin_resistor::shunting_yard(Circuit* circ)
                 }
                 // If the stack runs out without finding a left parenthesis, then there are mismatched parentheses.
                 if(!pe){
-		      std::string Err = std::string("Error: parentheses mismatched in: ") + Curr_Expression;
+		      std::string Err = std::string("Error: parentheses mismatched in: ") + Expression;
 		      throw std::runtime_error(Err);
                 }
                 // Pop the left parenthesis from the stack, but not onto the output queue.
@@ -383,7 +383,7 @@ void nonlin_resistor::shunting_yard(Circuit* circ)
         sc = stack[stack_counter - 1];
         
 	if(strcasecmp(sc.c_str(),"(")==0 ||  strcasecmp(sc.c_str(),")")==0){
-	      std::string Err = std::string("Error: parentheses mismatched in: ") + Curr_Expression;
+	      std::string Err = std::string("Error: parentheses mismatched in: ") + Expression;
 	      throw std::runtime_error(Err);
         }
         stack_counter--;
@@ -392,7 +392,7 @@ void nonlin_resistor::shunting_yard(Circuit* circ)
     //Make sure that we have only one expression at the end
     if(Tree.size()>1){
 	std::string Err = "Something went wrong when parsing: ";
-	Err+= Curr_Expression;
+	Err+= Expression;
 	throw std::runtime_error(Err);
     }else{
 	F = Temp_F[0];

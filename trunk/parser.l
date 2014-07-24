@@ -29,6 +29,8 @@
 
 [iI][A-Za-z0-9_]+ {yylval.str=strdup(yytext); return CURRENTSOURCE;}
 
+[eE][A-Za-z0-9_]+ {yylval.str=strdup(yytext); return E_ELEMENT;}
+
 [xX][A-Za-z0-9_]+ {yylval.str=strdup(yytext); return SUBCKT_INSTANCE;}
 
 
