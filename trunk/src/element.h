@@ -32,7 +32,7 @@
 #include "Sparse.h"
 #include "MatrixBase.h"
 #include "Circuit.h"
-#include <regex>
+#include <boost/regex.hpp>
 
 class Circuit;
 
@@ -88,8 +88,8 @@ public:
     
     //add p before the node or currents in thenonlinear expression. Used when we have subcircuits
     virtual void prepend_expression(std::string p){
-      std::regex e ("([vV])\(([A-Za-z_]?[0-9]*)\)");   
-      Expression = std::regex_replace (Expression,e,std::string("$1(")+p+".$2)");
+      boost::regex e ("([vV])\(([A-Za-z_]?[0-9]*)\)");   
+      Expression = boost::regex_replace (Expression,e,std::string("$1(")+p);
     }
     
     virtual ~NonLinElement(){}
