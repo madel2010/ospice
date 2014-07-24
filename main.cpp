@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
     
     std::vector<std::string> term;
     term.push_back("s1");
-    term.push_back("s2");
+    //term.push_back("s2");
     SubCircuit S1("Xtest" , term);
 
     //C1<< new resistor("R1" , "n1" , "n2", 1);
@@ -36,12 +36,12 @@ int main(int argc, char **argv) {
     C1<< new VCVS("E1","n1","0","n2","0",100);
     C1<< new resistor("R2" , "n2" , "0", 1);
     
-    C1<< new nonlin_resistor("R2" , "n2" , "0", "(10^(-12))*(exp(40*v(n2))-1)");
+    S1<< new nonlin_resistor("R2" , "s1" , "0", "(10^(-12))*(exp(40*v(n2))-1)");
     
     std::vector<std::string> inst_term;
     inst_term.push_back("n1");
-    inst_term.push_back("0");
-    //C1<< S1.create_instance("SI1" , inst_term);
+    //inst_term.push_back("0");
+    C1<< S1.create_instance("SI1" , inst_term);
     
     
     C1<< new DC;
