@@ -6,7 +6,33 @@ cmake_minimum_required(VERSION 2.6)
 SET(CMAKE_VERBOSE_MAKEFILE ON)
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules)
 
-SET(CMAKE_CXX_FLAGS "-O0 -g -fopenmp -Wall -std=c++11")
+#START: check the GCC compiler version
+if (CMAKE_COMPILER_IS_GNUCC)
+    execute_process(COMMAND ${CMAKE_C_COMPILER} -dumpversion
+                    OUTPUT_VARIABLE GCC_VERSION)
+    string(REGEX MATCHALL "[0-9]+" GCC_VERSION_COMPONENTS ${GCC_VERSION})
+    list(GET GCC_VERSION_COMPONENTS 0 GCC_MAJOR)
+    list(GET GCC_VERSION_COMPONENTS 1 GCC_MINOR)
+
+    #message(STATUS ${GCC_MAJOR})
+    #message(STATUS ${GCC_MINOR})
+    
+   if(GCC_MAJOR LESS 4)
+	message(FATAL_ERROR "GCC compiler less than 4")
+   elseif(GCC_MAJOR EQUAL 4 AND GCC_MINOR LESS 3)
+	message(FATAL_ERROR "GCC compiler less than 4.3")
+   elseif( (GCC_MAJOR EQUAL 4 OR GCC_MAJOR GREATER 4) AND (GCC_MINOR GREATER 3 OR GCC_MINOR EQUAL 3) )
+	SET(GCC_C11_FLAG "-std=c++0x")
+   elseif( (GCC_MAJOR EQUAL 4 OR GCC_MAJOR GREATER 4) AND (GCC_MINOR GREATER 7 OR GCC_MINOR EQUAL 7))
+	SET(GCC_C11_FLAG "-std=c++11")
+   endif()
+
+endif()
+#END: check the GCC compiler version
+
+
+SET(CMAKE_CXX_FLAGS "-O0 -g -fopenmp -Wall  ${GCC_C11_FLAG}")
+
 SET(CMAKE_C_FLAGS "-O0 -g -fopenmp -Wall")
 SET(LIBS gomp)
 
