@@ -149,8 +149,7 @@ public:
        
        //nonlinear resistor will have its own copy of prepend_nodes
        void prepend_nodes(std::string p){
-	  n1 = p + n1;
-	  n2 = p + n2;
+	  TwoTerminal::prepend_nodes(p);
 	  
 	  prepend_expression(p);
        }
