@@ -35,6 +35,7 @@
 #include "Circuit.h"
 #include <map>
 
+
 #include "symbolicc++.h"
 
 class resistor : public TwoTerminal
@@ -101,28 +102,9 @@ private:
       static Symbolic do_operator( vector<Symbolic>::iterator left , const char* op );
 public:
 		
-	nonlin_resistor(std::string _n1, std::string _n2, const char* _curr_expression):TwoTerminal(_n1,_n2){
-	     name = std::string("nlR")+".+"+n1+".-"+n2;
-	     
-	     Expression= _curr_expression;
-	     
-	     //add paranthesis to the expression. It is required for the  shunting_yard algorithm to make sure the expression is done
-	     Expression = std::string("(") + Expression;
-	     Expression += ")";
-	     
-	}
+	nonlin_resistor(std::string _n1, std::string _n2, const char* _curr_expression);
 	
-	nonlin_resistor(std::string _name, std::string _n1, std::string _n2, const char* _curr_expression):TwoTerminal(_n1,_n2){
-	
-	     name =_name;
-	     
-	     Expression = _curr_expression;
-	     
-	     //add paranthesis to the expression. It is required for the  shunting_yard algorithm to make sure the expression is done
-	     Expression = std::string("(") + Expression;
-	     Expression += ")";
-	     
-	};
+	nonlin_resistor(std::string _name, std::string _n1, std::string _n2, const char* _curr_expression);
 
 	nonlin_resistor* clone(){ return new nonlin_resistor(*this); }
 	

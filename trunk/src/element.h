@@ -88,7 +88,7 @@ public:
     
     //add p before the node or currents in thenonlinear expression. Used when we have subcircuits
     virtual void prepend_expression(std::string p){
-      boost::regex e ("([vV])\\(([A-Za-z_]?[0-9]*)\\)");   
+      boost::regex e ("([vV])\\([ \t]*([A-Za-z_]?[0-9]*)[ \t]*\\)");   
       Expression = boost::regex_replace (Expression,e,std::string("$1(")+p+"$2)");
     }
     
