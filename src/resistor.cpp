@@ -62,6 +62,32 @@ void resistor::add_my_nodes(Circuit* circuit){
 
 
 /*-------------Non Linear Resisor--------------*/
+nonlin_resistor::nonlin_resistor(std::string _n1, std::string _n2, const char* _curr_expression):TwoTerminal(_n1,_n2){
+
+	     name = std::string("nlR")+".+"+n1+".-"+n2;
+
+             //Remove all spaces from the expression to make it more compact when parsing it	     
+	     Expression =  boost::regex_replace(std::string(_curr_expression),boost::regex("\\s+"),"");
+	     
+	     //add paranthesis to the expression. It is required for the  shunting_yard algorithm to make sure the expression is done.
+
+             Expression = std::string("(") + Expression;
+	     Expression += ")";
+	     
+	}
+	
+nonlin_resistor::nonlin_resistor(std::string _name, std::string _n1, std::string _n2, const char* _curr_expression):TwoTerminal(_n1,_n2){
+	
+	     name =_name;
+	     
+	     Expression = boost::regex_replace(std::string(_curr_expression),boost::regex("\\s+"),"");
+	     
+	     //add paranthesis to the expression. It is required for the  shunting_yard algorithm to make sure the expression is done
+	     Expression = std::string("(") + Expression;
+	     Expression += ")";
+	     
+	};
+
 void nonlin_resistor::write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, Circuit* circ){
     
     circ->add_NonLinElement(this);
