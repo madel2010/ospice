@@ -16,34 +16,38 @@
 [Vv] {return V_VARIABLE;}
 \( {return LBRACKET;}
 \) {return RBRACKET;}
+\"  {return DOUBLE_QUOTE;}
 
-[rR][A-Za-z0-9_]+ {yylval.str=strdup(yytext); return RESISTOR;}
+^[ \t]*[rR][A-Za-z0-9_]+ {yylval.str=strdup(yytext); return RESISTOR;}
 
-[lL][A-Za-z0-9_]+ {yylval.str=strdup(yytext); return INDUCTOR;}
+^[ \t]*[lL][A-Za-z0-9_]+ {yylval.str=strdup(yytext); return INDUCTOR;}
 
-[cC][A-Za-z0-9_]+ {yylval.str=strdup(yytext); return CAPACITOR;}
+^[ \t]*[cC][A-Za-z0-9_]+ {yylval.str=strdup(yytext); return CAPACITOR;}
 
-[kK][A-Za-z0-9_]+ {yylval.str=strdup(yytext); return MUTUALINDUCTOR;}
+^[ \t]*[kK][A-Za-z0-9_]+ {yylval.str=strdup(yytext); return MUTUALINDUCTOR;}
 
-[vV][A-Za-z0-9_]+ {yylval.str=strdup(yytext); return VOLTAGESOURCE;}
+^[ \t]*[vV][A-Za-z0-9_]+ {yylval.str=strdup(yytext); return VOLTAGESOURCE;}
 
-[iI][A-Za-z0-9_]+ {yylval.str=strdup(yytext); return CURRENTSOURCE;}
+^[ \t]*[iI][A-Za-z0-9_]+ {yylval.str=strdup(yytext); return CURRENTSOURCE;}
 
-[eE][A-Za-z0-9_]+ {yylval.str=strdup(yytext); return E_ELEMENT;}
+^[ \t]*[eE][A-Za-z0-9_]+ {yylval.str=strdup(yytext); return E_ELEMENT;}
 
-[xX][A-Za-z0-9_]+ {yylval.str=strdup(yytext); return SUBCKT_INSTANCE;}
+^[ \t]*[xX][A-Za-z0-9_]+ {yylval.str=strdup(yytext); return SUBCKT_INSTANCE;}
 
+(?:.*[a-zA-Z]+[0-9]*)(?:.*\/).* {printf("%s",yytext);yylval.str=strdup(yytext); return PATH;}
 
 [A-Za-z_]+[0-9]* {yylval.str=strdup(yytext); return STRING;}
 
-\.[tT][rR][aA][nN] {return TRAN;}
+^[ \t]*\.[tT][rR][aA][nN] {return TRAN;}
 
 -?[0-9]+("."[0-9])*|-?"."[0-9]+|-?[0-9]+E[-+]?[0-9]+|-?[0-9]+"."[0-9]*E[-+]?[0-9]+|-?"."[0-9]+E[-+]?[0-9]+ { yylval.dval = atof(yytext) ; return DVALUE;} 
 
-\.[Ss][Uu][Bb][Cc][Kk][Tt] {return SUBCKT;}
-\.[eE][nN][dD][sS] {return END_SUBCKT;}
+^[ \t]*\.[Ss][Uu][Bb][Cc][Kk][Tt] {return SUBCKT;}
+^[ \t]*\.[eE][nN][dD][sS] {return END_SUBCKT;}
 
-\.[Pp][Rr][Ii][Nn][Tt][ \t]+[Tt][Rr][Aa][Nn] {return PRINT_TRAN;} /* Print statments*/
+^[ \t]*\.[Pp][Rr][Ii][Nn][Tt][ \t]+[Tt][Rr][Aa][Nn] {return PRINT_TRAN;} /* Print statments*/
+
+^[ \t]*\.[Ii][Nn][Cc][Ll][Uu][Dd][Ee] {return INCLUDE;} /* include statments*/
 
 
 

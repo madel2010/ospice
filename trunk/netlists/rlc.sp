@@ -6,6 +6,7 @@ R1 n1 0 2
 E1 n3 0 n1 0 10
 R2 n3 0 1
 
+.include "xzxzx/asass/asasas"
 
 .subckt Mina n1 n2
 R1 n1 n2 10

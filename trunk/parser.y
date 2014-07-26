@@ -86,7 +86,7 @@ void yyerror(const char *str){
 
 %token <dval> DVALUE
 %token <str> STRING
-
+%token <str> PATH
 
 %token <str> RESISTOR
 %token <str> INDUCTOR
@@ -103,11 +103,13 @@ void yyerror(const char *str){
 
 %token <str> TRAN
 %token <str> PRINT_TRAN
+%token <str> INCLUDE
 
 %token <str> COMMENT
 %token <str> NEWLINE
 %token <str> LBRACKET
 %token <str> RBRACKET
+%token <str> DOUBLE_QUOTE
 %token <str> V_VARIABLE
 
 %type <str> node
@@ -150,6 +152,7 @@ command:
 	| subcircuit_statment
 	| end_subckt_statment
 	| print_statment
+	| include_statment
 	;
 	
 resistor_statment:
@@ -195,6 +198,11 @@ tran_statment:
 	}
 	;
 	
+include_statment:
+	| INCLUDE DOUBLE_QUOTE PATH DOUBLE_QUOTE NEWLINE{
+	     // std::cout<<"Path="<<$2<<std::endl;
+	}
+	;
 	
 subckt_instance_statment:
 	| SUBCKT_INSTANCE node_list STRING{
