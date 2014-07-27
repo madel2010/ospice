@@ -142,7 +142,7 @@ bool nonlin_resistor::is_voltage_current(const std::string& c , std::string& dep
     dependent = "";
 
     //Check if it is a node voltage or current
-    boost::regex expr( "V\\([A-Za-z0-9]*\\)|I\\([A-Za-z0-9]*\\)" , boost::regex::icase) ;
+    boost::regex expr( "V\\(.+\\)|I\\(.+\\)" , boost::regex::icase) ;
     result = boost::regex_match( c, expr ) ;
 
     //if it is a reference to node voltage or branch current, then determine the name of the node
@@ -321,7 +321,12 @@ void nonlin_resistor::shunting_yard(Circuit* circ)
 		 Tree.push_back(Temp_F);
 		 //Next, we have to save the node names and references that the expression depends on, in order to use it latter.
 		int node_index = circ->get_variable_index(sc);
-		expression_depends_on.push_back( std::pair<Symbolic , int>(Temp_F,node_index) );
+		if(node_index<-1){ //no node found
+		  std::string Err = std::string("Error in parsing nonlinear expression, node does not exist: ") + sc;
+		  throw std::runtime_error(Err);
+		}else{
+		  expression_depends_on.push_back( std::pair<Symbolic , int>(Temp_F,node_index) );
+		}
          }else if(is_function(c))   {
                 stack[stack_counter] = c;
                 stack_counter++;
@@ -398,7 +403,7 @@ void nonlin_resistor::shunting_yard(Circuit* circ)
                     }
                 }
             }else{
-                std::string Err = std::string("Unknown token: ") + c;
+                 std::string Err = std::string("Error in parsing nonlinear expression, Unknown token: ") + c;
 		 throw std::runtime_error(Err);
             }
 

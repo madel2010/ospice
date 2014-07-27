@@ -8,7 +8,7 @@
 
 %}
 
-
+%x incl
 
 %%
 \*.* {return COMMENT;}
@@ -34,7 +34,7 @@
 
 ^[ \t]*[xX][A-Za-z0-9_]+ {yylval.str=strdup(yytext); return SUBCKT_INSTANCE;}
 
-(?:.*[a-zA-Z]+[0-9]*)(?:.*\/).* {printf("%s",yytext);yylval.str=strdup(yytext); return PATH;}
+\"(\\.|[^"])*\" {yylval.str=strdup(yytext); return QUOTED_STRING;}
 
 [A-Za-z_]+[0-9]* {yylval.str=strdup(yytext); return STRING;}
 
@@ -47,14 +47,38 @@
 
 ^[ \t]*\.[Pp][Rr][Ii][Nn][Tt][ \t]+[Tt][Rr][Aa][Nn] {return PRINT_TRAN;} /* Print statments*/
 
-^[ \t]*\.[Ii][Nn][Cc][Ll][Uu][Dd][Ee] {return INCLUDE;} /* include statments*/
-
-
-
-
 
 \n   {return NEWLINE;}                   /* ignore end of line */;
 [ \t]+                  /* ignore whitespace */;
 
 
+
+  /* START: Include Part */
+
+^[ \t]*\.[Ii][Nn][Cc][Ll][Uu][Dd][Ee][ \t]+ BEGIN(incl);
+
+<incl>[ \t]*      /* eat the whitespace */
+<incl>[^ \t\n]+   { /* got the include file name */
+            yyin = fopen( yytext, "r" );
+     
+                 if ( ! yyin ){
+                     printf( "Can not open include file %s",yytext );
+                     abort();
+                 }
+     
+     		yypush_buffer_state(yy_create_buffer( yyin, YY_BUF_SIZE ));
+     
+                BEGIN(INITIAL);
+}
+
+<<EOF>> {
+     	     //http://flex.sourceforge.net/manual/Multiple-Input-Buffers.html#Multiple-Input-Buffers
+     	     //get the previoust parser from the stack. usefull when we have include file
+     	     yypop_buffer_state();
+     
+             if ( !YY_CURRENT_BUFFER ){
+                     yyterminate(); //terminate parsing
+             }
+	}
+  /* END: Include Part */
 %%
