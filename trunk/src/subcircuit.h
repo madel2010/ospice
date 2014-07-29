@@ -65,7 +65,12 @@ public:
      
     /////Start:Must be defined as it it inherited from Element Base class
     void write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, Circuit* circ);
+    
     inline bool is_linear(){return my_subcircuit->is_linear;}
+    
+    //The Subcircuit does not add currents to the MNA, then return -1
+    int is_current_element(){return -1;}
+	
     void add_my_nodes(Circuit* circuit); 
     /////END:Must be defined as it it inherited from Element Base class
 

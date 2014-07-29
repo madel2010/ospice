@@ -22,7 +22,7 @@
 
 #include "ControledSources.h"
 
-/*-------------------The VCVS---------------*/
+/*-------------------The VCVS (E-element)---------------*/
 void VCVS::add_my_nodes(Circuit* circuit){
     in1_index = circuit->add_mna_variable(in1);
     in2_index = circuit->add_mna_variable(in2);
@@ -53,4 +53,34 @@ void VCVS::write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, C
     if(in2_index > -1){
 	G.add_to_entry(current_index , in2_index , gain);
     } 
+}
+
+/*-------------------The VCCS (G-element)---------------*/
+void VCCS::add_my_nodes(Circuit* circuit){
+    in1_index = circuit->add_mna_variable(in1);
+    in2_index = circuit->add_mna_variable(in2);
+    
+    out1_index = circuit->add_mna_variable(out1);
+    out2_index = circuit->add_mna_variable(out2);
+
+}
+
+void VCCS::write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, Circuit* circ){
+    if(out1_index > -1 && in1_index > -1 ){
+	G.add_to_entry(out1_index , in1_index , gain);
+    }
+    
+    if(out1_index > -1 && in2_index > -1 ){
+	G.add_to_entry(out1_index , in2_index , -gain);
+    }
+    
+    if(out2_index > -1 && in1_index > -1 ){
+	G.add_to_entry(out2_index , in1_index , -gain);
+    }
+    
+    if(out2_index > -1 && in2_index > -1 ){
+	G.add_to_entry(out2_index , in1_index , gain);
+    }
+    
+    
 }

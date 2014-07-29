@@ -52,6 +52,9 @@ public:
 	
 	bool is_linear(){return true;}
 	
+	//The Inductor does add currents to the MNA, then return the index of its current
+	int is_current_element(){return current_index;}
+	
 	virtual void write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, Circuit* circ);
 	
 	///add the requird nodes to the main circuit

@@ -34,6 +34,8 @@
 
 ^[ \t]*[xX][A-Za-z0-9_]+ {yylval.str=strdup(yytext); return SUBCKT_INSTANCE;}
 
+^[ \t]*[gG][A-Za-z0-9_]+ {yylval.str=strdup(yytext); return G_ELEMENT;}
+
 \"(\\.|[^"])*\" {yylval.str=strdup(yytext); return QUOTED_STRING;}
 
 [A-Za-z_]+[0-9]* {yylval.str=strdup(yytext); return STRING;}

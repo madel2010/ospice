@@ -59,6 +59,9 @@ public:
 	
 	bool is_linear(){return true;}
 	
+	//The Resistor does not add currents to the MNA, then return -1
+	int is_current_element(){return -1;}
+	
 	virtual void write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, Circuit* circ);
 	
 	///add the requird nodes to the main circuit
@@ -109,6 +112,9 @@ public:
 	nonlin_resistor* clone(){ return new nonlin_resistor(*this); }
 	
 	bool is_linear(){return false;}
+	
+	//The Resistor does not add currents to the MNA, then return -1
+	int is_current_element(){return -1;}
 	
 	virtual void write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, Circuit* circ);
 	
