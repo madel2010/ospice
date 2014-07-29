@@ -94,6 +94,7 @@ void yyerror(const char *str){
 %token <str> CAPACITOR
 %token <str> MUTUALINDUCTOR
 %token <str> E_ELEMENT
+%token <str> G_ELEMENT
 
 %token <str> SUBCKT_INSTANCE
 %token <str> SUBCKT
@@ -178,6 +179,12 @@ vcvs_statment:
 	      (*CurrentCircuit)<< new VCVS($1, $4, $5, $2, $3,$6);
 	}
 	;
+	
+vccs_statment:
+	| G_ELEMENT node node node node DVALUE NEWLINE{
+	      (*CurrentCircuit)<< new VCCS($1, $4, $5, $2, $3,$6);
+	}
+	;	
 
 voltagesource_statment:
 	| VOLTAGESOURCE node node DVALUE NEWLINE{ //DC voltage source

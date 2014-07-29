@@ -55,6 +55,8 @@ public:
     
     virtual void write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, Circuit* circ)=0;
     virtual bool is_linear()=0;
+    virtual int is_current_element()=0; //does this element add a current to the MNA. 
+					//If No, it should return -1, Otherwise it should return the index of the current element
     
     ///add the node name to the circuit, 
     virtual void add_my_nodes(Circuit* circuit)=0; 

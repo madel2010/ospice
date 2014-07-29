@@ -49,7 +49,7 @@ protected:
 public:
     
     //element_order_index is defined in Element class. It gives an order to the elements to write in the MNA first. 
-    //we need probes to be the last elements to make sure that all nodes are added first.
+    //we need probes to be the last elements to make sure that all nodes/elements are added first.
     Probe(){element_order_index=2;};
     
     virtual void get_data(double time , const double* solution)=0;
@@ -74,6 +74,9 @@ public:
     
     bool is_linear(){return true;}
     
+    //The VoltageProbe does not add currents to the MNA, then return -1
+    int is_current_element(){return -1;}
+	
     ///add the requird nodes to the main circuit
     void add_my_nodes(Circuit* circuit);
     

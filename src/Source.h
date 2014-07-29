@@ -86,6 +86,9 @@ public:
     
     bool is_linear(){ return true;} ;
     
+    //The current source does not add currents to the MNA, then return -1
+    int is_current_element(){return -1;}
+    
 };
 
 /*-------Voltage Source Class ----------------- */
@@ -129,6 +132,9 @@ public:
     }
     
     bool is_linear(){ return true;} ;
+    
+    //The Voltage source adds currents to the MNA, then return the index of its current index
+    int is_current_element(){return current_index;}
     
 };
 

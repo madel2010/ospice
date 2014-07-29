@@ -25,7 +25,7 @@
 
 #include "element.h""
 
-/*-------------------The VCVS---------------*/
+/*-------------------The VCVS (E-element)---------------*/
 class VCVS : public FourTerminal
 {
   private:
@@ -46,8 +46,37 @@ class VCVS : public FourTerminal
     void write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, Circuit* circ);
     bool is_linear(){return true;};
     
+    //The VCVS adds currents to the MNA, then return the index of its current
+    int is_current_element(){return current_index;}
+    
     ///add the node name to the circuit, 
     void add_my_nodes(Circuit* circuit); 
 };
 
+/*-------------------The VCCS (G-element)---------------*/
+class VCCS : public FourTerminal
+{
+  private:
+  double gain; //the gain of the VCCS
+  
+  public:
+    VCCS(std::string _inn1, std::string _inn2,std::string _out1, std::string _out2, double _gain): FourTerminal(_inn1,_inn2,_out1,_out2),gain(_gain){
+	  name = std::string("G")+".+"+out1+".-"+out2;
+    }
+    
+    VCCS(std::string _name, std::string _inn1, std::string _inn2,std::string _out1, std::string _out2, double _gain): FourTerminal(_inn1,_inn2,_out1,_out2),gain(_gain){
+	  name = _name;
+    }
+      
+    VCCS* clone(){return new VCCS(*this);};
+    
+    void write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, Circuit* circ);
+    bool is_linear(){return true;};
+    
+    //The VCCS does not add currents to the MNA, then return -1
+    int is_current_element(){return -1;}
+	
+    ///add the node name to the circuit, 
+    void add_my_nodes(Circuit* circuit); 
+};
 #endif // CONTROLED_SOURCES_H
