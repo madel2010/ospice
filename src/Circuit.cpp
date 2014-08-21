@@ -242,9 +242,9 @@ Element* Circuit::search_elements(std::string name){
     
     Element* results = nullptr;
     
-    std::vector<Element*>::iterator search = find_if(components.begin(), components.end(), [name](Element* el){return el->get_name()==name} );
+    std::list<Element*>::iterator search = find_if(components.begin(), components.end(), [name](Element* el){return el->get_name()==name;} );
     if(search==components.end()){
-      results = nullptrt;
+      results = nullptr;
     }else{
       results = *search;
     }

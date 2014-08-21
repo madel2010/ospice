@@ -30,6 +30,7 @@
 #define PROBES_H
 
 #include "element.h"
+#include "Inductor.h"
 #include <vector>
 #include <string>
 #include "plot.h"
