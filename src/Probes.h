@@ -94,4 +94,50 @@ public:
     }
 };
 
+
+class CurrentProbe : public Probe
+{
+  
+private:
+   int current_index;
+   TwoTerminal* my_element;
+   std::string my_element_name;
+   
+   ShortCircuit* SC;
+   
+public:
+  
+    CurrentProbe(std::string _name, TwoTerminal* element){
+      name = _name;
+      my_element = element;
+      SC = nullptr;
+    }
+    CurrentProbe(TwoTerminal* element){SC = nullptr; my_element = element;} 
+   
+    CurrentProbe(std::string _name, std::string element_name){
+      name = _name;
+      my_element = nullptr;
+      SC = nullptr;
+      my_element_name = element_name;
+    }
+    
+    CurrentProbe* clone(){ return new CurrentProbe(*this); }
+    
+    void write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, Circuit* circ);
+    
+    bool is_linear(){return true;}
+    
+    //The current Probe adds short circuit which requires currents added to the MNA, then return current index
+    int is_current_element(){return current_index;}
+	
+    ///add the requird nodes to the main circuit
+    void add_my_nodes(Circuit* circuit);
+    
+    void get_data(double time , const double* solution);
+    
+    void plot();
+    
+    
+};
+
 #endif // PROBES_H

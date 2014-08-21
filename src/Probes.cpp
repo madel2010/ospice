@@ -28,6 +28,7 @@
 #include "Circuit.h"
 #include "Probes.h"
 #include "plot.h"
+#include "Inductor.h"
 
 /*-----------------Voltage porbles------------*/
 VoltageProbe::VoltageProbe(std::string _name , std::string _n1, std::string _n2){
@@ -91,3 +92,44 @@ void VoltageProbe::plot(){
     
     my_plot.plot( time_points, data, name); //this function is defined in plot.h to plot the data of the probe
 }
+
+/*-----------------Current porbles------------*/
+void CurrentProbe::write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C , Circuit* circ){
+   
+    //This line is here becuase we want to add the SC and let the circuit add its node and current then we get its current_index
+    current_index = SC->is_current_element();
+    
+    circ->add_probe(this);
+    
+}
+
+void CurrentProbe::add_my_nodes(Circuit* circuit){
+  
+	  //check if the element to probe already exists
+	  if(!my_element){
+		TwoTerminal* circuit_search_results =  circuit->search_elements(my_element_name);
+	   	if(!circuit_search_results){    
+		    throw std::runtime_error(std::string("Current Probe element does not exist: ")+my_element_name);
+		}else{
+		    my_element = circuit_search_results;
+		}
+	  }
+	  
+	  if(my_element->is_current_element()!=-1){ //this is already an element that adds a current
+	    
+	    current_index = my_element->is_current_element(); //this function returns the index of the current if it is a current element
+	  
+	    
+	  }else{ //not a current element, then add SC
+	    
+	    std::string new_name = my_element->get_name() + "sc+";
+	    
+	    SC = new ShortCircuit(new_name , my_element->n2);
+	    circuit << new ShortCircuit();
+	    
+	    //change that element second node name and index to refelect the added short circuit
+	    my_element->n2 = new_name; //Current probe is a friend to TwoTerminals
+	    my_element->n2_index = circuit->add_mna_variable(new_name);    
+	  }
+	  
+};

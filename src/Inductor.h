@@ -31,7 +31,7 @@
 
 #include "element.h"
 
-
+/*-----START: Inductor Class -----------*/
 class Inductor : public TwoTerminal
 {
 private:
@@ -60,7 +60,7 @@ public:
 	///add the requird nodes to the main circuit
 	void add_my_nodes(Circuit* circuit);
 	
-	std::vector<std::string> get_terminals_name(){
+        std::vector<std::string> get_terminals_name(){
 	    std::vector<std::string> result;
 	    result.push_back(n1);
 	    result.push_back(n2);
@@ -73,7 +73,7 @@ public:
 	
 };
 
-
+/*---------START:  Mutual Inductor --------------------- */
 class MututalInductor : public TwoTerminal
 {
 private:
@@ -108,6 +108,23 @@ public:
 	    return result;
 	}
 	
+};
+
+/*---------START: Short Circuit --------------------- */
+class ShortCircuit :  public Inductor
+{
+
+private:
+	int current_index;
+  
+public:
+	ShortCircuit(std::string _n1, std::string _n2):Inductor(_n1,_n2,0){
+	     name = std::string("SC")+".+"+n1+".-"+n2;
+	}
+	
+	ShortCircuit(std::string _name, std::string _n1, std::string _n2):Inductor(_n1,_n2,0){
+	  name = _name;
+	};
 };
 
 #endif // INDUCTOR_H
