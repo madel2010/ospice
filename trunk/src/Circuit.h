@@ -132,6 +132,8 @@ public:
 	  required_analysis.push_back(an);
     }
     
+    Element* search_elements(std::string name);
+    
     int size_of_mna(){return mna_variable_indices.size(); }
     
     void update_probes(double time, const double* solution);

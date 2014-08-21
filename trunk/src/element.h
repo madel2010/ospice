@@ -102,6 +102,7 @@ public:
 ///Two Terminal Element Class
 class TwoTerminal : public Element
 {
+friend class CurrentProbe;
 
 protected:
     std::string n1; //First node name

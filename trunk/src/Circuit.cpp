@@ -238,3 +238,16 @@ const BMatrix::Dense<double>& Circuit::get_dc_solution(){
   }
 }
     
+Element* Circuit::search_elements(std::string name){
+    
+    Element* results = nullptr;
+    
+    std::vector<Element*>::iterator search = find_if(components.begin(), components.end(), [name](Element* el){return el->get_name()==name} );
+    if(search==components.end()){
+      results = nullptrt;
+    }else{
+      results = *search;
+    }
+    
+    return results;
+}
