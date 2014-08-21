@@ -1,5 +1,5 @@
-OUTPUT_DIRECTORY = "/home/spider/C++_projects/My_Simulator/Doc"
-INPUT = "/home/spider/C++_projects/My_Simulator/src"
+OUTPUT_DIRECTORY = "/home/madel/C++_projects/MySimulator/Doc"
+INPUT = "/home/madel/C++_projects/MySimulator/src"
 
 EXTRACT_ALL = YES
 INLINE_SOURCE = YES
