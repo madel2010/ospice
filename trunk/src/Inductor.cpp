@@ -58,7 +58,7 @@ void Inductor::add_my_nodes(Circuit* circuit){
     
     //we have to add the current element in case we need it for the mutual_inductances
     circuit->add_inductor_index(name,value);
-    circuit->add_inductor_index(name,value);
+
   
     
 }
