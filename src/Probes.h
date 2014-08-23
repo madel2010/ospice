@@ -46,13 +46,16 @@ protected:
     std::vector<double> data;
     std::vector<double> time_points;
     
-    Plot my_plot; //this keeps the class of the plot window of gnuplot
+    Plot* my_plot; //this keeps the class of the plot window of gnuplot
 public:
     
     //element_order_index is defined in Element class. It gives an order to the elements to write in the MNA first. 
     //we need probes to be the last elements to make sure that all nodes/elements are added first.
-    Probe(){element_order_index=2;};
-    
+    Probe(){element_order_index=2; my_plot = nullptr;};
+    virtual ~Probe(){
+      if(my_plot) delete my_plot;
+    };
+
     virtual void get_data(double time , const double* solution)=0;
     virtual void plot()=0;
     

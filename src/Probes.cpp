@@ -80,6 +80,9 @@ void VoltageProbe::get_data(double time, const double* solution){
  
 ///THis function plots the porbe data using gnuplot
 void VoltageProbe::plot(){
+    
+    if(!my_plot) my_plot = new Plot();
+    
     if(data.size() != time_points.size()){
 	throw std::runtime_error("Something wrong happened. A probe doesnot have the same number of data and time points");
     }
@@ -90,7 +93,7 @@ void VoltageProbe::plot(){
     }
     
     
-    my_plot.plot( time_points, data, name); //this function is defined in plot.h to plot the data of the probe
+    my_plot->plot( time_points, data, name); //this function is defined in plot.h to plot the data of the probe
 }
 
 /*-----------------Current porbles------------*/
@@ -125,10 +128,10 @@ void CurrentProbe::add_my_nodes(Circuit* circuit){
 	    
 	  }else{ //not a current element, then add SC
 	    
-	    std::string new_name = my_element->get_name() + "sc+";
+	    std::string new_name = my_element->get_name() + ".sc+";
 	    
 	    SC = new ShortCircuit(new_name , my_element->n2);
-	    (*circuit) << SC;
+	    (*circuit) << SC; //note that the components is a list so adding to it will not affect the iterator
 	    
 	    //change that element second node name and index to refelect the added short circuit
 	    my_element->n2 = new_name; //Current probe is a friend to TwoTerminals
@@ -148,6 +151,8 @@ void CurrentProbe::get_data(double time, const double* solution){
 }
 
 void CurrentProbe::plot(){
+    if(!my_plot) my_plot = new Plot();
+    
     if(data.size() != time_points.size()){
 	throw std::runtime_error("Something wrong happened. A probe doesnot have the same number of data and time points");
     }
@@ -158,5 +163,5 @@ void CurrentProbe::plot(){
     }
     
     
-    my_plot.plot( time_points, data, name); //this function is defined in plot.h to plot the data of the probe
+    my_plot->plot( time_points, data, name); //this function is defined in plot.h to plot the data of the probe
 }
