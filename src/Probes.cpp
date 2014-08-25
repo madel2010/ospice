@@ -100,7 +100,7 @@ void VoltageProbe::plot(){
 void CurrentProbe::write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C , Circuit* circ){
    
     //This line is here becuase we want to add the SC and let the circuit add its node and current then we get its current_index
-    current_index = SC->is_current_element();
+    if(SC) current_index = SC->is_current_element();
     
     circ->add_probe(this);
     

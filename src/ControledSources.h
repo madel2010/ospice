@@ -90,13 +90,25 @@ class CCCS : public FourTerminal
   int current_index; 
    
   public:
+    CCCS(TwoTerminal* _controlling_element ,std::string _out1, std::string _out2, double _gain): gain(_gain){
+	  name = std::string("F")+".+"+out1+".-"+out2;
+	  controlling_element = _controlling_element;
+	  controlling_element_name = controlling_element->get_name();
+	  in1 = controlling_element_name;
+          in2 = controlling_element_name;
+          out1 = _out1;
+          out2 = _out2;
+    }
+
     CCCS(std::string _controlling_element_name,std::string _out1, std::string _out2, double _gain): FourTerminal(_controlling_element_name,_controlling_element_name,_out1,_out2),gain(_gain){
 	  name = std::string("F")+".+"+out1+".-"+out2;
 	  controlling_element = nullptr;
+	  controlling_element_name = _controlling_element_name;
     }
     
     CCCS(std::string _name, std::string _controlling_element_name,std::string _out1, std::string _out2, double _gain): FourTerminal(_controlling_element_name,_controlling_element_name,_out1,_out2),gain(_gain){
 	  name = _name;
+          controlling_element_name = _controlling_element_name;
 	  controlling_element = nullptr;
     }
     

@@ -38,7 +38,7 @@ void Plot::init(){
 			close(fd[0]); // close read end 
 
 			//write commands to gnuplot
-			write(plot_fd, "set terminal wxt persist enhanced font \"arial-12\"\n",4+9+4+8+9+5+11);
+			//write(plot_fd, "set terminal wxt persist enhanced font \"arial-12\"\n",4+9+4+8+9+5+11);
 			
 			Plot::ready = true;
 
