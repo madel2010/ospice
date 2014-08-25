@@ -94,6 +94,7 @@ void yyerror(const char *str){
 %token <str> CAPACITOR
 %token <str> MUTUALINDUCTOR
 %token <str> E_ELEMENT
+%token <str> F_ELEMENT
 %token <str> G_ELEMENT
 
 %token <str> SUBCKT_INSTANCE
@@ -142,6 +143,7 @@ element:
 	| capacitor_statment
 	| subckt_instance_statment
 	| vcvs_statment
+	| cccs_statment
 	;
 	
 source:
@@ -177,6 +179,12 @@ capacitor_statment:
 vcvs_statment:
 	| E_ELEMENT node node node node DVALUE NEWLINE{
 	      (*CurrentCircuit)<< new VCVS($1, $4, $5, $2, $3,$6);
+	}
+	;
+
+cccs_statment:
+	| F_ELEMENT STRING node node DVALUE NEWLINE{
+	      (*CurrentCircuit)<< new CCCS($1, $2, $3, $4, $5);
 	}
 	;
 	

@@ -32,6 +32,8 @@
 
 ^[ \t]*[eE][A-Za-z0-9_]+ {yylval.str=strdup(yytext); return E_ELEMENT;}
 
+^[ \t]*[fF][A-Za-z0-9_]+ {yylval.str=strdup(yytext); return F_ELEMENT;}
+
 ^[ \t]*[xX][A-Za-z0-9_]+ {yylval.str=strdup(yytext); return SUBCKT_INSTANCE;}
 
 ^[ \t]*[gG][A-Za-z0-9_]+ {yylval.str=strdup(yytext); return G_ELEMENT;}
