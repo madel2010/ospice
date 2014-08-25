@@ -61,6 +61,7 @@ public:
     
 };
 
+/*---------------Voltage Probe Class -----------*/
 class VoltageProbe : public Probe
 {
 private:
@@ -98,7 +99,7 @@ public:
     }
 };
 
-
+/*---------------Current Probe Class -----------*/
 class CurrentProbe : public Probe
 {
   
