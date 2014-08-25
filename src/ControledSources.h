@@ -79,4 +79,37 @@ class VCCS : public FourTerminal
     ///add the node name to the circuit, 
     void add_my_nodes(Circuit* circuit); 
 };
+
+/*-------------------The VCCS (G-element)---------------*/
+class CCCS : public FourTerminal
+{
+  private:
+  double gain; //the gain of the VCCS
+  TwoTerminal* controlling_element;
+  std::string controlling_element_name;
+  int current_index; 
+   
+  public:
+    CCCS(std::string _controlling_element_name,std::string _out1, std::string _out2, double _gain): FourTerminal(_controlling_element_name,_controlling_element_name,_out1,_out2),gain(_gain){
+	  name = std::string("F")+".+"+out1+".-"+out2;
+	  controlling_element = nullptr;
+    }
+    
+    CCCS(std::string _name, std::string _controlling_element_name,std::string _out1, std::string _out2, double _gain): FourTerminal(_controlling_element_name,_controlling_element_name,_out1,_out2),gain(_gain){
+	  name = _name;
+	  controlling_element = nullptr;
+    }
+    
+      
+    CCCS* clone(){return new CCCS(*this);};
+    
+    void write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, Circuit* circ);
+    bool is_linear(){return true;};
+    
+    //The VCCS does not add currents to the MNA, then return -1
+    int is_current_element(){return -1;}
+	
+    ///add the node name to the circuit, 
+    void add_my_nodes(Circuit* circuit); 
+};
 #endif // CONTROLED_SOURCES_H
