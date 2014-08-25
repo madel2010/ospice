@@ -84,3 +84,40 @@ void VCCS::write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, C
     
     
 }
+
+/*-------------------The CCCS (G-element)---------------*/
+void CCCS::add_my_nodes(Circuit* circuit){
+  
+    //check if the controlling element already exists
+    if(!controlling_element){
+	Element* circuit_search_results =  circuit->search_elements(controlling_element_name);
+	if(!circuit_search_results){    
+	    throw std::runtime_error(std::string("CCCS error, controlling element does not exist: ")+controlling_element_name);
+	}else{
+	    controlling_element = dynamic_cast<TwoTerminal*>(circuit_search_results);
+	    if(!controlling_element){
+		throw std::runtime_error(std::string("CCCS controlling element is not Two Terminal Element:")+controlling_element_name);
+	    }
+	}
+    }
+    
+    current_index = controlling_element->is_current_element();
+    if(current_index == -1){ //this is NOT a current element
+	throw std::runtime_error(std::string("CCCS controlling element is not a Current Element:")+controlling_element_name);
+    }
+
+    out1_index = circuit->add_mna_variable(out1);
+    out2_index = circuit->add_mna_variable(out2);
+
+}
+
+void CCCS::write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<double> &C, Circuit* circ){
+    if(out1_index > -1 ){
+	G.add_to_entry(out1_index , current_index , gain);
+    }
+    
+    if(out2_index > -1 ){
+	G.add_to_entry(out2_index , current_index , -gain);
+    }
+    
+}

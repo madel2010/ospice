@@ -44,7 +44,7 @@ protected:
       
       //this is if we need to sort the elements of the circuit. 
       //For example, the probes should be sorted at the end, so we give it index 2
-      //Any element by default = 1; probes = 2
+      //Any element by TwoTerminal = 1; FourTerminal=2; probes = 3
       int element_order_index; 
       
 public:
@@ -158,12 +158,13 @@ protected:
     
 public:
   
-    FourTerminal(){};
+    FourTerminal(){element_order_index=2;};
     FourTerminal(std::string _in1, std::string _in2, std::string _out1, std::string _out2 ){
 	in1 = _in1;
 	in2 = _in2;
 	out1 = _out1;
 	out2 = _out2;
+	element_order_index =  2;
     }
     
     std::string get_in1(){return in1;}
