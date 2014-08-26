@@ -49,6 +49,7 @@ public:
 	void plot(std::string function);  //if you want to just plot a function
 
 	void init();
+	void end();
 	void send_command(const char * format , ...);
 	void xlabel(const char* label);
 	void ylabel(const char* label);

@@ -57,6 +57,13 @@ void Plot::init(){
 	}
 }
 
+void Plot::end(){
+	if(Plot::ready){
+		send_command("quit");
+		Plot::ready = false;
+	}
+}
+
 void Plot::send_command(const char * format , ...){
 	if(!Plot::ready) init();
 	
@@ -114,7 +121,10 @@ void Plot::draw_curves(){
  			send_command("%e %e\n", (*it)->x[i], (*it)->y[i]);
 		}
 		send_command("e\n");
+		
 	} 	
+
+	end(); //done drawing, close the plots
 }
 
 void Plot::xlabel(const char* label){

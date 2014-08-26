@@ -113,6 +113,7 @@ void yyerror(const char *str){
 %token <str> RBRACKET
 %token <str> DOUBLE_QUOTE
 %token <str> V_VARIABLE
+%token <str> I_VARIABLE
 
 %type <str> node
 %type <arg_list> node_list
@@ -240,9 +241,13 @@ end_subckt_statment:
 print_statment:
        |PRINT_TRAN v_node_list{
 	  for(std::string _node : (*$2)){
-	    std::string node_name = _node.substr (2,_node.length()-1);
+	    std::string node_name = _node.substr (2,_node.length()-3);
 	    boost::trim(node_name);
-	    (*CurrentCircuit)<< new VoltageProbe(_node , node_name , "0");
+	    if(_node[0]=='V'){ //Voltage Probale
+	    	(*CurrentCircuit)<< new VoltageProbe(_node , node_name , "0");
+	    }else if(_node[0]=='I' ){ //current Probe
+		(*CurrentCircuit)<< new CurrentProbe(_node , node_name);
+            }
 	  }
        }
        ;
@@ -279,6 +284,14 @@ v_node_list:
     |V_VARIABLE LBRACKET node RBRACKET{
           $$ = new std::list<std::string>;
           $$->push_back(std::string("V(")+$3+std::string(")"));
+    }
+    |v_node_list I_VARIABLE LBRACKET node RBRACKET{
+          $1->push_back(std::string("I(")+$4+std::string(")"));
+	  $$ = $1;
+    }
+    |I_VARIABLE LBRACKET node RBRACKET{
+          $$ = new std::list<std::string>;
+          $$->push_back(std::string("I(")+$3+std::string(")"));
     }
     ;    
 

@@ -52,8 +52,12 @@ public:
     //element_order_index is defined in Element class. It gives an order to the elements to write in the MNA first. 
     //we need probes to be the last elements to make sure that all nodes/elements are added first.
     Probe(){element_order_index=3; my_plot = nullptr;};
+    Probe(Plot* _my_plot){element_order_index=3; my_plot = _my_plot;};
     virtual ~Probe(){
-      if(my_plot) delete my_plot;
+      if(my_plot){ 
+	delete my_plot;
+	my_plot = nullptr;
+      }
     };
 
     virtual void get_data(double time , const double* solution)=0;
@@ -70,8 +74,8 @@ private:
     
     
 public:
-    VoltageProbe(std::string _name, std::string _n1, std::string _n2);
-    VoltageProbe(TwoTerminal* element);  
+    VoltageProbe(std::string _name, std::string _n1, std::string _n2, Plot* _my_plot = nullptr);
+    VoltageProbe(TwoTerminal* element, Plot* _my_plot = nullptr);  
    
     VoltageProbe* clone(){ return new VoltageProbe(*this); }
     
@@ -112,14 +116,18 @@ private:
    
 public:
   
-    CurrentProbe(std::string _name, TwoTerminal* element){
+    CurrentProbe(std::string _name, TwoTerminal* element, Plot* _my_plot = nullptr):Probe(_my_plot){
       name = _name;
       my_element = element;
       SC = nullptr;
     }
-    CurrentProbe(TwoTerminal* element){name = std::string("I(")+element->name+std::string(")"); SC = nullptr; my_element = element;} 
+    CurrentProbe(TwoTerminal* element, Plot* _my_plot = nullptr):Probe(_my_plot){
+	name = std::string("I(")+element->name+std::string(")"); 
+	SC = nullptr; 
+	my_element = element;
+    } 
    
-    CurrentProbe(std::string _name, std::string element_name){
+    CurrentProbe(std::string _name, std::string element_name, Plot* _my_plot = nullptr):Probe(_my_plot){
       name = _name;
       my_element = nullptr;
       SC = nullptr;

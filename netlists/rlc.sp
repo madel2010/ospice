@@ -19,4 +19,4 @@ L1 n1 n2 1
 
  
 .tran 0.1 1
-.print tran V(n1)
+.print tran V(n1) I(V1)
