@@ -27,7 +27,7 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
-
+#include <boost/algorithm/string/trim.hpp>
 
 //declare the list of crcuit classes to add the elements to it
 //this is also usefull when we add subcircuits. The first element in this list is always the main circtui
@@ -240,7 +240,9 @@ end_subckt_statment:
 print_statment:
        |PRINT_TRAN v_node_list{
 	  for(std::string _node : (*$2)){
-	    (*CurrentCircuit)<< new VoltageProbe(std::string("V(")+_node+std::string(")") , _node , "0");
+	    std::string node_name = _node.substr (2,_node.length()-1);
+	    boost::trim(node_name);
+	    (*CurrentCircuit)<< new VoltageProbe(_node , node_name , "0");
 	  }
        }
        ;
@@ -271,12 +273,12 @@ node_list:
     
 v_node_list:
     |v_node_list V_VARIABLE LBRACKET node RBRACKET{
-          $1->push_back($4);
+          $1->push_back(std::string("V(")+$4+std::string(")"));
 	  $$ = $1;
     }
     |V_VARIABLE LBRACKET node RBRACKET{
           $$ = new std::list<std::string>;
-          $$->push_back($3);
+          $$->push_back(std::string("V(")+$3+std::string(")"));
     }
     ;    
 
