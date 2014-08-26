@@ -28,10 +28,16 @@ if (CMAKE_COMPILER_IS_GNUCC)
 endif()
 #END: check the GCC compiler version
 
+#Debug -- Release
+set(CMAKE_BUILD_TYPE "Debug")
 
-SET(CMAKE_CXX_FLAGS "-O0 -g -fopenmp -Wall  ${GCC_C11_FLAG}")
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -DDebug")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -DDEBUG")
 
-SET(CMAKE_C_FLAGS "-O0 -g -fopenmp -Wall")
+
+SET(CMAKE_CXX_FLAGS "-fopenmp -Wall  ${GCC_C11_FLAG}")
+
+SET(CMAKE_C_FLAGS "-fopenmp -Wall")
 SET(LIBS gomp)
 
 SET(INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/SuiteSparse/KLU/Include 
