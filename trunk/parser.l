@@ -14,6 +14,7 @@
 \*.* {return COMMENT;}
 
 [Vv] {return V_VARIABLE;}
+[Ii] {return I_VARIABLE;}
 \( {return LBRACKET;}
 \) {return RBRACKET;}
 \"  {return DOUBLE_QUOTE;}

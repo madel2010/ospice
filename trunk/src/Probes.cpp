@@ -31,14 +31,14 @@
 #include "Inductor.h"
 
 /*-----------------Voltage porbles------------*/
-VoltageProbe::VoltageProbe(std::string _name , std::string _n1, std::string _n2){
+VoltageProbe::VoltageProbe(std::string _name , std::string _n1, std::string _n2, Plot* _my_plot):Probe(_my_plot){
     n1 = _n1;
     n2 = _n2;
     name = _name;
 }
 
 
-VoltageProbe::VoltageProbe(TwoTerminal* element){
+VoltageProbe::VoltageProbe(TwoTerminal* element, Plot* _my_plot):Probe(_my_plot){
     n1 = element->get_n1();
     n2 = element->get_n2();
     name = element->get_name();
