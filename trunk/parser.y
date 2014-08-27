@@ -301,7 +301,7 @@ v_node_list:
 /*--------------------This is the main part of the code--------------------*/
 
 
-
+char debug_level = 9;
 int main(int argc, char** argv)
 {
 

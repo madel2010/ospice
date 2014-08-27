@@ -11,6 +11,8 @@
 #include "Analysis.h"
 #include "Probes.h"
 
+char debug_level = 9;
+
 int main(int argc, char **argv) {
     
     Circuit C1;
