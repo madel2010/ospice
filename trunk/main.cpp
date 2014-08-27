@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
     C1<< new CCCS("F1","V1","n2","0",100);
     C1<< new resistor("R2" , "n2" , "0", 1);
     
-    //S1<< new nonlin_resistor("R2" , "s1" , "0", "(10^(-12))*(exp(40*v(	s1))-1)");
+    C1<< new nonlin_resistor("R2" , "s1" , "0", "(Is)*(exp(40*v(	s1))-1)");
     
     //std::vector<std::string> inst_term;
     //inst_term.push_back("n1");
@@ -54,6 +54,8 @@ int main(int argc, char **argv) {
     C1 << new CurrentProbe("I(R2)" , "R2");
     C1 << new CurrentProbe("I(V1)" , "V1");
     
+    C1.add_paraemter("Is", 1e-12);
+
     C1.start_analysis();
     
     C1.plot_probes();

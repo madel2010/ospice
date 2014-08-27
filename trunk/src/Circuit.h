@@ -34,7 +34,7 @@
 #include "element.h"
 #include <vector>
 #include <map>
-
+#include "symbolicc++.h"
 
 
 class Element;
@@ -63,6 +63,9 @@ protected:
      //Vector to hold list of non linear elements. This is used to update the vector fx each iteration
      std::list<NonLinElement*> Non_Linear_Elements;
      
+     //Map for Parameters specified in the netlist
+     std::map<std::string , Symbolic> Parameters;
+
      //associative array that saves the elements that addes extra nodes for currents like inductors. 
      //This is usefeull when we need to add mutual inductance. 
      //In this case we do not need to search in all elements
@@ -116,8 +119,10 @@ public:
     inline void add_source(Source* _src){
       sources.push_back(_src);
     }
-    
-    
+
+    void add_paraemter(std::string name, std::string expression);
+    void add_paraemter(std::string name, double value);
+
     inline void add_NonLinElement(NonLinElement* E){
       Non_Linear_Elements.push_back(E);
     }
