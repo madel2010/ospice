@@ -87,22 +87,9 @@ private:
       Symbolic F; //The non linear function 
       std::vector<Symbolic> dFdx; //The derivative of df/dx with respect to each node that F depends on
       
-      std::vector< std::pair<Symbolic , int> > expression_depends_on; //The node names and references that the expression depends on. 
+      std::vector< std::pair<Symbolic , int> > expression_depends_on; //The node index and references that the expression depends on. 
       
-      
-      
-      //The Shunting Yard algorithm is used to parse Mathematical Expressions
-      //This function is a modefied version of the code found in "http://en.wikipedia.org/wiki/Shunting_yard_algorithm"
-      void shunting_yard(Circuit* circ);
-      
-      //the following functions are used for shunting Yard algorithm
-      static bool is_numeric(const std::string& c); //if it is a numeric token
-      static bool is_voltage_current(const std::string& c , std::string& dependent); //check if it is a voltage or current token
-      std::string get_expression_token(int& pos);
-      static int op_preced(const char* c);
-      static bool op_left_assoc(const char* c);
-      static Symbolic do_operator( vector<Symbolic>::iterator left ,  vector<Symbolic>::iterator right , const char* op );
-      static Symbolic do_operator( vector<Symbolic>::iterator left , const char* op );
+
 public:
 		
 	nonlin_resistor(std::string _n1, std::string _n2, const char* _curr_expression);
