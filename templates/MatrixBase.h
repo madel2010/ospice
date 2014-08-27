@@ -271,9 +271,6 @@ public:
 	} 
 	
 	
-	
-	
-	
 	Dense<T> operator /(T val){
 		Dense<T> result(this->rows, this->cols);
 		for(int j=0; j< this->cols; j++){

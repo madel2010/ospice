@@ -28,56 +28,65 @@
 
 #include "Analysis.h"
 #include <string>
-
+#include "debug.h"
 
 ///THE DC ANALYSIS
 DC::DC(){
     simulation_done = false;
 }
 
+bool DC::Newton_iter(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double> &C, const BMatrix::Sparse<double> &J, const BMatrix::Dense<double> &B, const BMatrix::Dense<double> &fx, Circuit* circ, BMatrix::Dense<double> &solution, double B_scale){
 
+    BMatrix::Dense<double> Phi(circ->size_of_mna(),1);
+	
+    int Iter_Number = 0;
+    bool convergence=false;	
+    while(!convergence && Iter_Number < 15){
+	    
+	circ->update_fx((*solution));
+	circ->update_J((*solution));
+	    
+	Phi = G*solution + fx - B*B_scale;
+
+	if(Phi.norm()<=1e-12){
+		convergence = true;
+	}else{
+		(G+J).solve(Phi);  //Note: solve function rewrites the Phi
+		solution -= Phi;
+                Iter_Number++;
+	}
+     }
+
+     return convergence;
+}
 
 void DC::simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double> &C, const BMatrix::Sparse<double> &J, const BMatrix::Dense<double> &B, const BMatrix::Dense<double> &fx, Circuit* circ){
 
-    circ->update_sources(0);
+     circ->update_sources(0);
     
-    if(circ->is_circ_linear() && 1==2){
+    
+     dc_solution.create(circ->size_of_mna(),1);
+     dc_solution = 0;
 	
-	dc_solution = B;
-	const_cast<BMatrix::Sparse<double>&>(G).solve(dc_solution);  //Note: solve function rewrites the dc_solution
-	
-	//Now update the probes of the circuit with the solution
-	circ->update_probes( 0 , (*dc_solution) ); //this function takes the time and the solution vector
-	
-    }else{
-	dc_solution.create(circ->size_of_mna(),1);
-	dc_solution = 0;
-	    
-	BMatrix::Dense<double> Phi = BMatrix::Dense<double>(circ->size_of_mna(),1);
-	
-	bool convergence=false;
-	
-	while(!convergence){
-	    
-	    circ->update_fx((*dc_solution));
-	    circ->update_J((*dc_solution));
-	    
-	    
-	    Phi = G*dc_solution + fx - B;
+     //First try with B_scale=1
+     bool Newton_iter_result =  Newton_iter(G, C, J, B,fx, circ, dc_solution);
 
-	    if(Phi.norm()<=1e-12){
-		convergence = true;
-	    }else{
-	   
-	    	
-		(G+J).solve(Phi);  //Note: solve function rewrites the Phi
-		dc_solution -= Phi;
-	    }
-	}
-	circ->update_probes(0 , (*dc_solution) ); //This function should send to all the probes in the circuit the solution to add its value
+     if(!Newton_iter_result){ //No convergence 
+	//Try Scaling
+ 	_DD(1){ std::cout<<"Normal DC did not converge, trying DC source steping"<<std::endl;}
 
-    }
-     
+	for (int i=100; i>=1; i--){
+    		 Newton_iter_result = Newton_iter(G, C, J, B, fx, circ, dc_solution, 1/i);
+
+		 if(!Newton_iter_result){ //One step did not converge 
+			//exit with Error
+			std::runtime_error(std::string("DC did not converge using source steping step"));
+                        break;
+		 }
+        }
+     }
+     circ->update_probes(0 , (*dc_solution) ); //This function should send to all the probes in the circuit the solution to add its value
+
 }
 
 /*--------------------The transient analysis------------*/

@@ -43,6 +43,15 @@ namespace BMatrix{
 }
 
 template<> 
+ inline void Dense<double>::reset(){
+	
+	bzero(this->data,this->rows*this->cols*sizeof(double));
+	
+	this->LU_factors = NULL; //we do not need to allocate it unless we are going to invert the matrix
+	have_LU_factors = false;
+}
+
+template<> 
 inline void Dense<double>::create(int m, int n){ 
 	this->rows=m;
 	this->cols=n;

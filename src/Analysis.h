@@ -53,7 +53,9 @@ class DC: public Analysis
  
 private:  
     BMatrix::Dense<double> dc_solution; //the solution to the DC
-
+ 
+    //newton Iteration with scaling B. Return NULL if not converged
+    bool Newton_iter(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double> &C, const BMatrix::Sparse<double> &J, const BMatrix::Dense<double> &B, const BMatrix::Dense<double> &fx, Circuit* circ, BMatrix::Dense<double> &solution, double B_scale=1.0);
 public:
     DC();
 
