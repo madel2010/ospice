@@ -101,7 +101,7 @@ public:
 		
 	}
 	
-	Dense(T val){ 
+	explicit Dense(T val){ 
 		this->rows=1;
 		this->cols=1;
 		this->data = new T[1];
@@ -271,7 +271,7 @@ public:
 	} 
 	
 	
-	Dense<T> operator /(T val){
+	Dense<T> operator /(T val) const{
 		Dense<T> result(this->rows, this->cols);
 		for(int j=0; j< this->cols; j++){
 		    for(int i=0; i< this->rows; i++){
@@ -281,7 +281,7 @@ public:
   		return result;
 	}
 
-	Dense<T> operator *(T val){
+	Dense<T> operator *(T val) const{
 		Dense<T> result(this->rows, this->cols);
 		for(int j=0; j< this->cols; j++){
 		    for(int i=0; i< this->rows; i++){

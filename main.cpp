@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
     C1<< new CCCS("F1","V1","n2","0",100);
     C1<< new resistor("R2" , "n2" , "0", 1);
     
-    C1<< new nonlin_resistor("R2" , "s1" , "0", "(Is)*(exp(40*v(	s1))-1)");
+    C1<< new nonlin_resistor("R2" , "n1" , "0", "(Is)*(exp(40*v(	n1))-1)");
     
     //std::vector<std::string> inst_term;
     //inst_term.push_back("n1");

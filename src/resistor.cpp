@@ -33,6 +33,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/regex.hpp>
 #include "ShuntingYard.h"
+#include "debug.h"
 
 using boost::lexical_cast;
 using boost::bad_lexical_cast;
@@ -96,6 +97,9 @@ void nonlin_resistor::write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<do
     //call the shunt_yard algorithm to parse the nonlinear expression
     F = shunting_yard(Expression , expression_depends_on , circ);
     
+    _DD(2){
+      std::cout<<"I got NonLinear Expression = "<<F<<std::endl;
+    }
     //Find dF/dx. We assume that all the tree nodes has been evaluated in the shunting_yard algorithm, and F has been evaluated
     std::vector< std::pair<Symbolic , int> >::iterator iter;
     for(iter=expression_depends_on.begin(); iter!=expression_depends_on.end(); iter++){
