@@ -245,6 +245,8 @@ inline Dense<double> Dense<double>::operator * (const Dense<double> &B) const{
 		
 	//data = alpha*A*B + Beta*data
 	dgemm_("N", "N", &m, &n, &k, &Alpha, this->data, &m, *B, &ldb, &Beta, *result, &m,1,1);
+	
+	return result;
 }
 
 /*-----------------------START: BLAS routines--------------------------------*/

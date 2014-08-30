@@ -7,7 +7,7 @@
 #include <Circuit.h>
 
 //#define is_operator(c)  (c.compare("+") || c.compare("-") || c.compare("/") || c.compare("*") || c.compare("!") || c.compare("%") || c.compare("="))
-#define is_operator(c) (c == '+' || c == '-' || c == '/' || c == '*' || c == '=' || c == '^')
+#define is_operator(c) (c == '+' || c == '-' || c == '/' || c == '*' || c == '=' || c == '^' || c=='e')
 #define is_function(c)  (strcasecmp(c.c_str(),"exp")==0 || strcasecmp(c.c_str(),"ln")==0 || strcasecmp(c.c_str(),"sin")==0 || strcasecmp(c.c_str(),"cos")==0 )
 
 
@@ -62,8 +62,16 @@ std::string get_expression_token(const std::string& Expression , int& pos){
     //used to check if the first chr is a digit. If it is a digit, then all other chrs should also be digit
     bool first_chr_is_digit = false;
     
-    //if it is "-" then check the char before it. if it is operator or "(" then it is a negative sign
-    if(Expression[pos]=='-' && (Expression[pos-1]=='(' || is_operator(Expression[pos-1]) ) ){ 
+    
+    if(Expression[pos]=='('){ //it is a paranthesis
+	    token = Expression[pos];
+	    pos++;
+    }else if(Expression[pos]==')'){ //it is a paranthesis
+	    token = Expression[pos];
+	    pos++;
+	    
+    //if it is "-" then check the char before it. if it is operator or "(" then it is a negative sign	    
+    }else if(Expression[pos]=='-' && (Expression[pos-1]=='(' || is_operator(Expression[pos-1]) ) ){ 
 	    //get the number becuase it is a negative sign
 	    token = "-";
 	    pos++;
@@ -71,13 +79,8 @@ std::string get_expression_token(const std::string& Expression , int& pos){
 	    	token+= Expression[pos];
 	    	pos++;
 	    }
-    }else if(is_operator(Expression[pos])){ //it is an operator
-	    token = Expression[pos];
-	    pos++;
-    }else if(Expression[pos]=='('){ //it is a paranthesis
-	    token = Expression[pos];
-	    pos++;
-    }else if(Expression[pos]==')'){ //it is a paranthesis
+    //it is an operator. We also check if next char is "x" to differentiate bteween "e" and "exp"	    
+    }else if(is_operator(Expression[pos]) && Expression[pos+1]!='x'){ 
 	    token = Expression[pos];
 	    pos++;
     }else if(tolower(Expression[pos])=='v' || tolower(Expression[pos])=='i'){ //If it is a refernece to voltage node or branch current
@@ -95,7 +98,7 @@ std::string get_expression_token(const std::string& Expression , int& pos){
 	pos++;
 	
     }else{
-	while(pos < Expression.size() && !is_operator(Expression[pos]) && !is_function(token) && Expression[pos]!=')' ){
+	while(pos < Expression.size() && !(is_operator(Expression[pos]) && Expression[pos+1]!='x') && !is_function(token) && Expression[pos]!=')' ){
 	    token+= Expression[pos];
 	    pos++;
 	}
@@ -107,7 +110,7 @@ std::string get_expression_token(const std::string& Expression , int& pos){
  // operators
 // precedence   operators       associativity
 // 4            !               right to left
-// 3            * / %           left to right
+// 3            * / % e           left to right
 // 2            + -             left to right
 // 1            =               right to left
 int op_preced(const char* c)
@@ -115,7 +118,7 @@ int op_preced(const char* c)
     switch( (*c) )    {
         case '!':
             return 5;
-        case '*':  case '/': case '%':
+        case '*':  case '/': case '%': case 'e':
             return 4;
         case '+': case '-':
             return 3;
@@ -131,7 +134,7 @@ bool op_left_assoc(const char* c)
 {
     switch( (*c) )    {
         // left to right
-      case '*': case '/': case '%': case '+': case '-' : case '^':
+      case '*': case '/': case '%': case '+': case '-' : case '^': case 'e':
             return true;
         // right to left
         case '=': case '!':
@@ -155,6 +158,8 @@ Symbolic do_operator( vector<Symbolic>::iterator left ,  vector<Symbolic>::itera
      result = *left * *right;
    }else if(*op=='^'){
      result = *left ^ *right;
+   }else if(*op=='e'){
+     result = (*left)*10^(*right);
    }
    
   
