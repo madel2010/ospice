@@ -78,23 +78,20 @@ int Circuit::add_mna_variable(std::string var_name){
     return index;
 }
 
-void  Circuit::add_paraemter(std::string name, std::string expression){
+void  Circuit::add_parameter(std::string name, std::string expression){
      std::transform(name.begin(), name.end(), name.begin(), ::tolower); //convert name to lower
-    //First try to check if it is a number. if not then it might be a reference to node voltage or branch current
-    try
-    {
-        double expression_value = boost::lexical_cast<double>(name);
-	Parameters[name] = expression_value;
-    }
-    catch(boost::bad_lexical_cast& e)
-    {
-	Parameters[name] = expression; //it is not a number
-    }
+     Parameters[name] = std::string("(")+expression+")"; //addt () required by shunting yard
 }
 
-void  Circuit::add_paraemter(std::string name, double value){
-	std::transform(name.begin(), name.end(), name.begin(), ::tolower);
-	Parameters[name] = value;
+bool Circuit::get_parameter_expression(std::string name, std::string& return_expression){
+     return_expression.clear(); //first make sure to clear the expression
+     std::transform(name.begin(), name.end(), name.begin(), ::tolower); //convert name to lower
+     if(Parameters.find(name)==end(Parameters)){ //not found
+	return false;
+     }else{
+       return_expression = Parameters.at(name);
+       return true;
+    }
 }
 
 //this function adds a has map that maps every inductor to its added current, so that it would be easy when we use the mutual inductor

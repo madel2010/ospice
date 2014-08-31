@@ -10,6 +10,7 @@
 #include "SourceFunc.h"
 #include "Analysis.h"
 #include "Probes.h"
+#include "symbolicc++.h"
 
 char debug_level = 9;
 
@@ -54,7 +55,7 @@ int main(int argc, char **argv) {
     C1 << new CurrentProbe("I(R2)" , "R2");
     C1 << new CurrentProbe("I(V1)" , "V1");
     
-    C1.add_paraemter("Is", 1e-12);
+    C1.add_parameter("Is", "1e-12");
 
     C1.start_analysis();
     

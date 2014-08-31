@@ -83,7 +83,7 @@ std::string get_expression_token(const std::string& Expression , int& pos){
     }else if(is_operator(Expression[pos]) && Expression[pos+1]!='x'){ 
 	    token = Expression[pos];
 	    pos++;
-    }else if(tolower(Expression[pos])=='v' || tolower(Expression[pos])=='i'){ //If it is a refernece to voltage node or branch current
+    }else if((tolower(Expression[pos])=='v' || tolower(Expression[pos])=='i') && Expression[pos+1]=='('){ //If it is a refernece to voltage node or branch current
 	while(Expression[pos]!=')' ){
 	    token+= Expression[pos];
 	    pos++;
@@ -98,7 +98,8 @@ std::string get_expression_token(const std::string& Expression , int& pos){
 	pos++;
 	
     }else{
-	while(pos < Expression.size() && !(is_operator(Expression[pos]) && Expression[pos+1]!='x') && !is_function(token) && Expression[pos]!=')' ){
+	//while(pos < Expression.size() && Expression[pos]!=')' && Expression[pos+1]!=')' && !is_operator(Expression[pos+1]) ){
+        while(pos < Expression.size() && !(is_operator(Expression[pos]) && Expression[pos+1]!='x') && !is_function(token) && Expression[pos]!=')' ){
 	    token+= Expression[pos];
 	    pos++;
 	}
@@ -200,7 +201,7 @@ Symbolic shunting_yard(const std::string& Expression , std::vector< std::pair<Sy
     
     std::string c;
     std::string sc;          // used for record stack element
- 
+    std::string par_expression; //used to store the expression returned from Circuit->get_parameter_expression.
     //int output_counter = 0 ;
     int stack_counter = 0;
     
@@ -230,6 +231,9 @@ Symbolic shunting_yard(const std::string& Expression , std::vector< std::pair<Sy
          }else if(is_function(c))   {
                 stack[stack_counter] = c;
                 stack_counter++;
+         }else if(circ->get_parameter_expression(c, par_expression)){
+		Temp_F = shunting_yard(par_expression , expression_depends_on , circ);
+		Tree.push_back(Temp_F);
          }else if(is_operator( (*c.c_str()) ))  {
                 while(stack_counter > 0)    {
                     sc = stack[stack_counter - 1];
