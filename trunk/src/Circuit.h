@@ -63,8 +63,8 @@ protected:
      //Vector to hold list of non linear elements. This is used to update the vector fx each iteration
      std::list<NonLinElement*> Non_Linear_Elements;
      
-     //Map for Parameters specified in the netlist
-     std::map<std::string , Symbolic> Parameters;
+     //Map for Parameters specified in the netlist map[Name] = expression;
+     std::map<std::string , std::string> Parameters;
 
      //associative array that saves the elements that addes extra nodes for currents like inductors. 
      //This is usefeull when we need to add mutual inductance. 
@@ -120,8 +120,8 @@ public:
       sources.push_back(_src);
     }
 
-    void add_paraemter(std::string name, std::string expression);
-    void add_paraemter(std::string name, double value);
+    void add_parameter(std::string name, std::string expression);
+    bool get_parameter_expression(std::string name, std::string& return_expression); //return false if parametere does not exist
 
     inline void add_NonLinElement(NonLinElement* E){
       Non_Linear_Elements.push_back(E);

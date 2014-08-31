@@ -23,7 +23,7 @@
 #ifndef CONTROLED_SOURCES_H
 #define CONTROLED_SOURCES_H
 
-#include "element.h""
+#include "element.h"
 
 /*-------------------The VCVS (E-element)---------------*/
 class VCVS : public FourTerminal
