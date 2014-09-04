@@ -29,9 +29,8 @@
 #include <unordered_map>
 #include <boost/algorithm/string/trim.hpp>
 
-#ifndef _TRIM
-#define _TRIM(l) boost::trim(l)
-#endif
+
+
 
 
 //declare the list of crcuit classes to add the elements to it
@@ -175,56 +174,56 @@ command:
 	
 resistor_statment:
 	| RESISTOR node node DVALUE NEWLINE{
-	      (*CurrentCircuit)<< new resistor(_TRIM($1), $2, $3, $4);
+	      (*CurrentCircuit)<< new resistor(boost::trim_copy(std::string($1)), $2, $3, $4);
 	}
 	| G_ELEMENT node node CUR EQUAL QUOTED_STRING NEWLINE{
-	      (*CurrentCircuit)<<  new nonlin_resistor(_TRIM($1( , $2 , $3, $4);
+	      (*CurrentCircuit)<<  new nonlin_resistor(boost::trim_copy(std::string($1)) , $2 , $3, $4);
 	}
 	;
 	
 inductor_statment:
 	| INDUCTOR node node DVALUE NEWLINE{
-	      (*CurrentCircuit)<< new Inductor(_TRIM($1), $2, $3, $4);
+	      (*CurrentCircuit)<< new Inductor(boost::trim_copy(std::string($1)), $2, $3, $4);
 	}
 	;
 	
 
 capacitor_statment:
 	| CAPACITOR node node DVALUE NEWLINE{
-	      (*CurrentCircuit)<< new Capacitor(_TRIM($1), $2, $3, $4);
+	      (*CurrentCircuit)<< new Capacitor(boost::trim_copy(std::string($1)), $2, $3, $4);
 	}
 	;
 	
 vcvs_statment:
 	| E_ELEMENT node node node node DVALUE NEWLINE{
-	      (*CurrentCircuit)<< new VCVS(_TRIM($1), $4, $5, $2, $3,$6);
+	      (*CurrentCircuit)<< new VCVS(boost::trim_copy(std::string($1)), $4, $5, $2, $3,$6);
 	}
 	;
 
 cccs_statment:
 	| F_ELEMENT STRING node node DVALUE NEWLINE{
-	      (*CurrentCircuit)<< new CCCS(_TRIM($1), $2, $3, $4, $5);
+	      (*CurrentCircuit)<< new CCCS(boost::trim_copy(std::string($1)), $2, $3, $4, $5);
 	}
 	;
 	
 vccs_statment:
 	| G_ELEMENT node node node node DVALUE NEWLINE{
-	      (*CurrentCircuit)<< new VCCS(_TRIM($1), $4, $5, $2, $3,$6);
+	      (*CurrentCircuit)<< new VCCS(boost::trim_copy(std::string($1)), $4, $5, $2, $3,$6);
 	}
 	;	
 
 voltagesource_statment:
 	| VOLTAGESOURCE node node DVALUE NEWLINE{ //DC voltage source
-	      (*CurrentCircuit)<< new VoltageSource (_TRIM($1), $2, $3 , new DCSource($4) ) ;
+	      (*CurrentCircuit)<< new VoltageSource (boost::trim_copy(std::string($1)), $2, $3 , new DCSource($4) ) ;
 	}
 	| VOLTAGESOURCE node node SIN LBRACKET DVALUE DVALUE DVALUE DVALUE DVALUE DVALUE RBRACKET{ //Sin voltage source
-	      (*CurrentCircuit)<< new VoltageSource (_TRIM($1), $2, $3 , new SinSource($6,$7,$8,$9,$10,$11) ) ;
+	      (*CurrentCircuit)<< new VoltageSource (boost::trim_copy(std::string($1)), $2, $3 , new SinSource($6,$7,$8,$9,$10,$11) ) ;
 	}
 	;
 	
 currentsource_statment:
 	| CURRENTSOURCE node node DVALUE NEWLINE{ //DC voltage source
-	       (*CurrentCircuit)<< new CurrentSource (_TRIM($1), $2, $3 , new DCSource($4) ) ;
+	       (*CurrentCircuit)<< new CurrentSource (boost::trim_copy(std::string($1)), $2, $3 , new DCSource($4) ) ;
 	}	
 	;
 
@@ -275,7 +274,7 @@ print_statment:
        |PRINT_TRAN v_node_list{
 	  for(std::string _node : (*$2)){
 	    std::string node_name = _node.substr (2,_node.length()-3);
-	    _TRIM(node_name);
+	    boost::trim(node_name);
 	    if(_node[0]=='V'){ //Voltage Probale
 	    	(*CurrentCircuit)<< new VoltageProbe(_node , node_name , "0");
 	    }else if(_node[0]=='I' ){ //current Probe
