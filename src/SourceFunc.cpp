@@ -29,7 +29,8 @@
 #include "SourceFunc.h"
 #include <stdexcept>
 #include <stdarg.h>
-
+#include <math.h>
+#include "config.h"
 
 /*---------------------THE PWL FUNCTIONS-------------*/
 PWLSource::PWLSource(int arg_number, ...){
@@ -85,3 +86,19 @@ double PWLSource::get_value(double _time){
     
     return result;
 }
+
+/*---------------------THE PWL FUNCTIONS-------------*/
+SinSource::SinSource(double _Vo, double _Va, double _Freq, double _Td , double _Df , double _Phase){
+    Vo = _Vo;
+    Va = _Va;
+    Freq = _Freq;
+    Td = _Td;
+    Df = _Df;
+    Phase = _Phase;
+}
+ 
+    
+double SinSource::get_value(double time){
+  return Vo+Va*sin(2*PI*(Freq*(time-Td)+Phase/360))*exp(-(time-Td)*Df);
+}
+

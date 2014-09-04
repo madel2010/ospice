@@ -71,6 +71,24 @@ public:
     
     double get_value(double time);
 };
-#endif // SOURCEFUNC_H
 
+///Sin source function
+class SinSource: public SourceFunc
+{
+ 
+private:
+    double Vo; //Offset Voltage 
+    double Va; //Amplitude
+    double Freq; //Frequency
+    double Td ; //Delay
+    double Df; //Damping factor
+    double Phase; //Phase
+  
+public:
+    SinSource(double _Vo, double _Va, double _Freq, double _Td , double _Df , double _Phase);
+    
+    double get_value(double time);
+};
+
+#endif // SOURCEFUNC_H
 
