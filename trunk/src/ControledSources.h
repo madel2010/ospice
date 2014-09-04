@@ -123,5 +123,11 @@ class CCCS : public FourTerminal
 	
     ///add the node name to the circuit, 
     void add_my_nodes(Circuit* circuit); 
+    
+    //This have its own prepend nodes
+    void prepend_nodes(std::string p){
+	FourTerminal::prepend_nodes(p);
+	controlling_element_name = p+controlling_element_name;
+    }
 };
 #endif // CONTROLED_SOURCES_H

@@ -17,7 +17,9 @@
 [Ii] {return I_VARIABLE;}
 \( {return LBRACKET;}
 \) {return RBRACKET;}
-\"  {return DOUBLE_QUOTE;}
+[\"\']  {return DOUBLE_QUOTE;}
+=  {return EQUAL;}
+
 
 ^[ \t]*[rR][A-Za-z0-9_]+ {yylval.str=strdup(yytext); return RESISTOR;}
 
@@ -39,28 +41,34 @@
 
 ^[ \t]*[gG][A-Za-z0-9_]+ {yylval.str=strdup(yytext); return G_ELEMENT;}
 
-\"(\\.|[^"])*\" {yylval.str=strdup(yytext); return QUOTED_STRING;}
+\.[pP][aA][rR][aA][mM] {yylval.str=strdup(yytext); return PARAM;}
+
+[sS][iI][nN] {yylval.str=strdup(yytext); return SIN;}
+
+-?[0-9]+|-?[0-9]+"."[0-9]*|-?"."[0-9]+|-?[0-9]+[Ee][-+]?[0-9]+|-?[0-9]+"."[0-9]*[eE][-+]?[0-9]+|-?"."[0-9]+[eE][-+]?[0-9]+ { yylval.dval = atof(yytext) ; return DVALUE;} 
+
+[\"\'](\\.|[^"])*[\"\'] {yylval.str=strdup(yytext); return QUOTED_STRING;}
 
 [A-Za-z_]+[0-9]* {yylval.str=strdup(yytext); return STRING;}
 
-^[ \t]*\.[tT][rR][aA][nN] {return TRAN;}
+\.[tT][rR][aA][nN] {return TRAN;}
+\.[oO][pP] {return OP;}
 
--?[0-9]+("."[0-9])*|-?"."[0-9]+|-?[0-9]+E[-+]?[0-9]+|-?[0-9]+"."[0-9]*E[-+]?[0-9]+|-?"."[0-9]+E[-+]?[0-9]+ { yylval.dval = atof(yytext) ; return DVALUE;} 
+\.[Ss][Uu][Bb][Cc][Kk][Tt] {return SUBCKT;}
+\.[eE][nN][dD][sS] {return END_SUBCKT;}
 
-^[ \t]*\.[Ss][Uu][Bb][Cc][Kk][Tt] {return SUBCKT;}
-^[ \t]*\.[eE][nN][dD][sS] {return END_SUBCKT;}
+\.[Pp][Rr][Ii][Nn][Tt][ \t]+[Tt][Rr][Aa][Nn] {return PRINT_TRAN;} /* Print statments*/
 
-^[ \t]*\.[Pp][Rr][Ii][Nn][Tt][ \t]+[Tt][Rr][Aa][Nn] {return PRINT_TRAN;} /* Print statments*/
-
+[ \t]*[cC][uU][rR] {return CUR;}
 
 \n   {return NEWLINE;}                   /* ignore end of line */;
-[ \t]+                  /* ignore whitespace */;
+
 
 
 
   /* START: Include Part */
 
-^[ \t]*\.[Ii][Nn][Cc][Ll][Uu][Dd][Ee][ \t]+ BEGIN(incl);
+\.[Ii][Nn][Cc][Ll][Uu][Dd][Ee][ \t]+ BEGIN(incl);
 
 <incl>[ \t]*      /* eat the whitespace */
 <incl>[^ \t\n]+   { /* got the include file name */

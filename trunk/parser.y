@@ -29,6 +29,11 @@
 #include <unordered_map>
 #include <boost/algorithm/string/trim.hpp>
 
+#ifndef _TRIM
+#define _TRIM(l) boost::trim(l)
+#endif
+
+
 //declare the list of crcuit classes to add the elements to it
 //this is also usefull when we add subcircuits. The first element in this list is always the main circtui
 std::list<Circuit*> Circuit_lists(1,new Circuit);
@@ -69,6 +74,7 @@ void yyerror(const char *str){
         extern int yylineno;  
 	extern char *yytext;
         printf("Line %d: %s at %s\n", yylineno, str, yytext);
+        abort();
 }
 
 %}
@@ -84,10 +90,12 @@ void yyerror(const char *str){
 }
 %destructor { delete $$; } <arg_list> 
 
-
+%token <str> EQUAL
 %token <dval> DVALUE
 %token <str> STRING
 %token <str> QUOTED_STRING
+%token <str> BEGIN_SPACE
+%token <str> CUR
 
 %token <str> RESISTOR
 %token <str> INDUCTOR
@@ -97,6 +105,8 @@ void yyerror(const char *str){
 %token <str> F_ELEMENT
 %token <str> G_ELEMENT
 
+%token <str> SIN
+
 %token <str> SUBCKT_INSTANCE
 %token <str> SUBCKT
 %token <str> END_SUBCKT
@@ -104,8 +114,10 @@ void yyerror(const char *str){
 %token <str> VOLTAGESOURCE
 %token <str> CURRENTSOURCE
 
+%token <str> OP
 %token <str> TRAN
 %token <str> PRINT_TRAN
+%token <str> PARAM
 
 %token <str> COMMENT
 %token <str> NEWLINE
@@ -149,62 +161,77 @@ element:
 	
 source:
 	|voltagesource_statment
+	|currentsource_statment
 	;
 	
 command:
+	| op_statment
 	| tran_statment
 	| subcircuit_statment
 	| end_subckt_statment
 	| print_statment
+	| param_statment
 	;
 	
 resistor_statment:
 	| RESISTOR node node DVALUE NEWLINE{
-	      (*CurrentCircuit)<< new resistor($1, $2, $3, $4);
+	      (*CurrentCircuit)<< new resistor(_TRIM($1), $2, $3, $4);
+	}
+	| G_ELEMENT node node CUR EQUAL QUOTED_STRING NEWLINE{
+	      (*CurrentCircuit)<<  new nonlin_resistor(_TRIM($1( , $2 , $3, $4);
 	}
 	;
 	
 inductor_statment:
 	| INDUCTOR node node DVALUE NEWLINE{
-	      (*CurrentCircuit)<< new Inductor($1, $2, $3, $4);
+	      (*CurrentCircuit)<< new Inductor(_TRIM($1), $2, $3, $4);
 	}
 	;
 	
 
 capacitor_statment:
 	| CAPACITOR node node DVALUE NEWLINE{
-	      (*CurrentCircuit)<< new Capacitor($1, $2, $3, $4);
+	      (*CurrentCircuit)<< new Capacitor(_TRIM($1), $2, $3, $4);
 	}
 	;
 	
 vcvs_statment:
 	| E_ELEMENT node node node node DVALUE NEWLINE{
-	      (*CurrentCircuit)<< new VCVS($1, $4, $5, $2, $3,$6);
+	      (*CurrentCircuit)<< new VCVS(_TRIM($1), $4, $5, $2, $3,$6);
 	}
 	;
 
 cccs_statment:
 	| F_ELEMENT STRING node node DVALUE NEWLINE{
-	      (*CurrentCircuit)<< new CCCS($1, $2, $3, $4, $5);
+	      (*CurrentCircuit)<< new CCCS(_TRIM($1), $2, $3, $4, $5);
 	}
 	;
 	
 vccs_statment:
 	| G_ELEMENT node node node node DVALUE NEWLINE{
-	      (*CurrentCircuit)<< new VCCS($1, $4, $5, $2, $3,$6);
+	      (*CurrentCircuit)<< new VCCS(_TRIM($1), $4, $5, $2, $3,$6);
 	}
 	;	
 
 voltagesource_statment:
 	| VOLTAGESOURCE node node DVALUE NEWLINE{ //DC voltage source
-	      (*CurrentCircuit)<< new VoltageSource ($1, $2, $3 , new DCSource($4) ) ;
+	      (*CurrentCircuit)<< new VoltageSource (_TRIM($1), $2, $3 , new DCSource($4) ) ;
+	}
+	| VOLTAGESOURCE node node SIN LBRACKET DVALUE DVALUE DVALUE DVALUE DVALUE DVALUE RBRACKET{ //Sin voltage source
+	      (*CurrentCircuit)<< new VoltageSource (_TRIM($1), $2, $3 , new SinSource($6,$7,$8,$9,$10,$11) ) ;
 	}
 	;
 	
-voltagesource_statment:
+currentsource_statment:
 	| CURRENTSOURCE node node DVALUE NEWLINE{ //DC voltage source
-	       (*CurrentCircuit)<< new CurrentSource ($1, $2, $3 , new DCSource($4) ) ;
+	       (*CurrentCircuit)<< new CurrentSource (_TRIM($1), $2, $3 , new DCSource($4) ) ;
 	}	
+	;
+
+op_statment:
+	| OP{
+	      (*CurrentCircuit)<< new DC;
+	}
 	;
 	
 tran_statment:
@@ -213,7 +240,13 @@ tran_statment:
 	}
 	;
 	
-
+param_statment:
+	| PARAM STRING EQUAL DVALUE {
+	  std::ostringstream temp;
+	  temp << $4;
+	  CurrentCircuit->add_parameter($2 , temp.str());
+	}
+	;
 	
 subckt_instance_statment:
 	| SUBCKT_INSTANCE node_list STRING{
@@ -242,7 +275,7 @@ print_statment:
        |PRINT_TRAN v_node_list{
 	  for(std::string _node : (*$2)){
 	    std::string node_name = _node.substr (2,_node.length()-3);
-	    boost::trim(node_name);
+	    _TRIM(node_name);
 	    if(_node[0]=='V'){ //Voltage Probale
 	    	(*CurrentCircuit)<< new VoltageProbe(_node , node_name , "0");
 	    }else if(_node[0]=='I' ){ //current Probe
