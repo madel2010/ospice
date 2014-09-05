@@ -123,6 +123,7 @@ void yyerror(const char *str){
 %token <str> LBRACKET
 %token <str> RBRACKET
 %token <str> DOUBLE_QUOTE
+%token <str> SINGLE_QUOTE
 %token <str> V_VARIABLE
 %token <str> I_VARIABLE
 
@@ -176,10 +177,15 @@ resistor_statment:
 	| RESISTOR node node DVALUE NEWLINE{
 	      (*CurrentCircuit)<< new resistor(boost::trim_copy(std::string($1)), $2, $3, $4);
 	}
-	| G_ELEMENT node node CUR EQUAL QUOTED_STRING NEWLINE{
-	      (*CurrentCircuit)<<  new nonlin_resistor(boost::trim_copy(std::string($1)) , $2 , $3, $4);
+	| G_ELEMENT node node CUR EQUAL QUOTED_STRING {
+	      std::string expression = $6;
+	      //remove the quotes at the begining and end 
+	      expression.erase(expression.begin());
+	      expression.erase(expression.end()-1);
+	      (*CurrentCircuit)<<  new nonlin_resistor(boost::trim_copy(std::string($1)) , $2 , $3, expression.c_str());
 	}
 	;
+		
 	
 inductor_statment:
 	| INDUCTOR node node DVALUE NEWLINE{

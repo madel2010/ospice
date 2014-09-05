@@ -300,7 +300,7 @@ Symbolic shunting_yard(const std::string& Expression , std::vector< std::pair<Sy
                     sc = stack[stack_counter - 1];
                     if(is_function(sc)){
                          stack_counter--;
-			
+			 
 			 Temp_F = do_operator( Tree.end()-1 , sc.c_str() );
 			 Tree.pop_back();
 			 Tree.push_back(Temp_F);

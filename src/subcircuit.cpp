@@ -36,6 +36,7 @@ void SubCircuitInstance::add_my_nodes(Circuit* circuit){
       }
       
      //Add the elements to the main circuit with new names and nodes reflectin the subcircuit instance
+     my_subcircuit->components.sort([](Element* e1, Element* e2) { return e1->get_order_index() < e2->get_order_index(); });
      std::list<Element*>::iterator iter;     
      for(iter=my_subcircuit->components.begin(); iter!=my_subcircuit->components.end(); iter++){
          //just clone the elements to a new element with same value but different node names and attach it to the circuit using <<

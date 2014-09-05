@@ -28,6 +28,7 @@
 
 #include "Analysis.h"
 #include <string>
+#include <math.h>
 #include "debug.h"
 
 ///THE DC ANALYSIS
@@ -40,15 +41,20 @@ bool DC::Newton_iter(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<dou
     BMatrix::Dense<double> Phi(circ->size_of_mna(),1);
 	
     int Iter_Number = 0;
+    double Phi_norm=0 , Phi_norm_old=0;
     bool convergence=false;	
-    while(!convergence && Iter_Number < 15){
+    while(!convergence && !std::isnan(Phi_norm) && (Iter_Number < 400 || Phi_norm<Phi_norm_old)){
 	    
 	circ->update_fx((*solution));
 	circ->update_J((*solution));
 	    
 	Phi = G*solution + fx - B*B_scale;
-
-	if(Phi.norm()<=1e-12){
+	Phi_norm_old = Phi_norm;
+	Phi_norm = Phi.norm();
+	_DD(2){
+	 std::cout<<"DC Analysis: Phi = " << Phi_norm <<std::endl; 
+	}
+	if(Phi_norm<=1e-9){
 		convergence = true;
 	}else{
 		(G+J).solve(Phi);  //Note: solve function rewrites the Phi
@@ -66,21 +72,23 @@ void DC::simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double
     
     
      dc_solution.create(circ->size_of_mna(),1);
-     dc_solution = 0;
+     dc_solution.reset();
 	
      //First try with B_scale=1
      bool Newton_iter_result =  Newton_iter(G, C, J, B,fx, circ, dc_solution);
-
+     
+     
      if(!Newton_iter_result){ //No convergence 
 	//Try Scaling
  	_DD(1){ std::cout<<"Normal DC did not converge, trying DC source steping"<<std::endl;}
 
-	for (int i=100; i>=1; i--){
-    		 Newton_iter_result = Newton_iter(G, C, J, B, fx, circ, dc_solution, 1/i);
+ 	dc_solution.reset();
+	for (int i=1000; i>=1; i--){
+    		 Newton_iter_result = Newton_iter(G, C, J, B, fx, circ, dc_solution, 1/double(i));
 
 		 if(!Newton_iter_result){ //One step did not converge 
 			//exit with Error
-			std::runtime_error(std::string("DC did not converge using source steping step"));
+			throw std::runtime_error(std::string("DC did not converge using source steping"));
                         break;
 		 }
         }

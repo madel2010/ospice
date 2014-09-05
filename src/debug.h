@@ -5,7 +5,8 @@
 
 /*
 1->Information about Analysis
-2->Information about Analysis
+2->Information about elements
+3->Information about circuit
 */
 
 #ifdef DEBUG

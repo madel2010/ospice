@@ -33,8 +33,9 @@
 #include <boost/lexical_cast.hpp>
 #include <algorithm> 
 #include <locale>
- #include <string> 
-
+#include <string> 
+#include <debug.h>
+ 
 Circuit::Circuit()
 {
     //thie circuit is linear until we start adding elements using <<
@@ -175,6 +176,12 @@ void Circuit::attach_elements(){
      
      for(iter=components.begin(); iter!=components.end(); iter++){
 	  (*iter)->write_stamp(G,C,this);  
+     }
+     
+     _DD(3){
+	for(auto node_map : mna_variable_indices){
+	  std::cout<<node_map.first<<"=>"<<node_map.second<<std::endl;
+	}
      }
 }
 
