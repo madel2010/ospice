@@ -161,7 +161,7 @@ Expanded::Expanded(const Number<void> &n) : SymbolicProxy(n)
 // Implementation for Symbolic                   //
 ///////////////////////////////////////////////////
 
-int Symbolic::auto_expand = 1;
+int Symbolic::auto_expand = 0;
 int Symbolic::subst_count = 0;
 
 Symbolic::Symbolic() : SymbolicProxy(Number<int>(0)) {}

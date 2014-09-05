@@ -17,7 +17,8 @@
 [Ii] {return I_VARIABLE;}
 \( {return LBRACKET;}
 \) {return RBRACKET;}
-[\"\']  {return DOUBLE_QUOTE;}
+[\"]  {return DOUBLE_QUOTE;}
+[\']  {return SINGLE_QUOTE;}
 =  {return EQUAL;}
 
 
@@ -47,7 +48,7 @@
 
 -?[0-9]+|-?[0-9]+"."[0-9]*|-?"."[0-9]+|-?[0-9]+[Ee][-+]?[0-9]+|-?[0-9]+"."[0-9]*[eE][-+]?[0-9]+|-?"."[0-9]+[eE][-+]?[0-9]+ { yylval.dval = atof(yytext) ; return DVALUE;} 
 
-[\"\'](\\.|[^"])*[\"\'] {yylval.str=strdup(yytext); return QUOTED_STRING;}
+[\'](\\.|[^'])*[\'] {yylval.str=strdup(yytext); return QUOTED_STRING;}
 
 [A-Za-z_]+[0-9]* {yylval.str=strdup(yytext); return STRING;}
 

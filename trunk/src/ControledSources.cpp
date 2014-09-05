@@ -90,7 +90,7 @@ void CCCS::add_my_nodes(Circuit* circuit){
   
     //check if the controlling element already exists
     if(!controlling_element){
-	Element* circuit_search_results =  circuit->search_elements(controlling_element_name);
+	/*Element* circuit_search_results =  circuit->search_elements(controlling_element_name);
 	if(!circuit_search_results){    
 	    throw std::runtime_error(std::string("CCCS error, controlling element does not exist: ")+controlling_element_name);
 	}else{
@@ -98,10 +98,17 @@ void CCCS::add_my_nodes(Circuit* circuit){
 	    if(!controlling_element){
 		throw std::runtime_error(std::string("CCCS controlling element is not Two Terminal Element:")+controlling_element_name);
 	    }
+	}*/
+	//get the current_index by adding .I to the name
+	current_index = circuit->get_variable_index(controlling_element_name+".I");
+	if(current_index==-2){
+	    throw std::runtime_error(std::string("CCCS error, controlling element does not exist: ")+controlling_element_name);	    
 	}
+    }else{
+      current_index = controlling_element->is_current_element();
     }
     
-    current_index = controlling_element->is_current_element();
+    
     if(current_index == -1){ //this is NOT a current element
 	throw std::runtime_error(std::string("CCCS controlling element is not a Current Element:")+controlling_element_name);
     }

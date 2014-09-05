@@ -41,8 +41,8 @@ R1     n1    ndd		8.2e3
 R2     n1    0		4.7e3
 R3     ndd   nvo		750.0	
 
-xQ     n1    nvo		A1	npn
-R4     A1     n3			750.0
+xQ     n1    nvo		a1	npn
+R4     a1     n3			750.0
 Le     n3    0		220e-6
 
 xCrystal    a1		0	xtal

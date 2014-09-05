@@ -104,6 +104,10 @@ void nonlin_resistor::write_stamp(BMatrix::Sparse<double> &G, BMatrix::Sparse<do
     std::vector< std::pair<Symbolic , int> >::iterator iter;
     for(iter=expression_depends_on.begin(); iter!=expression_depends_on.end(); iter++){
 	dFdx.push_back(df(F,iter->first)); //deffierentaite F with respect to each variable it depends on in expression_depends_on
+    
+        _DD(2){
+	  std::cout<<"Differentiation = "<<*(dFdx.end()-1)<<std::endl;
+	}
     }
 }
 
