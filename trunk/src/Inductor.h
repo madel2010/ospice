@@ -60,16 +60,7 @@ public:
 	///add the requird nodes to the main circuit
 	void add_my_nodes(Circuit* circuit);
 	
-        std::vector<std::string> get_terminals_name(){
-	    std::vector<std::string> result;
-	    result.push_back(n1);
-	    result.push_back(n2);
-	    
-	    //the current_index
-	    result.push_back(name + ".I");
-	    
-	    return result;
-	}
+        
 	
 };
 
