@@ -94,8 +94,8 @@ class CCCS : public FourTerminal
 	  name = std::string("F")+".+"+out1+".-"+out2;
 	  controlling_element = _controlling_element;
 	  controlling_element_name = controlling_element->get_name();
-	  in1 = controlling_element_name;
-          in2 = controlling_element_name;
+	  in1 = "";
+          in2 = "";
           out1 = _out1;
           out2 = _out2;
     }

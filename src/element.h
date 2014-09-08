@@ -71,7 +71,7 @@ public:
     
     virtual void prepend_nodes(std::string p)=0;
     
-    ///Get the terminals of this element. 
+    ///Get the names of the terminals of this element. 
     ///It returns the names of the terminals of this element
     virtual std::vector<std::string> get_terminals()=0;
     
