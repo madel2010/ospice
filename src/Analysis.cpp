@@ -36,10 +36,12 @@ DC::DC(){
     simulation_done = false;
 }
 
-bool DC::Newton_iter(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double> &C, const BMatrix::Sparse<double> &J, const BMatrix::Dense<double> &B, const BMatrix::Dense<double> &fx, Circuit* circ, BMatrix::Dense<double> &solution, double B_scale){
+bool DC::Newton_iter(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double> &Gmin, const BMatrix::Sparse<double> &C, const BMatrix::Sparse<double> &J, const BMatrix::Dense<double> &B, const BMatrix::Dense<double> &fx, 
+		     Circuit* circ, BMatrix::Dense<double> &solution, int B_scale, int Gmin_scale){
 
-    BMatrix::Dense<double> Phi(circ->size_of_mna(),1);
-	
+    BMatrix::Dense<double> Phi(circ->size_of_mna(),1);	
+    BMatrix::Sparse<double> Jac(circ->size_of_mna(),circ->size_of_mna());
+    
     int Iter_Number = 0;
     double Phi_norm=0 , Phi_norm_old=0;
     bool convergence=false;	
@@ -48,7 +50,17 @@ bool DC::Newton_iter(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<dou
 	circ->update_fx((*solution));
 	circ->update_J((*solution));
 	    
-	Phi = G*solution + fx - B*B_scale;
+	if(Gmin_scale!=0.0){ //do the Gmin algorithm
+	  Phi = (G+Gmin/Gmin_scale)*solution + fx - B;
+	  Jac = G+Gmin/Gmin_scale+J;
+	}else if(B_scale!=1){
+	  Phi = G*solution + fx - B/B_scale;
+	  Jac = G+J;
+	}else{
+	  Phi = G*solution + fx - B;
+	  Jac = G+J;
+	} 
+		
 	Phi_norm_old = Phi_norm;
 	Phi_norm = Phi.norm();
 	_DD(2){
@@ -57,7 +69,7 @@ bool DC::Newton_iter(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<dou
 	if(Phi_norm<=1e-9){
 		convergence = true;
 	}else{
-		(G+J).solve(Phi);  //Note: solve function rewrites the Phi
+		Jac.solve(Phi);  //Note: solve function rewrites the Phi
 		solution -= Phi;
                 Iter_Number++;
 	}
@@ -73,18 +85,44 @@ void DC::simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double
     
      dc_solution.create(circ->size_of_mna(),1);
      dc_solution.reset();
-	
-     //First try with B_scale=1
-     bool Newton_iter_result =  Newton_iter(G, C, J, B,fx, circ, dc_solution);
+
+     BMatrix::Sparse<double> Gmin(circ->size_of_mna() , circ->size_of_mna());
+     
+     //First try with B_scale=1 Gmin_scale=0
+     bool Newton_iter_result =  Newton_iter(G, Gmin, C, J, B,fx, circ, dc_solution);
      
      
      if(!Newton_iter_result){ //No convergence 
-	//Try Scaling
- 	_DD(1){ std::cout<<"Normal DC did not converge, trying DC source steping"<<std::endl;}
+	//Try G scaling
+        _DD(1){ std::cout<<"Normal DC did not converge, trying Gmin steping"<<std::endl;}
 
+        for (auto n: circ->get_node_indeces()){
+	    Gmin.put(n,n, 1e9);
+	}
+ 	dc_solution.reset();
+	for (int i=1; i<=1e12; i=i*10){
+    		 Newton_iter_result = Newton_iter(G, Gmin, C, J, B, fx, circ, dc_solution, 1 , i);
+
+		 if(!Newton_iter_result){ //One step did not converge 
+			//exit 
+                        break;
+		 }
+        }
+        
+        if(Newton_iter_result){
+	    //we need to do a final iteration without Gmin
+	    Newton_iter_result = Newton_iter(G, Gmin, C, J, B, fx, circ, dc_solution);
+	}
+    
+     }
+     
+     if(!Newton_iter_result){ //No convergence
+        //Try source stepping
+ 	_DD(1){ std::cout<<"Normal DC did not converge, trying DC source steping"<<std::endl;}
+ 	
  	dc_solution.reset();
 	for (int i=1000; i>=1; i--){
-    		 Newton_iter_result = Newton_iter(G, C, J, B, fx, circ, dc_solution, 1/double(i));
+    		 Newton_iter_result = Newton_iter(G, Gmin, C, J, B, fx, circ, dc_solution, i);
 
 		 if(!Newton_iter_result){ //One step did not converge 
 			//exit with Error
