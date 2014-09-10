@@ -34,6 +34,7 @@
 #include "element.h"
 #include <vector>
 #include <map>
+#include <set>
 #include "symbolicc++.h"
 
 
@@ -57,6 +58,9 @@ protected:
      //Vector to hold list of elemets
      std::list<Element*> components;
      
+     //The indeces of node only. No currents or charges. This is good for constructing Gmin in the DC analysis
+     std::set<int> node_indeces;
+
      //Vector to hold list of elemets
      std::list<Source*> sources;
      

@@ -74,6 +74,10 @@ public:
     ///Get the names of the terminals of this element. 
     ///It returns the names of the terminals of this element
     virtual std::vector<std::string> get_terminals()=0;
+
+    ///Get the indecies of the terminals of this element. 
+    ///It returns the names of the terminals of this element
+    virtual std::vector<int> get_terminals_index()=0;
     
     virtual ~Element(){}
 };
@@ -125,9 +129,12 @@ public:
     virtual ~TwoTerminal(){}
 
     virtual std::vector<std::string> get_terminals(){
-	std::vector <std::string> result;
-	result.push_back(n1);
-	result.push_back(n2);
+	std::vector <std::string> result {n1 , n2};
+	return result;
+    }
+
+    virtual std::vector<int> get_terminals_index(){
+	std::vector <int> result {n1_index , n2_index};
 	return result;
     }
     
@@ -176,6 +183,11 @@ public:
 
     virtual std::vector<std::string> get_terminals(){
 	std::vector <std::string> result{in1 , in2, out1, out2};
+	return result;
+    }
+
+     virtual std::vector<int> get_terminals_index(){
+	std::vector <int> result{in1_index , in2_index, out1_index, out2_index};
 	return result;
     }
     
