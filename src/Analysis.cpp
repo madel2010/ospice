@@ -136,9 +136,21 @@ void DC::simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double
 
 }
 
-std::ostream& DC::print(std::ostream &out)const{
-    for(int i=0; i<dc_solution.get_number_of_rows(); i++){
-	out<<dc_solution.get(i,1)<<std::endl;
+std::ostream& DC::print(std::ostream &out , const Circuit* circ)const{
+    std::map<std::string , int>::const_iterator MNA_iter = circ->get_mna_variable_iterator();
+    std::string name; // whether it V, I or Q
+    for(int i=0; i<circ->size_of_mna(); i++){
+	
+	if(MNA_iter->first.substr(MNA_iter->first.size() - 1) == "I"){
+		name = "I(" + MNA_iter->first.substr(0,MNA_iter->first.size() - 2) + ")";
+	}else if(MNA_iter->first.substr(MNA_iter->first.size() - 1) == "Q"){
+		name = "Q(" + MNA_iter->first.substr(0,MNA_iter->first.size() - 2) + ")";
+	}else{
+		name = "V(" + MNA_iter->first + ")";
+	}
+	out<< name << "=" << dc_solution.get(MNA_iter->second,0)<<std::endl;
+	
+	MNA_iter++;
     }
     
     return out;
@@ -234,6 +246,13 @@ bool transient::perform_BE(const BMatrix::Sparse<double> &G, const BMatrix::Spar
     
 }
 
+std::ostream& transient::print(std::ostream &out , const Circuit* circ)const{
+    
+    out<<"Transient is done"<<std::endl;
+    
+    return out;
+}
+
 /*************Envelope Following Class -------------------------*/
 void envelope_following::simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double> &C, const BMatrix::Sparse<double> &J, const BMatrix::Dense<double> &B, const BMatrix::Dense<double> &fx, Circuit* circ){
   int MNA_size = circ->size_of_mna();
@@ -301,8 +320,11 @@ void envelope_following::simulate(const BMatrix::Sparse<double> &G, const BMatri
   
 }
 
-//Freind Functions
-std::ostream& operator<< (std::ostream &out, const Analysis &B){
-    return B.print(out);
+std::ostream& envelope_following::print(std::ostream &out , const Circuit* circ)const{
+    
+    out<<"EF is done"<<std::endl;
+    
+    return out;
 }
+
 

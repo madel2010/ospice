@@ -247,6 +247,7 @@ void Circuit::start_analysis(){
 	}
 	//start simulating the required analysis
 	(*iter)->simulate(G, C, J, B, fx, this);
+	(*iter)->print(std::cout , this);
     }
 }
 
