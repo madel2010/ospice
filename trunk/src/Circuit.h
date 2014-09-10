@@ -143,6 +143,11 @@ public:
     
     Element* search_elements(std::string name);
     
+    //return the indeces of the node only variable. No current charges
+    std::set<int> get_node_indeces(){
+      return node_indeces; 
+    }
+    
     int size_of_mna(){return mna_variable_indices.size(); }
     
     void update_probes(double time, const double* solution);

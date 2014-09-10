@@ -164,9 +164,10 @@ void Circuit::attach_elements(){
 					//that wont affect the iterator. This is only for lists but others like vectors the iterator could change if we append to it
 	  
 	  //Now save the node indexes becuase they will be needed in the Gmin and Cmin for DC and transiet
-	  std::vector<int> terminals = (*iter)->get_terminals_index();
+	  std::vector<std::string> terminals = (*iter)->get_terminals();
 	  for (auto t: terminals){
-		node_indeces.insert(t);
+		int i = get_variable_index(t);
+		if(i>-1) node_indeces.insert(i);
 	  }
      }
      
