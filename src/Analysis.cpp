@@ -37,7 +37,7 @@ DC::DC(){
 }
 
 bool DC::Newton_iter(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double> &Gmin, const BMatrix::Sparse<double> &C, const BMatrix::Sparse<double> &J, const BMatrix::Dense<double> &B, const BMatrix::Dense<double> &fx, 
-		     Circuit* circ, BMatrix::Dense<double> &solution, int B_scale, int Gmin_scale){
+		     Circuit* circ, BMatrix::Dense<double> &solution, int B_scale, long int Gmin_scale){
 
     BMatrix::Dense<double> Phi(circ->size_of_mna(),1);	
     BMatrix::Sparse<double> Jac(circ->size_of_mna(),circ->size_of_mna());
@@ -51,8 +51,9 @@ bool DC::Newton_iter(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<dou
 	circ->update_J((*solution));
 	    
 	if(Gmin_scale!=0.0){ //do the Gmin algorithm
-	  Phi = (G+Gmin/Gmin_scale)*solution + fx - B;
-	  Jac = G+Gmin/Gmin_scale+J;
+	  BMatrix::Sparse<double> A = G+Gmin/Gmin_scale;
+	  Phi = A*solution + fx - B;
+	  Jac = A+J;
 	}else if(B_scale!=1){
 	  Phi = G*solution + fx - B/B_scale;
 	  Jac = G+J;
@@ -97,10 +98,10 @@ void DC::simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double
         _DD(1){ std::cout<<"Normal DC did not converge, trying Gmin steping"<<std::endl;}
 
         for (auto n: circ->get_node_indeces()){
-	    Gmin.put(n,n, 1e9);
+	    Gmin.put(n,n, 1e14);
 	}
  	dc_solution.reset();
-	for (int i=1; i<=1e12; i=i*10){
+	for (long int i=1; i<=1e23; i=i*10){
     		 Newton_iter_result = Newton_iter(G, Gmin, C, J, B, fx, circ, dc_solution, 1 , i);
 
 		 if(!Newton_iter_result){ //One step did not converge 
@@ -121,8 +122,8 @@ void DC::simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double
  	_DD(1){ std::cout<<"Normal DC did not converge, trying DC source steping"<<std::endl;}
  	
  	dc_solution.reset();
-	for (int i=1000; i>=1; i--){
-    		 Newton_iter_result = Newton_iter(G, Gmin, C, J, B, fx, circ, dc_solution, i);
+	for (int i=1000; i>=1; i*=2){
+    		 Newton_iter_result = Newton_iter(G, Gmin, C, J, B, fx, circ, dc_solution, i , 0);
 
 		 if(!Newton_iter_result){ //One step did not converge 
 			//exit with Error
@@ -134,6 +135,15 @@ void DC::simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double
      circ->update_probes(0 , (*dc_solution) ); //This function should send to all the probes in the circuit the solution to add its value
 
 }
+
+std::ostream& DC::print(std::ostream &out)const{
+    for(int i=0; i<dc_solution.get_number_of_rows(); i++){
+	out<<dc_solution.get(i,1)<<std::endl;
+    }
+    
+    return out;
+}
+
 
 /*--------------------The transient analysis------------*/
 void transient::simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double> &C, const BMatrix::Sparse<double> &J, const BMatrix::Dense<double> &B, const BMatrix::Dense<double> &fx, Circuit* circ){
@@ -290,3 +300,9 @@ void envelope_following::simulate(const BMatrix::Sparse<double> &G, const BMatri
  }
   
 }
+
+//Freind Functions
+std::ostream& operator<< (std::ostream &out, const Analysis &B){
+    return B.print(out);
+}
+

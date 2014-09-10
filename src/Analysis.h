@@ -44,6 +44,8 @@ public:
     virtual ~Analysis(){};
     
     virtual void simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double> &C, const BMatrix::Sparse<double> &J, const BMatrix::Dense<double> &B, const BMatrix::Dense<double> &fx, Circuit* circ)=0;
+    virtual std::ostream& print(std::ostream &out) const =0;
+    friend std::ostream& operator<< (std::ostream &out, const Analysis &B);
 };
 
 
@@ -58,14 +60,17 @@ private:
     //B_scale -> for source stepping
     //Gmin_scale ->for stepping the conductances connected to the ground
     bool Newton_iter(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double> &Gmin, const BMatrix::Sparse<double> &C, const BMatrix::Sparse<double> &J, const BMatrix::Dense<double> &B, const BMatrix::Dense<double> &fx, 
-		     Circuit* circ, BMatrix::Dense<double> &solution, int B_scale=1.0, int Gmin_scale=0.0);
+		     Circuit* circ, BMatrix::Dense<double> &solution, int B_scale=1, long int Gmin_scale=0);
 public:
     DC();
 
     ~DC(){};
     void simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double> &C, const BMatrix::Sparse<double> &J, const BMatrix::Dense<double> &B, const BMatrix::Dense<double> &fx, Circuit* circ);
      
-     const BMatrix::Dense<double>& get_solution() { return dc_solution ; }
+    const BMatrix::Dense<double>& get_solution() { return dc_solution ; }
+    
+    //Print the output
+    std::ostream& print(std::ostream &out)const;
 };
 
 ///This class is for the transient Analysis
@@ -108,7 +113,8 @@ public:
 	set_initial_condition = true;
     }
     
-    
+    //print the output
+    std::ostream& print(std::ostream &out)const;
 };
 
 
@@ -140,6 +146,7 @@ public:
 
      void simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double> &C, const BMatrix::Sparse<double> &J, const BMatrix::Dense<double> &B, const BMatrix::Dense<double> &fx, Circuit* circ);
 
+     std::ostream& print(std::ostream &out) const;
 };
 
 #endif // ANALYSIS_H
