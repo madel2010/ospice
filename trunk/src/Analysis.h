@@ -44,8 +44,7 @@ public:
     virtual ~Analysis(){};
     
     virtual void simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double> &C, const BMatrix::Sparse<double> &J, const BMatrix::Dense<double> &B, const BMatrix::Dense<double> &fx, Circuit* circ)=0;
-    virtual std::ostream& print(std::ostream &out) const =0;
-    friend std::ostream& operator<< (std::ostream &out, const Analysis &B);
+    virtual std::ostream& print(std::ostream &out , const Circuit* circ) const =0;
 };
 
 
@@ -70,7 +69,7 @@ public:
     const BMatrix::Dense<double>& get_solution() { return dc_solution ; }
     
     //Print the output
-    std::ostream& print(std::ostream &out)const;
+    std::ostream& print(std::ostream &out , const Circuit* circ)const;
 };
 
 ///This class is for the transient Analysis
@@ -114,7 +113,7 @@ public:
     }
     
     //print the output
-    std::ostream& print(std::ostream &out)const;
+    std::ostream& print(std::ostream &out , const Circuit* circ)const;
 };
 
 
@@ -146,7 +145,7 @@ public:
 
      void simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double> &C, const BMatrix::Sparse<double> &J, const BMatrix::Dense<double> &B, const BMatrix::Dense<double> &fx, Circuit* circ);
 
-     std::ostream& print(std::ostream &out) const;
+     std::ostream& print(std::ostream &out , const Circuit* circ) const;
 };
 
 #endif // ANALYSIS_H

@@ -85,7 +85,7 @@ private:
      BMatrix::Dense<double> B; 
      
      //associative array that maps the node name/current_name to its index
-     std::map< std::string , int> mna_variable_indices;
+     std::map<std::string , int> mna_variable_indices;
      
      //associative array that saves if there are nodes have different names but same inex. very usefull in subcircuits
      std::map< std::string , std::string> similar_nodes;
@@ -106,9 +106,14 @@ public:
     
     //returns node_index if exists, -1 if ground , -2 if not exists
     int get_variable_index(std::string var_name); //return the index of the node
-    
+
     int add_mna_variable(std::string var_name);
-    
+
+    //return an iterator to the first element of the mna_variable_indices. Usefull if you want to iterate. You must know the MNS size using size_of_mna()
+    std::map<std::string , int>::const_iterator get_mna_variable_iterator() const{
+	return mna_variable_indices.cbegin(); 
+    }
+
     //This makes two node have the same index.
     void alias_two_nodes(std::string node1 , std::string node2 ){similar_nodes[node1] = node2;}
     
@@ -148,7 +153,7 @@ public:
       return node_indeces; 
     }
     
-    int size_of_mna(){return mna_variable_indices.size(); }
+    int size_of_mna() const {return mna_variable_indices.size(); }
     
     void update_probes(double time, const double* solution);
     
