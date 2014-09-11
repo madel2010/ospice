@@ -64,16 +64,19 @@ bool DC::Newton_iter(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<dou
 		
 	Phi_norm_old = Phi_norm;
 	Phi_norm = Phi.norm();
-	_DD(2){
-	 std::cout<<"DC Analysis: Phi = " << Phi_norm <<std::endl; 
-	}
-	if(Phi_norm<=1e-9){
+	
+	if(Phi_norm<=1e-6){
 		convergence = true;
 	}else{
 		Jac.solve(Phi);  //Note: solve function rewrites the Phi
 		solution -= Phi;
                 Iter_Number++;
 	}
+
+	_DD(2){
+	   if(convergence) std::cout<<"DC Analysis: Phi = " << Phi_norm <<std::endl; 
+	}
+
      }
 
      return convergence;
@@ -122,7 +125,7 @@ void DC::simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double
  	_DD(1){ std::cout<<"Normal DC did not converge, trying DC source steping"<<std::endl;}
  	
  	dc_solution.reset();
-	for (int i=1000; i>=1; i*=2){
+	for (int i=1000; i>=1; i--){
     		 Newton_iter_result = Newton_iter(G, Gmin, C, J, B, fx, circ, dc_solution, i , 0);
 
 		 if(!Newton_iter_result){ //One step did not converge 

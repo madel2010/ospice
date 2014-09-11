@@ -36,7 +36,7 @@
 #include <map>
 #include <set>
 #include "symbolicc++.h"
-
+#include <iostream>
 
 class Element;
 class NonLinElement;
@@ -45,7 +45,10 @@ class Source;
 class Analysis;
 class DC;
 
-
+struct configuration{
+	std::string files_base_name = "Ospice";
+	int output_mode = 0; //0->screen , 1->file	
+};
 
 class Circuit
 {
@@ -101,6 +104,9 @@ private:
  
      virtual void attach_elements();
 public:
+
+     configuration config; //The configuration structure
+
      Circuit();
     ~Circuit();
     

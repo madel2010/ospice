@@ -189,6 +189,21 @@ void Circuit::attach_elements(){
 	  std::cout<<node_map.first<<"=>"<<node_map.second<<std::endl;
 	}
      }
+
+     _DD(9){
+	std::ofstream output;
+        output.open(config.files_base_name+".G");
+	output << G;
+	output.close();
+
+	output.open(config.files_base_name+".C");	
+	output << C;
+	output.close();
+
+	output.open(config.files_base_name+".fx");	
+	output << fx;
+	output.close();
+     }
 }
 
 
@@ -216,8 +231,10 @@ void Circuit::update_sources(double time){
 ///This function calls the NonLinElement.update_fx() to put the new values of the non linear expression in the fx vector at time 
 ///Note: that the function NonLinElement.update_fx() is only defined for nonlinear elements as they are also inherited from "NonLinElement" class
 void Circuit::update_fx(const double* solution){
-    std::list<NonLinElement*>::iterator iter;
-    
+    //Make sure that fx is zeros before you update the values 
+    fx.reset();
+
+    std::list<NonLinElement*>::iterator iter; 
     for(iter= Non_Linear_Elements.begin(); iter!= Non_Linear_Elements.end(); iter++){
 	(*iter)->update_fx( fx , solution); //this is a function of all nonlinear elements to update the fx vector
     }
@@ -226,8 +243,10 @@ void Circuit::update_fx(const double* solution){
 ///This function calls the NonLinElement.update_J() to put the new values of the non linear Jacobian matrix in the G matrix at time 
 ///Note: that the function NonLinElement.update_J() is only defined for nonlinear elements as they are also inherited from "NonLinElement" class
 void Circuit::update_J(const double* solution){
+    //Make sure that J is zeros before you update the values 
+    J.reset();
+
     std::list<NonLinElement*>::iterator iter;
-    
     for(iter= Non_Linear_Elements.begin(); iter!= Non_Linear_Elements.end(); iter++){
 	(*iter)->update_J( J , solution); 
     }

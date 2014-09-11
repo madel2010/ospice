@@ -146,8 +146,8 @@ void nonlin_resistor::update_fx(BMatrix::Dense<double>& fx, const double* soluti
 	  throw std::runtime_error("Expression can not be converted to a value, something wrong");
       }
     
-      if(n1_index > -1) fx.put(n1_index,0,value);
-      if(n2_index > -1) fx.put(n2_index,0,-value);
+      if(n1_index > -1) fx.add_to_entry(n1_index,0,value);
+      if(n2_index > -1) fx.add_to_entry(n2_index,0,-value);
 }
 
 //This function gives the result of J by updating the entries of the jacobian matrix 
@@ -179,11 +179,11 @@ void nonlin_resistor::update_J(BMatrix::Sparse<double>& J, const double* solutio
 	  }
 	  
 	  if(n1_index > -1){
-	      J.put(n1_index , expression_depends_on[dfdx_counter].second , value);
+	      J.add_to_entry(n1_index , expression_depends_on[dfdx_counter].second , value);
 	  }
     
 	  if(n2_index > -1) {
-	      J.put(n2_index , expression_depends_on[dfdx_counter].second , value);
+	      J.add_to_entry(n2_index , expression_depends_on[dfdx_counter].second , -value);
 	  }
       
 	  dfdx_counter++;
