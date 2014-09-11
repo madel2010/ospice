@@ -371,7 +371,10 @@ int yydebug = 0;
 	///END: create the subcircuit instances from the map of saved instances
 
 	      
-	      
+	//Configuration of the circuit
+	CurrentCircuit->config.files_base_name = argv[1];
+	CurrentCircuit->config.output_mode = 1; //0->screen , 1->file
+
 	//Start simulating the circuit
 	CurrentCircuit->start_analysis();
 	CurrentCircuit->plot_probes();

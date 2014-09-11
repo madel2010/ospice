@@ -7,6 +7,12 @@
 1->Information about Analysis
 2->Information about elements
 3->Information about circuit
+4->
+5->
+6->
+7->
+8->
+9->Information about Matrices
 */
 
 #ifdef DEBUG

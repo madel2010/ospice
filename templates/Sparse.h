@@ -422,6 +422,17 @@ public:
 	  	number_of_klu_refactor = 0;
 	}
 	
+	void reset(){
+	      typename std::list<SparseElement>::iterator row_iterator;
+
+	      for(int col=0; col< this->cols; col++){
+	    	  for(row_iterator= this->cols_lists[col].begin() ; row_iterator!=this->cols_lists[col].end(); row_iterator++){
+			row_iterator->value = 0.0;
+	    	  }
+	      }
+	      this->values_have_changed = true;
+	}
+
       ~Sparse(){
 	if(this->Ap) delete[] this->Ap;
 	this->Ap=NULL;
