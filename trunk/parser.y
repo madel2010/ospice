@@ -28,7 +28,7 @@
 #include <string>
 #include <unordered_map>
 #include <boost/algorithm/string/trim.hpp>
-
+#include <memory>
 
 
 
@@ -83,11 +83,13 @@ void yyerror(const char *str){
 /*------This part is the declaration of what are the types that the flex would return----------*/
 %union{
 	double dval;
+	/*char* str;*/
 	char* str;
 	int ival;
 	std::list<std::string>*  arg_list;
 }
 %destructor { delete $$; } <arg_list> 
+%destructor { delete $$; } <str> 
 
 %token <str> EQUAL
 %token <dval> DVALUE
