@@ -39,7 +39,7 @@ DC::DC(){
 bool DC::Newton_iter(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double> &Gmin, const BMatrix::Sparse<double> &C, const BMatrix::Sparse<double> &J, const BMatrix::Dense<double> &B, const BMatrix::Dense<double> &fx, 
 		     Circuit* circ, BMatrix::Dense<double> &solution, int B_scale, long int Gmin_scale){
 
-    BMatrix::Dense<double> Phi(circ->size_of_mna(),1);	
+    BMatrix::Dense<double> Phi;
     BMatrix::Sparse<double> Jac(circ->size_of_mna(),circ->size_of_mna());
     
     int Iter_Number = 0;

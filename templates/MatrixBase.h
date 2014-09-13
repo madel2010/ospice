@@ -17,7 +17,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <string.h>
-
+#include <memory>
 
 extern "C" void dgetrf_( const int * M,  const int* N, double* A, const int *lda, int* ipiv, int* result );
 extern "C" void dgetrs_( const char* TRANS,  const int* N, const int* nrhs, double* A, const int *lda, int* ipiv, double* B, const int* ldb,  int* result, int tlen);
@@ -152,15 +152,17 @@ public:
 		this->rows= B.rows;
 		this->cols= B.cols;
 		
+		if(this->data) delete[] this->data;
+		
 		this->data = B.data;
 		B.data = nullptr;
 		
 		
-		
+		if(this->LU_factors) delete[] this->LU_factors;
 		this->LU_factors = B.LU_factors;
 		B.LU_factors = nullptr;
 		
-		have_LU_factors = B.LU_factors;
+		have_LU_factors = B.have_LU_factors;
 	}
 
 	Dense<T>* clone(){
@@ -232,9 +234,11 @@ public:
 		this->rows= A.rows;
 		this->cols= A.cols;
 		
+		if(this->data) delete[] this->data;
 		this->data = A.data;
 		A.data = nullptr;
 		
+		if(this->LU_factors) delete[] this->LU_factors;
 		this->LU_factors = A.LU_factors;
 		A.LU_factors = nullptr;
 		
