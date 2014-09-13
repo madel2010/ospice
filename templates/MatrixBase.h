@@ -238,7 +238,7 @@ public:
 		this->LU_factors = A.LU_factors;
 		A.LU_factors = nullptr;
 		
-		have_LU_factors = A.LU_factors;
+		have_LU_factors = A.have_LU_factors;
 		
 		return *this;
 	}  

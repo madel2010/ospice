@@ -26,6 +26,7 @@ Int KLU_free_symbolic
     n = Symbolic->n ;
     KLU_free (Symbolic->P, n, sizeof (Int), Common) ;
     KLU_free (Symbolic->Q, n, sizeof (Int), Common) ;
+    KLU_free (Symbolic->IQ, n, sizeof (Int), Common) ; //Added by mina , neede in klu_solve()
     KLU_free (Symbolic->R, n+1, sizeof (Int), Common) ;
     KLU_free (Symbolic->Lnz, n, sizeof (double), Common) ;
     KLU_free (Symbolic, 1, sizeof (KLU_symbolic), Common) ;
