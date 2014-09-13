@@ -83,8 +83,8 @@ void yyerror(const char *str){
 /*------This part is the declaration of what are the types that the flex would return----------*/
 %union{
 	double dval;
-	/*char* str;*/
 	char* str;
+	/*std::unique_ptr<char[]> str;*/
 	int ival;
 	std::list<std::string>*  arg_list;
 }
@@ -178,6 +178,9 @@ command:
 resistor_statment:
 	| RESISTOR node node DVALUE NEWLINE{
 	      (*CurrentCircuit)<< new resistor(boost::trim_copy(std::string($1)), $2, $3, $4);
+	      free($1);
+	      free($2);
+	      free($3);
 	}
 	| G_ELEMENT node node CUR EQUAL QUOTED_STRING {
 	      std::string expression = $6;
@@ -211,18 +214,30 @@ vcvs_statment:
 cccs_statment:
 	| F_ELEMENT STRING node node DVALUE NEWLINE{
 	      (*CurrentCircuit)<< new CCCS(boost::trim_copy(std::string($1)), $2, $3, $4, $5);
+	      free($1);
+	      free($2);
+	      free($3);
+	      free($4);
 	}
 	;
 	
 vccs_statment:
 	| G_ELEMENT node node node node DVALUE NEWLINE{
 	      (*CurrentCircuit)<< new VCCS(boost::trim_copy(std::string($1)), $4, $5, $2, $3,$6);
+	      free($1);
+	      free($2);
+	      free($3);
+	      free($4);
+	      free($5);
 	}
 	;	
 
 voltagesource_statment:
 	| VOLTAGESOURCE node node DVALUE NEWLINE{ //DC voltage source
 	      (*CurrentCircuit)<< new VoltageSource (boost::trim_copy(std::string($1)), $2, $3 , new DCSource($4) ) ;
+	      free($1);
+	      free($2);
+	      free($3);
 	}
 	| VOLTAGESOURCE node node SIN LBRACKET DVALUE DVALUE DVALUE DVALUE DVALUE DVALUE RBRACKET{ //Sin voltage source
 	      (*CurrentCircuit)<< new VoltageSource (boost::trim_copy(std::string($1)), $2, $3 , new SinSource($6,$7,$8,$9,$10,$11) ) ;

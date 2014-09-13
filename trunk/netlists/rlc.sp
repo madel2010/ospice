@@ -1,5 +1,5 @@
 
-.param Is = 1e-12
+*.param Is = 1e-12
 
 V1 n1 0 1
 R1 n1 0 1
@@ -12,13 +12,13 @@ R2 n2 0 1
 
 *.include ./netlists/include.sp
 
-.subckt Mina n1 n2
-R1 n1 n2 10
-.ends
+*.subckt Mina n1 n2
+*R1 n1 n2 10
+*.ends
 
-.subckt Mina2 n1 n2
-L1 n1 n2 1
-.ends
+*.subckt Mina2 n1 n2
+*L1 n1 n2 1
+*.ends
 
  
 .op
