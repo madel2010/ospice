@@ -31,16 +31,19 @@
 #include <math.h>
 #include "debug.h"
 
+transient::Jac = BMatrix::Sparse<double>;
+transient::G_p_C_p_J = BMatrix::Sparse<double> ;
+
 ///THE DC ANALYSIS
 DC::DC(){
     simulation_done = false;
+    
 }
 
 bool DC::Newton_iter(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double> &Gmin, const BMatrix::Sparse<double> &C, const BMatrix::Sparse<double> &J, const BMatrix::Dense<double> &B, const BMatrix::Dense<double> &fx, 
 		     Circuit* circ, BMatrix::Dense<double> &solution, int B_scale, long int Gmin_scale){
 
     BMatrix::Dense<double> Phi;
-    BMatrix::Sparse<double> Jac(circ->size_of_mna(),circ->size_of_mna());
     
     int Iter_Number = 0;
     double Phi_norm=0 , Phi_norm_old=0;
@@ -200,11 +203,12 @@ bool transient::perform_BE(const BMatrix::Sparse<double> &G, const BMatrix::Spar
      int MNA_size = circ->size_of_mna();
      
      BMatrix::Sparse<double> scaled_C = C/h; // let us save the C/h because we have constant step size
-     BMatrix::Sparse<double> temp, G_p_C_p_J(MNA_size,MNA_size);
     
      BMatrix::Dense<double> Phi(MNA_size,1);
      BMatrix::Dense<double> scaled_C_times_pre_solution = scaled_C*solution;
-	  
+
+     BMatrix::Sparse<double> temp;	  
+
      BMatrix::Sparse<double> G_p_C = G+scaled_C; // let us save the C/h because we have constant step size
     
      

@@ -42,7 +42,7 @@
 
 ^[ \t]*[gG][A-Za-z0-9_]+ {yylval.str=strdup(yytext); return G_ELEMENT;}
 
-\.[pP][aA][rR][aA][mM] {yylval.str=strdup(yytext); return PARAM;}
+\.[pP][aA][rR][aA][mM] {return PARAM;}
 
 [sS][iI][nN] {yylval.str=strdup(yytext); return SIN;}
 

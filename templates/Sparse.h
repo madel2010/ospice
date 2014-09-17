@@ -69,7 +69,7 @@ private:
       
       bool structure_has_changed;
       bool values_have_changed;
-	
+      
       BMatrix::MWrap<double>* MWrap_Ax; //The Mwrap class that holdes tha Ax values. It is used in the KLU routines
        
       //the following numbers are for storing the time for doing sparse order and LU factorization.
@@ -170,6 +170,9 @@ private:
       }
       
 public:
+      bool Freeze_structure; //If we call move constructor do we need to keep the same structure
+	
+
       Sparse(){
 	  this->rows=0; //Number of rows
 	  this->cols=0; //Number of cols
@@ -194,7 +197,7 @@ public:
 	  this->ccs_created = false; 
 	  this->structure_has_changed = true;
 	  this->values_have_changed = true;
-
+	  this->Freeze_structure = false;
 	  
 
 	  //the time report data
@@ -289,6 +292,7 @@ public:
 
 	  this->structure_has_changed = true;
 	  this->values_have_changed = true;
+	  this->Freeze_structure = false;
 
 	  this->Symbolic = NULL;
 	  this->Numeric = NULL;
@@ -303,6 +307,66 @@ public:
           number_of_klu_analyze = 0;
           number_of_klu_factor = 0;
 	  number_of_klu_refactor = 0;
+      }
+
+      //Move contructor 
+     Sparse(Sparse<T> && A){
+	  
+	  int n = A.cols;	
+
+	  cols_lists = A.cols_lists;
+	  A.cols_lists = nullptr;
+
+
+	  first_row = A.first_row;
+          A.first_row=nullptr;
+
+	  last_row = A.last_row;
+	  A.last_row = nullptr ;
+	  
+	  	  
+	  Last_accessed_ele_in_col = A.Last_accessed_ele_in_col;
+	  A.Last_accessed_ele_in_col = nullptr;
+
+	  this->Ap = A.Ap; 
+          A.Ap = nullptr;
+	  this->Ai = A.Ai; 
+	  A.Ai = nullptr;
+	  this->Ax = A.Ax; 
+	  A.Ax = nullptr;
+	  
+	  
+
+	  this->nnz  = A.nnz;
+	  this->rows = A.rows; //Number of rows
+	  this->cols = A.cols; //Number of cols
+
+	  this->ccs_created = A.ccs_created;
+
+	  this->matrix_created = A.matrix_created;
+
+	  klu_defaults(&this->Common);
+	  this->Common.scale=0;
+
+	 //do we need to make it a new matrix when caling solve
+	  this->values_have_changed = true;
+
+	  //freeze structure only if required by setting Freeze_structure=true and when nnz>0
+	  if(!this>Freeze_structure || this->nnz==0){
+		this->Symbolic = A.Symbolic;
+                this->Numeric = A.Numeric;
+
+		this->structure_has_changed = true;
+	  	
+	  	//the time report data
+	  	time_to_do_klu_analyze = 0;
+      	  	time_to_do_klu_factor = 0;
+	  	time_to_do_klu_refactor = 0;
+          	number_of_klu_analyze = 0;
+          	number_of_klu_factor = 0;
+	  	number_of_klu_refactor = 0;
+	 }
+
       }
 
       Sparse(int m, int n,T zero_element):SBase<T>(zero_element){
@@ -363,6 +427,7 @@ public:
 	
 	  this->structure_has_changed = true;
 	  this->values_have_changed = true;
+	  this->Freeze_structure = false;
 
 	  klu_defaults(&this->Common);
 	  this->Common.scale=0;
@@ -410,7 +475,8 @@ public:
 		this->ccs_created = false;
 		this->structure_has_changed = true;
 	  	this->values_have_changed = true;
-	  	
+	  	this->Freeze_structure = false;
+
 		this->nnz = 0;
 
 		//the time report data
