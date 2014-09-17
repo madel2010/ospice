@@ -53,6 +53,8 @@ class DC: public Analysis
 {
  
 private:  
+    static BMatrix::Sparse<double> Jac; //This is the matrix that needs to be factorized each step. We have to make it static to prevent many sparse ordering
+
     BMatrix::Dense<double> dc_solution; //the solution to the DC
  
     //newton Iteration with scaling B. Return NULL if not converged
@@ -77,6 +79,8 @@ class transient: public Analysis
 {
  friend envelope_following;
 private:  
+     static BMatrix::Sparse<double> G_p_C_p_J; //This is the matrix that needs to be factorized each step. We have to make it static to prevent many sparse ordering
+
     BMatrix::Dense<double> tr_solution; //the solution to the DC
     
     bool set_initial_condition; //if we want to set an initial condition not to use the DC analysis

@@ -188,6 +188,10 @@ resistor_statment:
 	      expression.erase(expression.begin());
 	      expression.erase(expression.end()-1);
 	      (*CurrentCircuit)<<  new nonlin_resistor(boost::trim_copy(std::string($1)) , $2 , $3, expression.c_str());
+	      free($1);
+	      free($2);
+	      free($3);
+	      free($6);
 	}
 	;
 		
@@ -195,6 +199,9 @@ resistor_statment:
 inductor_statment:
 	| INDUCTOR node node DVALUE NEWLINE{
 	      (*CurrentCircuit)<< new Inductor(boost::trim_copy(std::string($1)), $2, $3, $4);
+	      free($1);
+	      free($2);
+	      free($3);
 	}
 	;
 	
@@ -202,12 +209,20 @@ inductor_statment:
 capacitor_statment:
 	| CAPACITOR node node DVALUE NEWLINE{
 	      (*CurrentCircuit)<< new Capacitor(boost::trim_copy(std::string($1)), $2, $3, $4);
+	      free($1);
+	      free($2);
+	      free($3);
 	}
 	;
 	
 vcvs_statment:
 	| E_ELEMENT node node node node DVALUE NEWLINE{
 	      (*CurrentCircuit)<< new VCVS(boost::trim_copy(std::string($1)), $4, $5, $2, $3,$6);
+	      free($1);
+	      free($2);
+	      free($3);
+	      free($4);
+	      free($5);
 	}
 	;
 
@@ -241,12 +256,18 @@ voltagesource_statment:
 	}
 	| VOLTAGESOURCE node node SIN LBRACKET DVALUE DVALUE DVALUE DVALUE DVALUE DVALUE RBRACKET{ //Sin voltage source
 	      (*CurrentCircuit)<< new VoltageSource (boost::trim_copy(std::string($1)), $2, $3 , new SinSource($6,$7,$8,$9,$10,$11) ) ;
+	  free($1);
+	  free($2);
+	  free($3);
 	}
 	;
 	
 currentsource_statment:
 	| CURRENTSOURCE node node DVALUE NEWLINE{ //DC voltage source
 	       (*CurrentCircuit)<< new CurrentSource (boost::trim_copy(std::string($1)), $2, $3 , new DCSource($4) ) ;
+	      free($1);
+	      free($2);
+	      free($3);
 	}	
 	;
 
@@ -267,12 +288,14 @@ param_statment:
 	  std::ostringstream temp;
 	  temp << $4;
 	  CurrentCircuit->add_parameter($2 , temp.str());
+	  free($2);
 	}
 	;
 	
 subckt_instance_statment:
 	| SUBCKT_INSTANCE node_list STRING{
 	      subckt_instances[$1] = std::pair<std::string , std::list<std::string> >( $3 , (*$2) ) ;
+	     free($3);
 	}
 	;
 	
@@ -283,6 +306,7 @@ subcircuit_statment:
 	    std::vector<std::string> terminals {std::make_move_iterator($3->begin()), std::make_move_iterator($3->end())};
 	    Circuit_lists.push_back(new SubCircuit($2 , terminals));
 	    CurrentCircuit = Circuit_lists.back();
+	    free($2);
 	}
 	;
 	

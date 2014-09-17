@@ -1,10 +1,10 @@
 
-*.param Is = 1e-12
+.param Is = 1e-12
 
 V1 n1 0 1
 R1 n1 0 1
 *Xa1 n2 n3 Mina2
-*C1 n2 0 1
+C1 n2 0 1
 *Xb1 n3 0 Mina
 
 F1 V1 n2 0 100.1
@@ -22,5 +22,5 @@ R2 n2 0 1
 
  
 .op
-*.tran 0.1 1
+*.tran 0.1 3
 *.print tran V(n1) I(V1)
