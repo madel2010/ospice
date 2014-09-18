@@ -304,6 +304,16 @@ public:
 		} 
   		return result;
 	}
+
+	Dense<T> operator +(T val) const{
+		Dense<T> result(this->rows, this->cols);
+		for(int j=0; j< this->cols; j++){
+		    for(int i=0; i< this->rows; i++){
+			result.data[i+this->rows*j] = this->data[i+this->rows*j] + val;
+		    }  
+		} 
+  		return result;
+	}
 	
 	T get(int m, int n) const{
 		return this->data[m+this->rows*n];

@@ -256,7 +256,7 @@ bool transient::perform_BE(const BMatrix::Sparse<double> &G, const BMatrix::Spar
 		  
 	Phi = G_p_C*solution + fx - B - ( scaled_C_times_pre_solution );
 
-	if(Phi.norm()<=1e-12){
+	if(Phi.norm() <= (solution*circ->config.reltol + circ->config.abstol).norm() ){
 	      convergence = true;
 		      
 	      //calculate sensitivity matrix
@@ -319,7 +319,7 @@ bool transient::perform_TR(const BMatrix::Sparse<double> &G, const BMatrix::Spar
 	//NOTE: B = B - B_pre ... check simulate()
 	Phi = G_p_C*solution + fx + fx_pre - B + ( scaled_C_times_pre_solution );
 
-	if(Phi.norm()<=1e-12){
+	if(Phi.norm()<= (solution*circ->config.reltol + circ->config.abstol).norm() ){
 	      convergence = true;
 		      
 	      //calculate sensitivity matrix

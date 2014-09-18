@@ -28,7 +28,7 @@ endif()
 #END: check the GCC compiler version
 
 #Debug -- Release
-set(CMAKE_BUILD_TYPE "Debug")
+set(CMAKE_BUILD_TYPE "Release")
 
 if(CMAKE_BUILD_TYPE MATCHES Debug)
 	#if you don't want the full compiler output, remove the following line
