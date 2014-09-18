@@ -31,18 +31,19 @@
 #include <math.h>
 #include "debug.h"
 
-transient::Jac = BMatrix::Sparse<double>;
-transient::G_p_C_p_J = BMatrix::Sparse<double> ;
+BMatrix::Sparse<double> DC::Jac = BMatrix::Sparse<double>();
+BMatrix::Sparse<double> transient::G_p_C_p_J = BMatrix::Sparse<double>();
 
 ///THE DC ANALYSIS
 DC::DC(){
     simulation_done = false;
-    
+    Jac.Freeze_structure = true; //not do sparse ordering every time
 }
 
 bool DC::Newton_iter(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double> &Gmin, const BMatrix::Sparse<double> &C, const BMatrix::Sparse<double> &J, const BMatrix::Dense<double> &B, const BMatrix::Dense<double> &fx, 
 		     Circuit* circ, BMatrix::Dense<double> &solution, int B_scale, long int Gmin_scale){
 
+    
     BMatrix::Dense<double> Phi;
     
     int Iter_Number = 0;
@@ -170,7 +171,8 @@ void transient::simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse
 
 void transient::simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double> &C, const BMatrix::Sparse<double> &J, const BMatrix::Dense<double> &B, const BMatrix::Dense<double> &fx, Circuit* circ, BMatrix::Sparse< double >* Sensitivty_Matrix){
      
-      
+      G_p_C_p_J.Freeze_structure = true;
+
       if(!set_initial_condition){
 	   tr_solution = circ->get_dc_solution();
       }else{
