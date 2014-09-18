@@ -311,8 +311,32 @@ public:
 
       //Move contructor 
      Sparse(Sparse<T> && A){
-	  
-	  int n = A.cols;	
+
+	  //freeze structure only if required by setting Freeze_structure=true and when nnz>0
+	  if(!this>Freeze_structure || this->nnz==0){
+		if(this->Symbolic){
+			klu_free_symbolic (&this->Symbolic, &this->Common);
+		}
+          	if(this->Numeric){
+			klu_B_numeric* my_numeric = (klu_B_numeric*)this->Numeric;
+			klu_B_free_numeric (&my_numeric, &this->Common);   
+		}
+
+		this->Symbolic = A.Symbolic;
+                this->Numeric = A.Numeric;
+
+		this->structure_has_changed = true;
+	  	
+	  	//the time report data
+	  	time_to_do_klu_analyze = 0;
+      	  	time_to_do_klu_factor = 0;
+	  	time_to_do_klu_refactor = 0;
+          	number_of_klu_analyze = 0;
+          	number_of_klu_factor = 0;
+	  	number_of_klu_refactor = 0;
+
+	 }
+
 
 	  cols_lists = A.cols_lists;
 	  A.cols_lists = nullptr;
@@ -351,22 +375,7 @@ public:
 	 //do we need to make it a new matrix when caling solve
 	  this->values_have_changed = true;
 
-	  //freeze structure only if required by setting Freeze_structure=true and when nnz>0
-	  if(!this>Freeze_structure || this->nnz==0){
-		this->Symbolic = A.Symbolic;
-                this->Numeric = A.Numeric;
-
-		this->structure_has_changed = true;
-	  	
-	  	//the time report data
-	  	time_to_do_klu_analyze = 0;
-      	  	time_to_do_klu_factor = 0;
-	  	time_to_do_klu_refactor = 0;
-          	number_of_klu_analyze = 0;
-          	number_of_klu_factor = 0;
-	  	number_of_klu_refactor = 0;
-	 }
-
+	  
       }
 
       Sparse(int m, int n,T zero_element):SBase<T>(zero_element){
@@ -576,6 +585,92 @@ public:
 	  this->ccs_created = false; //for now we just make the new object create the CCS
 	  this->structure_has_changed = true;
 	  this->values_have_changed = true;
+
+	 return *this;
+      }
+
+      //Move operator =
+      Sparse<T >& operator=(Sparse<T >&& A){
+	
+	  if(this->matrix_created){
+
+	  	delete[] cols_lists;
+	  	
+
+	  	if(this->Ax) delete[] this->Ax;
+	  	
+	  }
+
+	  //freeze structure only if required by setting Freeze_structure=true and when nnz>0
+	  if(!this>Freeze_structure || this->nnz==0){
+
+		if(this->Symbolic){
+			klu_free_symbolic (&this->Symbolic, &this->Common);
+		}
+          	if(this->Numeric){
+			klu_B_numeric* my_numeric = (klu_B_numeric*)this->Numeric;
+			klu_B_free_numeric (&my_numeric, &this->Common);   
+		}
+
+		this->Symbolic = A.Symbolic;
+                this->Numeric = A.Numeric;
+
+		this->structure_has_changed = true;
+	  	
+		if(this->Ap) delete[] this->Ap ;
+	  	if(this->Ai ) delete[] this->Ai;
+		if(this->first_row) delete[] first_row;
+       	  	if(this->last_row) delete[] last_row;
+	  	
+		if(this->Last_accessed_ele_in_col) delete[] Last_accessed_ele_in_col;
+
+	  	//the time report data
+	  	time_to_do_klu_analyze = 0;
+      	  	time_to_do_klu_factor = 0;
+	  	time_to_do_klu_refactor = 0;
+          	number_of_klu_analyze = 0;
+          	number_of_klu_factor = 0;
+	  	number_of_klu_refactor = 0;
+	  }
+
+
+	  cols_lists = A.cols_lists;
+	  A.cols_lists = nullptr;
+
+
+	  first_row = A.first_row;
+          A.first_row=nullptr;
+
+	  last_row = A.last_row;
+	  A.last_row = nullptr ;
+	  
+	  	  
+	  Last_accessed_ele_in_col = A.Last_accessed_ele_in_col;
+	  A.Last_accessed_ele_in_col = nullptr;
+
+	  this->Ap = A.Ap; 
+          A.Ap = nullptr;
+	  this->Ai = A.Ai; 
+	  A.Ai = nullptr;
+	  this->Ax = A.Ax; 
+	  A.Ax = nullptr;
+	  
+	  
+
+	  this->nnz  = A.nnz;
+	  this->rows = A.rows; //Number of rows
+	  this->cols = A.cols; //Number of cols
+
+	  this->ccs_created = A.ccs_created;
+
+	  this->matrix_created = A.matrix_created;
+
+	  klu_defaults(&this->Common);
+	  this->Common.scale=0;
+
+	 //do we need to make it a new matrix when caling solve
+	  this->values_have_changed = true;
+
 
 	 return *this;
       }
