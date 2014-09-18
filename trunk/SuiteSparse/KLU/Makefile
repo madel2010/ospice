@@ -15,7 +15,7 @@ all:
 	( cd Demo ; $(MAKE) )
 
 library:
-	( cd Lib ; $(MAKE) )
+	( cd Lib ; $(MAKE) CFLAGS='$(CFLAGS)' CXXFLAGS='$(CXXFLAGS)' )
 
 clean:
 	( cd Demo ; $(MAKE) clean )

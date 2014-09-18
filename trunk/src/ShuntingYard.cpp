@@ -59,8 +59,6 @@ bool is_voltage_current(const std::string& c , std::string& dependent){
 std::string get_expression_token(const std::string& Expression , int& pos){
     std::string token = "";
     
-    //used to check if the first chr is a digit. If it is a digit, then all other chrs should also be digit
-    bool first_chr_is_digit = false;
     
     
     if(Expression[pos]=='('){ //it is a paranthesis

@@ -47,7 +47,8 @@ class DC;
 
 struct configuration{
 	std::string files_base_name = "Ospice";
-	int output_mode = 0; //0->screen , 1->file	
+	int output_mode = 0; //0->screen , 1->file
+	int integration_order = 2; //1->BE , 2->TR	
 };
 
 class Circuit

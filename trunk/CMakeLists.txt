@@ -2,8 +2,7 @@ PROJECT(blockklu)
 
 cmake_minimum_required(VERSION 2.6)
 
-#if you don't want the full compiler output, remove the following line
-SET(CMAKE_VERBOSE_MAKEFILE ON)
+
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules)
 
 #START: check the GCC compiler version
@@ -30,6 +29,11 @@ endif()
 
 #Debug -- Release
 set(CMAKE_BUILD_TYPE "Debug")
+
+if(CMAKE_BUILD_TYPE MATCHES Debug)
+	#if you don't want the full compiler output, remove the following line
+	SET(CMAKE_VERBOSE_MAKEFILE ON)
+endif()
 
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall -O0 -DDebug")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -O0 -DDEBUG")

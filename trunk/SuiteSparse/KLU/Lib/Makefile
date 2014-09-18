@@ -8,8 +8,8 @@ include ../../SuiteSparse_config/SuiteSparse_config.mk
 # TEST = -DTESTING
 
 #C = $(CC) $(CF) 
-C = $(CC) -o0 -g
-CPP = $(CXX) -o0 -g -std=c++11
+C = $(CC) $(CFLAGS)
+CPP = $(CXX) $(CXXFLAGS) -std=c++11
 
 INC = ../Include/klu.h ../Include/klu_internal.h ../Include/klu_version.h \
     ../../SuiteSparse_config/SuiteSparse_config.h Makefile

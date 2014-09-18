@@ -116,17 +116,18 @@ namespace BMatrix{
         if(Last_accessed_ele_in_col) delete[] Last_accessed_ele_in_col;
 	Last_accessed_ele_in_col = NULL;
 
-	klu_free_symbolic (&this->Symbolic, &this->Common);
+	if(this->Symbolic) klu_free_symbolic (&this->Symbolic, &this->Common);
 	this->Symbolic=NULL;
 	
-	klu_numeric* my_numeric = (klu_numeric*)this->Numeric;
-        klu_free_numeric (&my_numeric, &this->Common); 
-	
+	if(this->Numeric){
+		klu_numeric* my_numeric = (klu_numeric*)this->Numeric;
+        	klu_free_numeric (&my_numeric, &this->Common); 
+	}
 	this->Numeric=NULL;
 
       }
 
-  
+     
 };
 
 #endif
