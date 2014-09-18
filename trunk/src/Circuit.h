@@ -49,6 +49,8 @@ struct configuration{
 	std::string files_base_name = "Ospice";
 	int output_mode = 0; //0->screen , 1->file
 	int integration_order = 2; //1->BE , 2->TR	
+	double abstol = 1e-6; //the absolute required tolerance
+	double reltol = 0.01; //the relative tolerance required
 };
 
 class Circuit
