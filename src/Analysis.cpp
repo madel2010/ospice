@@ -141,6 +141,10 @@ void DC::simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double
      }
      circ->update_probes(0 , (*dc_solution) ); //This function should send to all the probes in the circuit the solution to add its value
 
+     _DD(1){
+	 std::cout<<"DC Analysis Report:"<<std::endl;
+	 Jac.report_timing();
+      }
 }
 
 std::ostream& DC::print(std::ostream &out , const Circuit* circ)const{
@@ -171,7 +175,9 @@ void transient::simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse
 
 void transient::simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double> &C, const BMatrix::Sparse<double> &J, const BMatrix::Dense<double> &B, const BMatrix::Dense<double> &fx, Circuit* circ, BMatrix::Sparse< double >* Sensitivty_Matrix){
      
-      G_p_C_p_J.Freeze_structure = true;
+      G_p_C_p_J.Freeze_structure = true; //do not sparse ordering every time
+
+      BMatrix::Dense<double> TR_B;
 
       if(!set_initial_condition){
 	   tr_solution = circ->get_dc_solution();
@@ -180,14 +186,28 @@ void transient::simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse
       }
 	  
       double time = start_time+h;
+      int s = 1; //to find the first time point and use BE
       bool convergence;
       while(time <= end_time){	  
 	std::cout<<"Current time = "<<time<<std::endl;
 	
-	circ->update_sources(time);
+	TR_B = B; //B at previous time point	
 	
-	convergence = perform_BE(G, C, J, B, fx, tr_solution ,h, circ, Sensitivty_Matrix);
-	
+	if(circ->config.integration_order==1 || s==1){
+		circ->update_sources(time);
+		convergence = perform_BE(G, C, J, B, fx, tr_solution ,h, circ, Sensitivty_Matrix);
+	}else if(circ->config.integration_order==2){
+		circ->update_sources(time);
+		TR_B += B;
+		convergence = perform_TR(G, C, J, TR_B, fx, tr_solution ,h, circ, Sensitivty_Matrix);
+	}else{
+		throw std::runtime_error("Transient analysis: Integration order not known");
+	}
+
+	if(!convergence){
+		throw std::runtime_error("Transient analysis: No convergence");
+	}
+
 	circ->update_probes(time , (*tr_solution) ); //This function should send to all the probes in the circuit the solution to add its value
 
 	if(std::find(save_solution_at.begin(),save_solution_at.end(),time)!=save_solution_at.end()){
@@ -195,6 +215,12 @@ void transient::simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse
 	}
 	 
 	time+= h;
+	s++;
+      }
+
+      _DD(1){
+	 std::cout<<"Transient Analysis Report:"<<std::endl;
+	 G_p_C_p_J.report_timing();
       }
 }
 
@@ -229,6 +255,69 @@ bool transient::perform_BE(const BMatrix::Sparse<double> &G, const BMatrix::Spar
 	circ->update_J((*solution));
 		  
 	Phi = G_p_C*solution + fx - B - ( scaled_C_times_pre_solution );
+
+	if(Phi.norm()<=1e-12){
+	      convergence = true;
+		      
+	      //calculate sensitivity matrix
+	      if(Sensitivty_Matrix){
+		      //sensetivity_matrix = (J\(C/h)) * sensetivity_matrix;
+		      temp  = scaled_C;
+		      G_p_C_p_J.solve(temp);
+		      (*Sensitivty_Matrix) = temp*(*Sensitivty_Matrix);
+	      }
+	    
+        }else{
+	      G_p_C_p_J = G_p_C+J;
+	      G_p_C_p_J.solve(Phi);  //Note: solve function rewrites the Phi
+
+	      tr_solution -= Phi;
+     
+	}
+	number_of_iterations++;
+    }
+
+    return convergence;
+    
+}
+
+//solution should be the previous point and is overwritten by the new solution
+bool transient::perform_TR(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double> &C, const BMatrix::Sparse<double> &J, const BMatrix::Dense<double> &B, const BMatrix::Dense<double> &fx, 
+			   BMatrix::Dense<double>& solution, double h, Circuit* circ, BMatrix::Sparse< double >* Sensitivty_Matrix){
+  
+     int MNA_size = circ->size_of_mna();
+     
+     BMatrix::Sparse<double> scaled_C = C*(2/h); // let us save the C/h because we have constant step size
+    
+     BMatrix::Dense<double> Phi(MNA_size,1);
+     BMatrix::Dense<double> scaled_C_times_pre_solution = (G-scaled_C)*solution;
+
+     BMatrix::Sparse<double> temp;	  
+
+     BMatrix::Sparse<double> G_p_C = G+scaled_C; // let us save the C/h because we have constant step size
+    
+     
+      
+     bool convergence=false;
+     int number_of_iterations = 0;
+
+     //get fx_pre at previous time point
+     circ->update_fx((*solution));
+     BMatrix::Dense<double> fx_pre = fx;
+
+     while(!convergence){
+	 
+        //if the number of iterations exeeded a certain value, then stop
+        if(number_of_iterations>30){
+	    convergence=false;
+	    break;
+	}
+	
+	circ->update_fx((*solution));
+	circ->update_J((*solution));
+		  
+	//NOTE: B = B - B_pre ... check simulate()
+	Phi = G_p_C*solution + fx + fx_pre - B + ( scaled_C_times_pre_solution );
 
 	if(Phi.norm()<=1e-12){
 	      convergence = true;

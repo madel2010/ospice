@@ -97,6 +97,10 @@ private:
     //to do the transient analysis. this is called from simulate(). it can also compute the Sensitivty Matrix
     bool perform_BE(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double> &C, const BMatrix::Sparse<double> &J,const BMatrix::Dense<double> &B, const BMatrix::Dense<double> &fx, 
 			   BMatrix::Dense<double>& solution, double h, Circuit* circ, BMatrix::Sparse< double >* Sensitivty_Matrix);
+
+    bool perform_TR(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double> &C, const BMatrix::Sparse<double> &J,const BMatrix::Dense<double> &B, const BMatrix::Dense<double> &fx, 
+			   BMatrix::Dense<double>& solution, double h, Circuit* circ, BMatrix::Sparse< double >* Sensitivty_Matrix);
+
 public:
     transient(double _start_time, double _end_time , double _h):start_time(_start_time), end_time(_end_time), h(_h){
       set_initial_condition = false;

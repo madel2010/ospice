@@ -314,18 +314,7 @@ public:
 
 	  //freeze structure only if required by setting Freeze_structure=true and when nnz>0
 	 	  //freeze structure only if required by setting Freeze_structure=true and when nnz>0
-	  if(!this>Freeze_structure || this->nnz==0){
-
-		if(this->Symbolic){
-			klu_free_symbolic (&this->Symbolic, &this->Common);
-		}
-          	if(this->Numeric){
-			klu_B_numeric* my_numeric = (klu_B_numeric*)this->Numeric;
-			klu_B_free_numeric (&my_numeric, &this->Common);   
-		}
-
-		this->Symbolic = A.Symbolic;
-                this->Numeric = A.Numeric;
+	  if(!this->Freeze_structure || this->nnz==0){
 
 		this->structure_has_changed = true;
 		
@@ -351,13 +340,7 @@ public:
 		Last_accessed_ele_in_col = A.Last_accessed_ele_in_col;
    	        A.Last_accessed_ele_in_col = nullptr;
 
-	  	//the time report data
-	  	time_to_do_klu_analyze = 0;
-      	  	time_to_do_klu_factor = 0;
-	  	time_to_do_klu_refactor = 0;
-          	number_of_klu_analyze = 0;
-          	number_of_klu_factor = 0;
-	  	number_of_klu_refactor = 0;
+	  	
 	  }
 
 
@@ -540,15 +523,18 @@ public:
         if(Last_accessed_ele_in_col) delete[] Last_accessed_ele_in_col;
 	Last_accessed_ele_in_col = NULL;
 
-	klu_free_symbolic (&this->Symbolic, &this->Common);
+	if(this->Symbolic) klu_free_symbolic (&this->Symbolic, &this->Common);
 	this->Symbolic=NULL;
 	
-	klu_B_numeric* my_numeric = (klu_B_numeric*)this->Numeric;
-        klu_B_free_numeric (&my_numeric, &this->Common); 
-	
+	if(this->Numeric){
+		klu_numeric* my_numeric = (klu_numeric*)this->Numeric;
+        	klu_free_numeric (&my_numeric, &this->Common); 
+	}
 	this->Numeric=NULL;
 
       }
+
+     
 
       Sparse<T >& operator=(T val){throw std::runtime_error("operator=(T val) not codded yet");}
       
@@ -563,7 +549,7 @@ public:
  	  }
 
 	  int n = A.cols;
-	  int m = A.rows;
+	 
 	  if(!this->matrix_created){
 	  	
 
@@ -622,18 +608,8 @@ public:
 	  }
 
 	  //freeze structure only if required by setting Freeze_structure=true and when nnz>0
-	  if(!this>Freeze_structure || this->nnz==0){
+	  if(!this->Freeze_structure || this->nnz==0){
 
-		if(this->Symbolic){
-			klu_free_symbolic (&this->Symbolic, &this->Common);
-		}
-          	if(this->Numeric){
-			klu_B_numeric* my_numeric = (klu_B_numeric*)this->Numeric;
-			klu_B_free_numeric (&my_numeric, &this->Common);   
-		}
-
-		this->Symbolic = A.Symbolic;
-                this->Numeric = A.Numeric;
 
 		this->structure_has_changed = true;
 	  	
@@ -660,13 +636,7 @@ public:
 		Last_accessed_ele_in_col = A.Last_accessed_ele_in_col;
    	        A.Last_accessed_ele_in_col = nullptr;
 
-	  	//the time report data
-	  	time_to_do_klu_analyze = 0;
-      	  	time_to_do_klu_factor = 0;
-	  	time_to_do_klu_refactor = 0;
-          	number_of_klu_analyze = 0;
-          	number_of_klu_factor = 0;
-	  	number_of_klu_refactor = 0;
+	  	
 	  }
 
 

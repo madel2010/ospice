@@ -11,7 +11,7 @@ AMD version 2.3.0, Jun 1, 2012: approximate minimum degree ordering
     (rows with more than max (10 * sqrt (n), 16) entries are
     considered "dense", and placed last in output permutation)
     aggressive absorption:  yes
-    size of AMD integer: 4
+    size of AMD integer: 8
 
 
 AMD version 2.3.0, Jun 1, 2012, results:
@@ -42,7 +42,7 @@ AMD version 2.3.0, Jun 1, 2012: approximate minimum degree ordering
     (rows with more than max (10 * sqrt (n), 16) entries are
     considered "dense", and placed last in output permutation)
     aggressive absorption:  yes
-    size of AMD integer: 4
+    size of AMD integer: 8
 
 
 AMD version 2.3.0, Jun 1, 2012, results:
@@ -73,7 +73,7 @@ AMD version 2.3.0, Jun 1, 2012: approximate minimum degree ordering
     (rows with more than max (10 * sqrt (n), 16) entries are
     considered "dense", and placed last in output permutation)
     aggressive absorption:  yes
-    size of AMD integer: 4
+    size of AMD integer: 8
 
 
 AMD version 2.3.0, Jun 1, 2012, results:
@@ -84,7 +84,7 @@ AMD version 2.3.0, Jun 1, 2012, results:
     number of nonzeros on diagonal:                     1
     nonzeros in pattern of A+A' (excl. diagonal):       0
     # dense rows/columns of A+A':                       0
-    memory used, in bytes:                              36
+    memory used, in bytes:                              72
     # of memory compactions:                            0
 
     The following approximate statistics are for a subsequent
@@ -107,10 +107,10 @@ AMD version 2.3.0, Jun 1, 2012, results:
 
 Factorize PAP'=LDL' and solve Ax=b
 Nz in L: 0  Flop count: 0
-relative maxnorm of residual: 1.97325e-17
+relative maxnorm of residual: 0
 Factorize A=LDL' and solve Ax=b
 Nz in L: 0  Flop count: 0
-relative maxnorm of residual: 1.97325e-17
+relative maxnorm of residual: 0
 
 
 --------------------------------------------------------
@@ -124,7 +124,7 @@ AMD version 2.3.0, Jun 1, 2012: approximate minimum degree ordering
     (rows with more than max (10 * sqrt (n), 16) entries are
     considered "dense", and placed last in output permutation)
     aggressive absorption:  yes
-    size of AMD integer: 4
+    size of AMD integer: 8
 
 
 AMD version 2.3.0, Jun 1, 2012, results:
@@ -135,7 +135,7 @@ AMD version 2.3.0, Jun 1, 2012, results:
     number of nonzeros on diagonal:                     1
     nonzeros in pattern of A+A' (excl. diagonal):       0
     # dense rows/columns of A+A':                       0
-    memory used, in bytes:                              52
+    memory used, in bytes:                              104
     # of memory compactions:                            0
 
     The following approximate statistics are for a subsequent
@@ -158,10 +158,10 @@ AMD version 2.3.0, Jun 1, 2012, results:
 
 Factorize PAP'=LDL' and solve Ax=b
 Nz in L: 0  Flop count: 0
-relative maxnorm of residual: 5.51046e-17
+relative maxnorm of residual: 8.32667e-17
 Factorize A=LDL' and solve Ax=b
 Nz in L: 0  Flop count: 0
-relative maxnorm of residual: 5.51046e-17
+relative maxnorm of residual: 8.32667e-17
 
 
 --------------------------------------------------------
@@ -175,7 +175,7 @@ AMD version 2.3.0, Jun 1, 2012: approximate minimum degree ordering
     (rows with more than max (10 * sqrt (n), 16) entries are
     considered "dense", and placed last in output permutation)
     aggressive absorption:  yes
-    size of AMD integer: 4
+    size of AMD integer: 8
 
 
 AMD version 2.3.0, Jun 1, 2012, results:
@@ -186,7 +186,7 @@ AMD version 2.3.0, Jun 1, 2012, results:
     number of nonzeros on diagonal:                     2
     nonzeros in pattern of A+A' (excl. diagonal):       2
     # dense rows/columns of A+A':                       0
-    memory used, in bytes:                              80
+    memory used, in bytes:                              160
     # of memory compactions:                            0
 
     The following approximate statistics are for a subsequent
@@ -209,10 +209,10 @@ AMD version 2.3.0, Jun 1, 2012, results:
 
 Factorize PAP'=LDL' and solve Ax=b
 Nz in L: 1  Flop count: 3
-relative maxnorm of residual: 2.53432e-17
+relative maxnorm of residual: 5.55112e-17
 Factorize A=LDL' and solve Ax=b
 Nz in L: 1  Flop count: 3
-relative maxnorm of residual: 2.53432e-17
+relative maxnorm of residual: 5.55112e-17
 
 
 --------------------------------------------------------
@@ -226,7 +226,7 @@ AMD version 2.3.0, Jun 1, 2012: approximate minimum degree ordering
     (rows with more than max (10 * sqrt (n), 16) entries are
     considered "dense", and placed last in output permutation)
     aggressive absorption:  yes
-    size of AMD integer: 4
+    size of AMD integer: 8
 
 
 AMD version 2.3.0, Jun 1, 2012, results:
@@ -237,7 +237,7 @@ AMD version 2.3.0, Jun 1, 2012, results:
     number of nonzeros on diagonal:                     2
     nonzeros in pattern of A+A' (excl. diagonal):       2
     # dense rows/columns of A+A':                       0
-    memory used, in bytes:                              112
+    memory used, in bytes:                              224
     # of memory compactions:                            0
 
     The following approximate statistics are for a subsequent
@@ -260,10 +260,10 @@ AMD version 2.3.0, Jun 1, 2012, results:
 
 Factorize PAP'=LDL' and solve Ax=b
 Nz in L: 1  Flop count: 3
-relative maxnorm of residual: 1.08041e-16
+relative maxnorm of residual: 1.11022e-16
 Factorize A=LDL' and solve Ax=b
 Nz in L: 1  Flop count: 3
-relative maxnorm of residual: 1.08041e-16
+relative maxnorm of residual: 1.11022e-16
 
 
 --------------------------------------------------------
@@ -277,7 +277,7 @@ AMD version 2.3.0, Jun 1, 2012: approximate minimum degree ordering
     (rows with more than max (10 * sqrt (n), 16) entries are
     considered "dense", and placed last in output permutation)
     aggressive absorption:  yes
-    size of AMD integer: 4
+    size of AMD integer: 8
 
 
 AMD version 2.3.0, Jun 1, 2012, results:
@@ -288,7 +288,7 @@ AMD version 2.3.0, Jun 1, 2012, results:
     number of nonzeros on diagonal:                     3
     nonzeros in pattern of A+A' (excl. diagonal):       6
     # dense rows/columns of A+A':                       0
-    memory used, in bytes:                              136
+    memory used, in bytes:                              272
     # of memory compactions:                            0
 
     The following approximate statistics are for a subsequent
@@ -311,10 +311,10 @@ AMD version 2.3.0, Jun 1, 2012, results:
 
 Factorize PAP'=LDL' and solve Ax=b
 Nz in L: 3  Flop count: 11
-relative maxnorm of residual: 1.50772e-16
+relative maxnorm of residual: 1.11022e-16
 Factorize A=LDL' and solve Ax=b
 Nz in L: 3  Flop count: 11
-relative maxnorm of residual: 1.50772e-16
+relative maxnorm of residual: 1.11022e-16
 
 
 --------------------------------------------------------
@@ -328,7 +328,7 @@ AMD version 2.3.0, Jun 1, 2012: approximate minimum degree ordering
     (rows with more than max (10 * sqrt (n), 16) entries are
     considered "dense", and placed last in output permutation)
     aggressive absorption:  yes
-    size of AMD integer: 4
+    size of AMD integer: 8
 
 
 AMD version 2.3.0, Jun 1, 2012, results:
@@ -339,7 +339,7 @@ AMD version 2.3.0, Jun 1, 2012, results:
     number of nonzeros on diagonal:                     3
     nonzeros in pattern of A+A' (excl. diagonal):       6
     # dense rows/columns of A+A':                       0
-    memory used, in bytes:                              196
+    memory used, in bytes:                              392
     # of memory compactions:                            0
 
     The following approximate statistics are for a subsequent
@@ -362,10 +362,10 @@ AMD version 2.3.0, Jun 1, 2012, results:
 
 Factorize PAP'=LDL' and solve Ax=b
 Nz in L: 3  Flop count: 11
-relative maxnorm of residual: 1.2715e-16
+relative maxnorm of residual: 1.38778e-16
 Factorize A=LDL' and solve Ax=b
 Nz in L: 3  Flop count: 11
-relative maxnorm of residual: 1.2715e-16
+relative maxnorm of residual: 1.38778e-16
 
 
 --------------------------------------------------------
@@ -379,7 +379,7 @@ AMD version 2.3.0, Jun 1, 2012: approximate minimum degree ordering
     (rows with more than max (10 * sqrt (n), 16) entries are
     considered "dense", and placed last in output permutation)
     aggressive absorption:  yes
-    size of AMD integer: 4
+    size of AMD integer: 8
 
 
 AMD version 2.3.0, Jun 1, 2012, results:
@@ -390,7 +390,7 @@ AMD version 2.3.0, Jun 1, 2012, results:
     number of nonzeros on diagonal:                     24
     nonzeros in pattern of A+A' (excl. diagonal):       136
     # dense rows/columns of A+A':                       0
-    memory used, in bytes:                              1516
+    memory used, in bytes:                              3032
     # of memory compactions:                            0
 
     The following approximate statistics are for a subsequent
@@ -430,7 +430,7 @@ AMD version 2.3.0, Jun 1, 2012: approximate minimum degree ordering
     (rows with more than max (10 * sqrt (n), 16) entries are
     considered "dense", and placed last in output permutation)
     aggressive absorption:  yes
-    size of AMD integer: 4
+    size of AMD integer: 8
 
 
 AMD version 2.3.0, Jun 1, 2012, results:
@@ -441,7 +441,7 @@ AMD version 2.3.0, Jun 1, 2012, results:
     number of nonzeros on diagonal:                     24
     nonzeros in pattern of A+A' (excl. diagonal):       136
     # dense rows/columns of A+A':                       0
-    memory used, in bytes:                              2368
+    memory used, in bytes:                              4736
     # of memory compactions:                            0
 
     The following approximate statistics are for a subsequent
@@ -481,7 +481,7 @@ AMD version 2.3.0, Jun 1, 2012: approximate minimum degree ordering
     (rows with more than max (10 * sqrt (n), 16) entries are
     considered "dense", and placed last in output permutation)
     aggressive absorption:  yes
-    size of AMD integer: 4
+    size of AMD integer: 8
 
 
 AMD version 2.3.0, Jun 1, 2012, results:
@@ -492,7 +492,7 @@ AMD version 2.3.0, Jun 1, 2012, results:
     number of nonzeros on diagonal:                     27
     nonzeros in pattern of A+A' (excl. diagonal):       252
     # dense rows/columns of A+A':                       0
-    memory used, in bytes:                              2180
+    memory used, in bytes:                              4360
     # of memory compactions:                            0
 
     The following approximate statistics are for a subsequent
@@ -515,10 +515,10 @@ AMD version 2.3.0, Jun 1, 2012, results:
 
 Factorize PAP'=LDL' and solve Ax=b
 Nz in L: 126  Flop count: 954
-relative maxnorm of residual: 1.57392e-10
+relative maxnorm of residual: 2.59625e-10
 Factorize A=LDL' and solve Ax=b
 Nz in L: 276  Flop count: 4206
-relative maxnorm of residual: 5.08528e-10
+relative maxnorm of residual: 2.72848e-10
 
 
 --------------------------------------------------------
@@ -532,7 +532,7 @@ AMD version 2.3.0, Jun 1, 2012: approximate minimum degree ordering
     (rows with more than max (10 * sqrt (n), 16) entries are
     considered "dense", and placed last in output permutation)
     aggressive absorption:  yes
-    size of AMD integer: 4
+    size of AMD integer: 8
 
 
 AMD version 2.3.0, Jun 1, 2012, results:
@@ -543,7 +543,7 @@ AMD version 2.3.0, Jun 1, 2012, results:
     number of nonzeros on diagonal:                     27
     nonzeros in pattern of A+A' (excl. diagonal):       252
     # dense rows/columns of A+A':                       0
-    memory used, in bytes:                              3592
+    memory used, in bytes:                              7184
     # of memory compactions:                            0
 
     The following approximate statistics are for a subsequent
@@ -566,10 +566,10 @@ AMD version 2.3.0, Jun 1, 2012, results:
 
 Factorize PAP'=LDL' and solve Ax=b
 Nz in L: 126  Flop count: 954
-relative maxnorm of residual: 4.49621e-10
+relative maxnorm of residual: 3.27418e-10
 Factorize A=LDL' and solve Ax=b
 Nz in L: 276  Flop count: 4206
-relative maxnorm of residual: 2.43323e-10
+relative maxnorm of residual: 2.32376e-10
 
 
 --------------------------------------------------------
@@ -583,7 +583,7 @@ AMD version 2.3.0, Jun 1, 2012: approximate minimum degree ordering
     (rows with more than max (10 * sqrt (n), 16) entries are
     considered "dense", and placed last in output permutation)
     aggressive absorption:  yes
-    size of AMD integer: 4
+    size of AMD integer: 8
 
 
 AMD version 2.3.0, Jun 1, 2012, results:
@@ -594,7 +594,7 @@ AMD version 2.3.0, Jun 1, 2012, results:
     number of nonzeros on diagonal:                     48
     nonzeros in pattern of A+A' (excl. diagonal):       352
     # dense rows/columns of A+A':                       0
-    memory used, in bytes:                              3416
+    memory used, in bytes:                              6832
     # of memory compactions:                            0
 
     The following approximate statistics are for a subsequent
@@ -617,10 +617,10 @@ AMD version 2.3.0, Jun 1, 2012, results:
 
 Factorize PAP'=LDL' and solve Ax=b
 Nz in L: 441  Flop count: 5961
-relative maxnorm of residual: 2.77611e-13
+relative maxnorm of residual: 2.38712e-13
 Factorize A=LDL' and solve Ax=b
 Nz in L: 829  Flop count: 20103
-relative maxnorm of residual: 2.73632e-13
+relative maxnorm of residual: 2.27374e-13
 
 
 --------------------------------------------------------
@@ -634,7 +634,7 @@ AMD version 2.3.0, Jun 1, 2012: approximate minimum degree ordering
     (rows with more than max (10 * sqrt (n), 16) entries are
     considered "dense", and placed last in output permutation)
     aggressive absorption:  yes
-    size of AMD integer: 4
+    size of AMD integer: 8
 
 
 AMD version 2.3.0, Jun 1, 2012, results:
@@ -645,7 +645,7 @@ AMD version 2.3.0, Jun 1, 2012, results:
     number of nonzeros on diagonal:                     48
     nonzeros in pattern of A+A' (excl. diagonal):       352
     # dense rows/columns of A+A':                       0
-    memory used, in bytes:                              5500
+    memory used, in bytes:                              11000
     # of memory compactions:                            0
 
     The following approximate statistics are for a subsequent
@@ -668,10 +668,10 @@ AMD version 2.3.0, Jun 1, 2012, results:
 
 Factorize PAP'=LDL' and solve Ax=b
 Nz in L: 441  Flop count: 5961
-relative maxnorm of residual: 1.79919e-13
+relative maxnorm of residual: 2.27374e-13
 Factorize A=LDL' and solve Ax=b
 Nz in L: 829  Flop count: 20103
-relative maxnorm of residual: 2.21795e-13
+relative maxnorm of residual: 3.83693e-13
 
 
 --------------------------------------------------------
@@ -685,7 +685,7 @@ AMD version 2.3.0, Jun 1, 2012: approximate minimum degree ordering
     (rows with more than max (10 * sqrt (n), 16) entries are
     considered "dense", and placed last in output permutation)
     aggressive absorption:  yes
-    size of AMD integer: 4
+    size of AMD integer: 8
 
 
 AMD version 2.3.0, Jun 1, 2012, results:
@@ -696,7 +696,7 @@ AMD version 2.3.0, Jun 1, 2012, results:
     number of nonzeros on diagonal:                     24
     nonzeros in pattern of A+A' (excl. diagonal):       0
     # dense rows/columns of A+A':                       0
-    memory used, in bytes:                              1728
+    memory used, in bytes:                              3456
     # of memory compactions:                            0
 
     The following approximate statistics are for a subsequent
@@ -736,7 +736,7 @@ AMD version 2.3.0, Jun 1, 2012: approximate minimum degree ordering
     (rows with more than max (10 * sqrt (n), 16) entries are
     considered "dense", and placed last in output permutation)
     aggressive absorption:  yes
-    size of AMD integer: 4
+    size of AMD integer: 8
 
 
 AMD version 2.3.0, Jun 1, 2012, results:
@@ -747,7 +747,7 @@ AMD version 2.3.0, Jun 1, 2012, results:
     number of nonzeros on diagonal:                     24
     nonzeros in pattern of A+A' (excl. diagonal):       0
     # dense rows/columns of A+A':                       0
-    memory used, in bytes:                              2028
+    memory used, in bytes:                              4056
     # of memory compactions:                            0
 
     The following approximate statistics are for a subsequent
@@ -787,7 +787,7 @@ AMD version 2.3.0, Jun 1, 2012: approximate minimum degree ordering
     (rows with more than max (10 * sqrt (n), 16) entries are
     considered "dense", and placed last in output permutation)
     aggressive absorption:  yes
-    size of AMD integer: 4
+    size of AMD integer: 8
 
 
 AMD version 2.3.0, Jun 1, 2012, results:
@@ -798,7 +798,7 @@ AMD version 2.3.0, Jun 1, 2012, results:
     number of nonzeros on diagonal:                     48
     nonzeros in pattern of A+A' (excl. diagonal):       258
     # dense rows/columns of A+A':                       0
-    memory used, in bytes:                              2964
+    memory used, in bytes:                              5928
     # of memory compactions:                            1
 
     The following approximate statistics are for a subsequent
@@ -821,10 +821,10 @@ AMD version 2.3.0, Jun 1, 2012, results:
 
 Factorize PAP'=LDL' and solve Ax=b
 Nz in L: 288  Flop count: 2630
-relative maxnorm of residual: 5.63629e-16
+relative maxnorm of residual: 5.96745e-16
 Factorize A=LDL' and solve Ax=b
 Nz in L: 511  Flop count: 7383
-relative maxnorm of residual: 7.86677e-16
+relative maxnorm of residual: 6.93889e-16
 
 
 --------------------------------------------------------
@@ -838,7 +838,7 @@ AMD version 2.3.0, Jun 1, 2012: approximate minimum degree ordering
     (rows with more than max (10 * sqrt (n), 16) entries are
     considered "dense", and placed last in output permutation)
     aggressive absorption:  yes
-    size of AMD integer: 4
+    size of AMD integer: 8
 
 
 AMD version 2.3.0, Jun 1, 2012, results:
@@ -849,7 +849,7 @@ AMD version 2.3.0, Jun 1, 2012, results:
     number of nonzeros on diagonal:                     48
     nonzeros in pattern of A+A' (excl. diagonal):       258
     # dense rows/columns of A+A':                       0
-    memory used, in bytes:                              4596
+    memory used, in bytes:                              9192
     # of memory compactions:                            1
 
     The following approximate statistics are for a subsequent
@@ -872,10 +872,10 @@ AMD version 2.3.0, Jun 1, 2012, results:
 
 Factorize PAP'=LDL' and solve Ax=b
 Nz in L: 288  Flop count: 2630
-relative maxnorm of residual: 5.98635e-16
+relative maxnorm of residual: 5.55112e-16
 Factorize A=LDL' and solve Ax=b
 Nz in L: 511  Flop count: 7383
-relative maxnorm of residual: 8.69957e-16
+relative maxnorm of residual: 5.55112e-16
 
 
 --------------------------------------------------------
@@ -889,7 +889,7 @@ AMD version 2.3.0, Jun 1, 2012: approximate minimum degree ordering
     (rows with more than max (10 * sqrt (n), 16) entries are
     considered "dense", and placed last in output permutation)
     aggressive absorption:  yes
-    size of AMD integer: 4
+    size of AMD integer: 8
 
 
 AMD version 2.3.0, Jun 1, 2012, results:
@@ -900,7 +900,7 @@ AMD version 2.3.0, Jun 1, 2012, results:
     number of nonzeros on diagonal:                     62
     nonzeros in pattern of A+A' (excl. diagonal):       280
     # dense rows/columns of A+A':                       0
-    memory used, in bytes:                              3576
+    memory used, in bytes:                              7152
     # of memory compactions:                            0
 
     The following approximate statistics are for a subsequent
@@ -923,10 +923,10 @@ AMD version 2.3.0, Jun 1, 2012, results:
 
 Factorize PAP'=LDL' and solve Ax=b
 Nz in L: 226  Flop count: 1472
-relative maxnorm of residual: 5.22633e-16
+relative maxnorm of residual: 5.55112e-16
 Factorize A=LDL' and solve Ax=b
 Nz in L: 662  Flop count: 11350
-relative maxnorm of residual: 8.70398e-16
+relative maxnorm of residual: 1.11022e-15
 
 
 --------------------------------------------------------
@@ -940,7 +940,7 @@ AMD version 2.3.0, Jun 1, 2012: approximate minimum degree ordering
     (rows with more than max (10 * sqrt (n), 16) entries are
     considered "dense", and placed last in output permutation)
     aggressive absorption:  yes
-    size of AMD integer: 4
+    size of AMD integer: 8
 
 
 AMD version 2.3.0, Jun 1, 2012, results:
@@ -951,7 +951,7 @@ AMD version 2.3.0, Jun 1, 2012, results:
     number of nonzeros on diagonal:                     62
     nonzeros in pattern of A+A' (excl. diagonal):       280
     # dense rows/columns of A+A':                       0
-    memory used, in bytes:                              5456
+    memory used, in bytes:                              10912
     # of memory compactions:                            0
 
     The following approximate statistics are for a subsequent
@@ -974,10 +974,10 @@ AMD version 2.3.0, Jun 1, 2012, results:
 
 Factorize PAP'=LDL' and solve Ax=b
 Nz in L: 226  Flop count: 1472
-relative maxnorm of residual: 3.90504e-14
+relative maxnorm of residual: 5.68434e-14
 Factorize A=LDL' and solve Ax=b
 Nz in L: 662  Flop count: 11350
-relative maxnorm of residual: 1.17376e-12
+relative maxnorm of residual: 2.15827e-12
 
 
 --------------------------------------------------------
@@ -991,7 +991,7 @@ AMD version 2.3.0, Jun 1, 2012: approximate minimum degree ordering
     (rows with more than max (10 * sqrt (n), 16) entries are
     considered "dense", and placed last in output permutation)
     aggressive absorption:  yes
-    size of AMD integer: 4
+    size of AMD integer: 8
 
 
 AMD version 2.3.0, Jun 1, 2012, results:
@@ -1002,7 +1002,7 @@ AMD version 2.3.0, Jun 1, 2012, results:
     number of nonzeros on diagonal:                     66
     nonzeros in pattern of A+A' (excl. diagonal):       4290
     # dense rows/columns of A+A':                       0
-    memory used, in bytes:                              22968
+    memory used, in bytes:                              45936
     # of memory compactions:                            0
 
     The following approximate statistics are for a subsequent
@@ -1025,10 +1025,10 @@ AMD version 2.3.0, Jun 1, 2012, results:
 
 Factorize PAP'=LDL' and solve Ax=b
 Nz in L: 2145  Flop count: 97955
-relative maxnorm of residual: 7.02358e-13
+relative maxnorm of residual: 7.50219e-13
 Factorize A=LDL' and solve Ax=b
 Nz in L: 2145  Flop count: 97955
-relative maxnorm of residual: 7.02358e-13
+relative maxnorm of residual: 7.50219e-13
 
 
 --------------------------------------------------------
@@ -1042,7 +1042,7 @@ AMD version 2.3.0, Jun 1, 2012: approximate minimum degree ordering
     (rows with more than max (10 * sqrt (n), 16) entries are
     considered "dense", and placed last in output permutation)
     aggressive absorption:  yes
-    size of AMD integer: 4
+    size of AMD integer: 8
 
 
 AMD version 2.3.0, Jun 1, 2012, results:
@@ -1053,7 +1053,7 @@ AMD version 2.3.0, Jun 1, 2012, results:
     number of nonzeros on diagonal:                     66
     nonzeros in pattern of A+A' (excl. diagonal):       4290
     # dense rows/columns of A+A':                       0
-    memory used, in bytes:                              43936
+    memory used, in bytes:                              87872
     # of memory compactions:                            0
 
     The following approximate statistics are for a subsequent
@@ -1076,10 +1076,10 @@ AMD version 2.3.0, Jun 1, 2012, results:
 
 Factorize PAP'=LDL' and solve Ax=b
 Nz in L: 2145  Flop count: 97955
-relative maxnorm of residual: 6.20317e-13
+relative maxnorm of residual: 8.59759e-13
 Factorize A=LDL' and solve Ax=b
 Nz in L: 2145  Flop count: 97955
-relative maxnorm of residual: 6.20317e-13
+relative maxnorm of residual: 8.59759e-13
 
 
 --------------------------------------------------------
@@ -1093,7 +1093,7 @@ AMD version 2.3.0, Jun 1, 2012: approximate minimum degree ordering
     (rows with more than max (10 * sqrt (n), 16) entries are
     considered "dense", and placed last in output permutation)
     aggressive absorption:  yes
-    size of AMD integer: 4
+    size of AMD integer: 8
 
 
 AMD version 2.3.0, Jun 1, 2012, results:
@@ -1104,7 +1104,7 @@ AMD version 2.3.0, Jun 1, 2012, results:
     number of nonzeros on diagonal:                     66
     nonzeros in pattern of A+A' (excl. diagonal):       0
     # dense rows/columns of A+A':                       0
-    memory used, in bytes:                              2376
+    memory used, in bytes:                              4752
     # of memory compactions:                            0
 
     The following approximate statistics are for a subsequent
@@ -1127,10 +1127,10 @@ AMD version 2.3.0, Jun 1, 2012, results:
 
 Factorize PAP'=LDL' and solve Ax=b
 Nz in L: 0  Flop count: 0
-relative maxnorm of residual: 1.38561e-16
+relative maxnorm of residual: 2.22045e-16
 Factorize A=LDL' and solve Ax=b
 Nz in L: 0  Flop count: 0
-relative maxnorm of residual: 1.38561e-16
+relative maxnorm of residual: 2.22045e-16
 
 
 --------------------------------------------------------
@@ -1144,7 +1144,7 @@ AMD version 2.3.0, Jun 1, 2012: approximate minimum degree ordering
     (rows with more than max (10 * sqrt (n), 16) entries are
     considered "dense", and placed last in output permutation)
     aggressive absorption:  yes
-    size of AMD integer: 4
+    size of AMD integer: 8
 
 
 AMD version 2.3.0, Jun 1, 2012, results:
@@ -1155,7 +1155,7 @@ AMD version 2.3.0, Jun 1, 2012, results:
     number of nonzeros on diagonal:                     66
     nonzeros in pattern of A+A' (excl. diagonal):       0
     # dense rows/columns of A+A':                       0
-    memory used, in bytes:                              2932
+    memory used, in bytes:                              5864
     # of memory compactions:                            0
 
     The following approximate statistics are for a subsequent
@@ -1178,10 +1178,10 @@ AMD version 2.3.0, Jun 1, 2012, results:
 
 Factorize PAP'=LDL' and solve Ax=b
 Nz in L: 0  Flop count: 0
-relative maxnorm of residual: 1.38561e-16
+relative maxnorm of residual: 2.22045e-16
 Factorize A=LDL' and solve Ax=b
 Nz in L: 0  Flop count: 0
-relative maxnorm of residual: 1.38561e-16
+relative maxnorm of residual: 2.22045e-16
 
 
 --------------------------------------------------------
@@ -1231,6 +1231,6 @@ name: Dense/3  n: 3 entries: 9 (invalid Ai)
 
 ldlamd: invalid matrix and/or permutation
 
-Largest residual during all tests: 5.08528e-10
+Largest residual during all tests: 3.27418e-10
 
 ldlamd: all tests passed

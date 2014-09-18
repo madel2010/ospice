@@ -6,7 +6,7 @@ AMD version 2.3.0, Jun 1, 2012: approximate minimum degree ordering
     (rows with more than max (10 * sqrt (n), 16) entries are
     considered "dense", and placed last in output permutation)
     aggressive absorption:  yes
-    size of AMD integer: 4
+    size of AMD integer: 8
 
 
 Input matrix:  24-by-24, with 160 entries.
@@ -123,7 +123,7 @@ AMD version 2.3.0, Jun 1, 2012, results:
     number of nonzeros on diagonal:                     24
     nonzeros in pattern of A+A' (excl. diagonal):       136
     # dense rows/columns of A+A':                       0
-    memory used, in bytes:                              1516
+    memory used, in bytes:                              3032
     # of memory compactions:                            0
 
     The following approximate statistics are for a subsequent
