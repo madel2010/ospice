@@ -23,4 +23,4 @@ R2 n2 0 1
  
 .op
 .tran 0.01 3
-.print tran V(n1) I(V1)
+*.print tran V(n1) I(V1)

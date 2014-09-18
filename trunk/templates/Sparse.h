@@ -313,7 +313,9 @@ public:
      Sparse(Sparse<T> && A){
 
 	  //freeze structure only if required by setting Freeze_structure=true and when nnz>0
+	 	  //freeze structure only if required by setting Freeze_structure=true and when nnz>0
 	  if(!this>Freeze_structure || this->nnz==0){
+
 		if(this->Symbolic){
 			klu_free_symbolic (&this->Symbolic, &this->Common);
 		}
@@ -326,7 +328,29 @@ public:
                 this->Numeric = A.Numeric;
 
 		this->structure_has_changed = true;
-	  	
+		
+		if(this->first_row){
+			delete[] first_row;
+			first_row = nullptr;
+		}
+       	  	if(this->last_row){
+			delete[] last_row;
+	  		last_row = nullptr;
+		}
+		if(this->Last_accessed_ele_in_col){
+			delete[] Last_accessed_ele_in_col;
+			Last_accessed_ele_in_col = nullptr;
+		}
+
+		first_row = A.first_row;
+	        A.first_row=nullptr;
+
+	  	last_row = A.last_row;
+	  	A.last_row = nullptr ;
+
+		Last_accessed_ele_in_col = A.Last_accessed_ele_in_col;
+   	        A.Last_accessed_ele_in_col = nullptr;
+
 	  	//the time report data
 	  	time_to_do_klu_analyze = 0;
       	  	time_to_do_klu_factor = 0;
@@ -334,24 +358,13 @@ public:
           	number_of_klu_analyze = 0;
           	number_of_klu_factor = 0;
 	  	number_of_klu_refactor = 0;
-
-	 }
+	  }
 
 
 	  cols_lists = A.cols_lists;
 	  A.cols_lists = nullptr;
 
-
-	  first_row = A.first_row;
-          A.first_row=nullptr;
-
-	  last_row = A.last_row;
-	  A.last_row = nullptr ;
-	  
-	  	  
-	  Last_accessed_ele_in_col = A.Last_accessed_ele_in_col;
-	  A.Last_accessed_ele_in_col = nullptr;
-
+	
 	  this->Ap = A.Ap; 
           A.Ap = nullptr;
 	  this->Ai = A.Ai; 
@@ -593,12 +606,19 @@ public:
       Sparse<T >& operator=(Sparse<T >&& A){
 	
 	  if(this->matrix_created){
-
 	  	delete[] cols_lists;
-	  	
-
-	  	if(this->Ax) delete[] this->Ax;
-	  	
+		if(this->Ap){
+			delete[] this->Ap ;
+			this->Ap = nullptr;
+		}
+	  	if(this->Ai ){
+			delete[] this->Ai;
+			this->Ai = nullptr;
+		}
+	  	if(this->Ax){
+			delete[] this->Ax;
+			this->Ax = nullptr;
+		}
 	  }
 
 	  //freeze structure only if required by setting Freeze_structure=true and when nnz>0
@@ -617,12 +637,28 @@ public:
 
 		this->structure_has_changed = true;
 	  	
-		if(this->Ap) delete[] this->Ap ;
-	  	if(this->Ai ) delete[] this->Ai;
-		if(this->first_row) delete[] first_row;
-       	  	if(this->last_row) delete[] last_row;
-	  	
-		if(this->Last_accessed_ele_in_col) delete[] Last_accessed_ele_in_col;
+		
+		if(this->first_row){
+			delete[] first_row;
+			first_row = nullptr;
+		}
+       	  	if(this->last_row){
+			delete[] last_row;
+	  		last_row = nullptr;
+		}
+		if(this->Last_accessed_ele_in_col){
+			delete[] Last_accessed_ele_in_col;
+			Last_accessed_ele_in_col = nullptr;
+		}
+
+		first_row = A.first_row;
+	        A.first_row=nullptr;
+
+	  	last_row = A.last_row;
+	  	A.last_row = nullptr ;
+
+		Last_accessed_ele_in_col = A.Last_accessed_ele_in_col;
+   	        A.Last_accessed_ele_in_col = nullptr;
 
 	  	//the time report data
 	  	time_to_do_klu_analyze = 0;
@@ -638,15 +674,7 @@ public:
 	  A.cols_lists = nullptr;
 
 
-	  first_row = A.first_row;
-          A.first_row=nullptr;
-
-	  last_row = A.last_row;
-	  A.last_row = nullptr ;
 	  
-	  	  
-	  Last_accessed_ele_in_col = A.Last_accessed_ele_in_col;
-	  A.Last_accessed_ele_in_col = nullptr;
 
 	  this->Ap = A.Ap; 
           A.Ap = nullptr;

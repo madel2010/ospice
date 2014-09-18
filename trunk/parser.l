@@ -44,7 +44,7 @@
 
 \.[pP][aA][rR][aA][mM] {return PARAM;}
 
-[sS][iI][nN] {yylval.str=strdup(yytext); return SIN;}
+[sS][iI][nN] {return SIN;}
 
 -?[0-9]+|-?[0-9]+"."[0-9]*|-?"."[0-9]+|-?[0-9]+[Ee][-+]?[0-9]+|-?[0-9]+"."[0-9]*[eE][-+]?[0-9]+|-?"."[0-9]+[eE][-+]?[0-9]+ { yylval.dval = atof(yytext) ; return DVALUE;} 
 
