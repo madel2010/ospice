@@ -30,6 +30,7 @@
 #include <string>
 #include <math.h>
 #include "debug.h"
+#include "util.h"
 
 BMatrix::Sparse<double> DC::Jac = BMatrix::Sparse<double>();
 BMatrix::Sparse<double> transient::G_p_C_p_J = BMatrix::Sparse<double>();
@@ -189,7 +190,7 @@ void transient::simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse
       int s = 1; //to find the first time point and use BE
       bool convergence;
       while(time <= end_time){	  
-	std::cout<<"Current time = "<<time<<std::endl;
+	std::cout<<"Current time = "<<time;
 	
 	TR_B = B; //B at previous time point	
 	
@@ -243,6 +244,9 @@ bool transient::perform_BE(const BMatrix::Sparse<double> &G, const BMatrix::Spar
       
      bool convergence=false;
      int number_of_iterations = 0;
+
+     double max_phi;
+
      while(!convergence){
 	 
         //if the number of iterations exeeded a certain value, then stop
@@ -255,8 +259,16 @@ bool transient::perform_BE(const BMatrix::Sparse<double> &G, const BMatrix::Spar
 	circ->update_J((*solution));
 		  
 	Phi = G_p_C*solution + fx - B - ( scaled_C_times_pre_solution );
+	
+	G_p_C_p_J = G_p_C+J;
+	G_p_C_p_J.solve(Phi);  //Note: solve function rewrites the Phi
 
-	if(Phi.norm() <= (solution*circ->config.reltol + circ->config.abstol).norm() ){
+	solution -= Phi;
+
+	number_of_iterations++;
+	
+	max_phi = max_abs(Phi);
+	if( max_phi < max_abs(solution*circ->config.abstol + circ->config.abstol ) ){
 	      convergence = true;
 		      
 	      //calculate sensitivity matrix
@@ -266,17 +278,14 @@ bool transient::perform_BE(const BMatrix::Sparse<double> &G, const BMatrix::Spar
 		      G_p_C_p_J.solve(temp);
 		      (*Sensitivty_Matrix) = temp*(*Sensitivty_Matrix);
 	      }
-	    
-        }else{
-	      G_p_C_p_J = G_p_C+J;
-	      G_p_C_p_J.solve(Phi);  //Note: solve function rewrites the Phi
 
-	      tr_solution -= Phi;
-     
-	}
-	number_of_iterations++;
+	      break;
+	    
+        }
+	
     }
 
+    std::cout<<" PHI="<<max_phi<<std::endl;
     return convergence;
     
 }
@@ -305,6 +314,8 @@ bool transient::perform_TR(const BMatrix::Sparse<double> &G, const BMatrix::Spar
      circ->update_fx((*solution));
      BMatrix::Dense<double> fx_pre = fx;
 
+     double max_phi;
+
      while(!convergence){
 	 
         //if the number of iterations exeeded a certain value, then stop
@@ -319,7 +330,15 @@ bool transient::perform_TR(const BMatrix::Sparse<double> &G, const BMatrix::Spar
 	//NOTE: B = B - B_pre ... check simulate()
 	Phi = G_p_C*solution + fx + fx_pre - B + ( scaled_C_times_pre_solution );
 
-	if(Phi.norm()<= (solution*circ->config.reltol + circ->config.abstol).norm() ){
+	G_p_C_p_J = G_p_C+J;
+        G_p_C_p_J.solve(Phi);  //Note: solve function rewrites the Phi
+
+        solution -= Phi;
+
+	number_of_iterations++;
+
+	max_phi = max_abs(Phi);
+	if(max_phi < max_abs(solution*circ->config.abstol + circ->config.abstol) ){
 	      convergence = true;
 		      
 	      //calculate sensitivity matrix
@@ -330,16 +349,12 @@ bool transient::perform_TR(const BMatrix::Sparse<double> &G, const BMatrix::Spar
 		      (*Sensitivty_Matrix) = temp*(*Sensitivty_Matrix);
 	      }
 	    
-        }else{
-	      G_p_C_p_J = G_p_C+J;
-	      G_p_C_p_J.solve(Phi);  //Note: solve function rewrites the Phi
+        }
 
-	      tr_solution -= Phi;
-     
-	}
-	number_of_iterations++;
+	
     }
 
+    std::cout<<" PHI="<<max_phi<<std::endl;
     return convergence;
     
 }

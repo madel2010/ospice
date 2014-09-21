@@ -14,7 +14,7 @@
 *.hb tones = 5XHz harms =10 intmodmax=0
 .OP
 *.hb 5Xhz harms =100
-.tran 0.0001e-6 6e-6
+.tran 3e-10 4e-3
 
 
 .print TRAN v(nVin)	v(nvo) 
