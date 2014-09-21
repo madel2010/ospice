@@ -25,5 +25,5 @@ double max_abs(const BMatrix::Dense<double> &A){
 
 	int index = idamax_(&size , *A, &idx);
 
-	return abs((*A)[index]);
+	return abs((*A)[index-1]);
 }

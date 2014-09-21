@@ -34,6 +34,7 @@
 #include "element.h"
 #include <vector>
 #include <map>
+#include <unordered_map>
 #include <set>
 #include "symbolicc++.h"
 #include <iostream>
@@ -91,7 +92,7 @@ private:
      BMatrix::Dense<double> B; 
      
      //associative array that maps the node name/current_name to its index
-     std::map<std::string , int> mna_variable_indices;
+     std::unordered_map<std::string , int> mna_variable_indices;
      
      //associative array that saves if there are nodes have different names but same inex. very usefull in subcircuits
      std::map< std::string , std::string> similar_nodes;
@@ -119,7 +120,7 @@ public:
     int add_mna_variable(std::string var_name);
 
     //return an iterator to the first element of the mna_variable_indices. Usefull if you want to iterate. You must know the MNS size using size_of_mna()
-    std::map<std::string , int>::const_iterator get_mna_variable_iterator() const{
+    std::unordered_map<std::string , int>::const_iterator get_mna_variable_iterator() const{
 	return mna_variable_indices.cbegin(); 
     }
 
