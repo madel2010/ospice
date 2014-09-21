@@ -2,14 +2,14 @@
 .param Is = 1e-12
 
 V1 n1 0 sin(0 1 1 0 0 0) 
-R1 n1 0 1
+*R1 n1 0 1
 *Xa1 n2 n3 Mina2
-C1 n2 0 1
+*C1 n2 0 1
 *Xb1 n3 0 Mina
 
-F1 V1 n2 0 100.1
-R2 n2 0 1
-
+*F1 V1 n2 0 100.1
+R2 n2 0 10
+G1 n1 n2 CUR='Is*(exp((V(n1)-V(n2))*40)-1)'
 *.include ./netlists/include.sp
 
 *.subckt Mina n1 n2
@@ -22,5 +22,5 @@ R2 n2 0 1
 
  
 .op
-.tran 0.01 3
-.print tran V(n1) I(V1)
+.tran 0.001 3
+.print tran V(n1) V(n2)

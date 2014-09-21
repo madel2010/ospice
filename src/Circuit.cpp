@@ -117,7 +117,7 @@ int Circuit::get_variable_index(std::string var_name){
 	result = -1; //means it is a ground
     }else{
 	//search the map first, may be we can find it
-	std::map< std::string , int>::iterator it=mna_variable_indices.find(var_name);
+	std::unordered_map< std::string , int>::iterator it=mna_variable_indices.find(var_name);
 	
 	if(it!=mna_variable_indices.end()){
 	    result = it->second;

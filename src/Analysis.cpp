@@ -149,7 +149,7 @@ void DC::simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double
 }
 
 std::ostream& DC::print(std::ostream &out , const Circuit* circ)const{
-    std::map<std::string , int>::const_iterator MNA_iter = circ->get_mna_variable_iterator();
+    std::unordered_map<std::string , int>::const_iterator MNA_iter = circ->get_mna_variable_iterator();
     std::string name; // whether it V, I or Q
     for(int i=0; i<circ->size_of_mna(); i++){
 	
@@ -285,7 +285,7 @@ bool transient::perform_BE(const BMatrix::Sparse<double> &G, const BMatrix::Spar
 	
     }
 
-    std::cout<<" PHI="<<max_phi<<std::endl;
+    std::cout<<" PHI="<<max_phi<<" NR count = "<<number_of_iterations<<std::endl;
     return convergence;
     
 }
@@ -354,7 +354,7 @@ bool transient::perform_TR(const BMatrix::Sparse<double> &G, const BMatrix::Spar
 	
     }
 
-    std::cout<<" PHI="<<max_phi<<std::endl;
+    std::cout<<" PHI="<<max_phi<<" NR count = "<<number_of_iterations<<std::endl;
     return convergence;
     
 }
