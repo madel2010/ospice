@@ -31,6 +31,7 @@
 #include <math.h>
 #include "debug.h"
 #include "util.h"
+#include <time.h>
 
 BMatrix::Sparse<double> DC::Jac = BMatrix::Sparse<double>();
 BMatrix::Sparse<double> transient::G_p_C_p_J = BMatrix::Sparse<double>();
@@ -89,6 +90,8 @@ bool DC::Newton_iter(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<dou
 
 void DC::simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double> &C, const BMatrix::Sparse<double> &J, const BMatrix::Dense<double> &B, const BMatrix::Dense<double> &fx, Circuit* circ){
 
+     clock_t start,finish;
+
      circ->update_sources(0);
     
     
@@ -97,6 +100,9 @@ void DC::simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double
 
      BMatrix::Sparse<double> Gmin(circ->size_of_mna() , circ->size_of_mna());
      
+      
+      start = clock();
+
      //First try with B_scale=1 Gmin_scale=0
      bool Newton_iter_result =  Newton_iter(G, Gmin, C, J, B,fx, circ, dc_solution);
      
@@ -140,12 +146,18 @@ void DC::simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse<double
 		 }
         }
      }
+  
+     finish = clock();
+
      circ->update_probes(0 , (*dc_solution) ); //This function should send to all the probes in the circuit the solution to add its value
 
      _DD(1){
 	 std::cout<<"DC Analysis Report:"<<std::endl;
 	 Jac.report_timing();
       }
+
+      std::cout<<"Time for DC Analysis: "<<(double(finish)-double(start))/CLOCKS_PER_SEC<<" sec"<<std::endl;
+
 }
 
 std::ostream& DC::print(std::ostream &out , const Circuit* circ)const{
@@ -189,8 +201,15 @@ void transient::simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse
       double time = start_time+h;
       int s = 1; //to find the first time point and use BE
       bool convergence;
+
+      clock_t start,finish;
+      start = clock();
+
       while(time <= end_time){	  
+
+	_DD(1){
 	std::cout<<"Current time = "<<time;
+	}
 	
 	TR_B = B; //B at previous time point	
 	
@@ -218,11 +237,15 @@ void transient::simulate(const BMatrix::Sparse<double> &G, const BMatrix::Sparse
 	time+= h;
 	s++;
       }
+    
+      finish = clock();
 
       _DD(1){
 	 std::cout<<"Transient Analysis Report:"<<std::endl;
 	 G_p_C_p_J.report_timing();
       }
+      
+      std::cout<<"Time for Transient Analysis: "<<(double(finish)-double(start))/CLOCKS_PER_SEC<<" sec"<<std::endl;
 }
 
 //solution should be the previous point and is overwritten by the new solution
@@ -285,7 +308,10 @@ bool transient::perform_BE(const BMatrix::Sparse<double> &G, const BMatrix::Spar
 	
     }
 
-    std::cout<<" PHI="<<max_phi<<" NR count = "<<number_of_iterations<<std::endl;
+    _DD(1){
+    std::cout<<" Max Phi="<<max_phi<<" NR count = "<<number_of_iterations<<std::endl;
+    }
+
     return convergence;
     
 }
@@ -354,7 +380,10 @@ bool transient::perform_TR(const BMatrix::Sparse<double> &G, const BMatrix::Spar
 	
     }
 
-    std::cout<<" PHI="<<max_phi<<" NR count = "<<number_of_iterations<<std::endl;
+    _DD(1){
+    std::cout<<" Max Phi="<<max_phi<<" NR count = "<<number_of_iterations<<std::endl;
+    }
+
     return convergence;
     
 }
