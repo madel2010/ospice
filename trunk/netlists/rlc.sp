@@ -2,6 +2,7 @@
 .param Is = 1e-12
 
 V1 n1 0 sin(0 1 1 0 0 0) 
+*V1 0 n1 sin(1 1 90)
 *R1 n1 0 1
 *Xa1 n2 n3 Mina2
 *C1 n2 0 1
@@ -24,3 +25,6 @@ G1 n1 n2 CUR='Is*(exp((V(n1)-V(n2))*40)-1)'
 .op
 .tran 0.001 3
 .print tran V(n1) V(n2)
+*.option method = pade 1 1
+
+.end

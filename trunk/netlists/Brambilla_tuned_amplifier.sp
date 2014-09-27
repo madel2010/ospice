@@ -14,8 +14,8 @@
 *.hb tones = 5XHz harms =10 intmodmax=0
 .OP
 *.hb 5Xhz harms =100
-.tran 3e-10 4e-3
-
+*.tran 3e-10 4e-3
+.tran 3e-10 0.5e-4
 
 .print TRAN v(nVin)	v(nvo) 
 *.print HB v(nVin)	v(nVo)
@@ -32,7 +32,7 @@ Vdd    ndd  0		20
 **************
 * Source for transient analysis
 *Vin     nVin 	        0		Pulse (0 1 0.1n 0.1n 0.1n 1n 5n)
-Vin    nVin	       	0		sin(0 1.0 5e6 0 0 0) 
+Vin    nVin	       	0		sin(0 1.0 5e6 0 0 90) 
 *************
 
 C1     nVin  n1			33e-9
